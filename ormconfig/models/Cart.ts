@@ -9,7 +9,7 @@ export class Cart {
 
     quantity: number
 
-    @ManyToOne(() => User, (user) => user.carts)
+    @ManyToOne(() => User, (user) => user.cart)
     user: User
 
     @ManyToOne(() => Product, (product) => product.on_cart)

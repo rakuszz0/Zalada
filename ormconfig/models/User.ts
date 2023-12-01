@@ -20,12 +20,12 @@ export class User {
     @Column()
     address: string
 
-    @ManyToOne(() => Role, (role) => role.id)
+    @ManyToOne(() => Role, (role) => role.users)
     user_level: Role
 
-    @ManyToOne(() => Cart, (cart) => cart.user)
-    carts: Cart[]
+    @OneToMany(() => Cart, (cart) => cart.user)
+    cart: Cart[]
 
-    @ManyToOne(() => Transaction, (transaction) => transaction.user)
+    @OneToMany(() => Transaction, (transaction) => transaction.user)
     transactions: Transaction[]
 }

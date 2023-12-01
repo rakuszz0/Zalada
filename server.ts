@@ -5,13 +5,12 @@ import SwaggerService from './src/infrastructure/swagger'
 import RoutesService from "./src/infrastructure/routes"
 import { envSchema } from "./src/config/app"
 
-const server = fastify({ logger: true })
+const server = fastify({ logger: process.env.NODE_ENV == "development" ? true : false })
 
 async function main() {
     // Env Validation
     await envSchema.parseAsync(process.env)
 
-    // Swagger service
     await server.register(SwaggerService)
 
     // Register all routes
