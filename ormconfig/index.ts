@@ -1,13 +1,7 @@
 import "reflect-metadata"
 import "dotenv/config"
 import { DataSource } from "typeorm";
-import { User } from "./models/User";
-import { Bank } from "./models/Bank";
-import { Cart } from "./models/Cart";
-import { Product } from "./models/Product";
-import { Role } from "./models/Role";
-import { Store } from "./models/Store";
-import { Transaction } from "./models/Transaction";
+import { Bank, Cart, Product, Role, Store, Transaction, User } from "./models";
 
 export default new DataSource({
     type: "mysql",

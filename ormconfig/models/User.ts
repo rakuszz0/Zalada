@@ -1,31 +1,46 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Role } from "./Role";
 import { Cart } from "./Cart";
 import { Transaction } from "./Transaction";
 
 @Entity({ name: "users" })
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    username: string
+  @Column()
+  username: string;
 
-    @Column({ unique: true })
-    email: string
+  @Column({ unique: true })
+  email: string;
 
-    @Column()
-    phone_number: number
+  @Column()
+  password: string;
 
-    @Column()
-    address: string
+  @Column()
+  phone_number: number;
 
-    @ManyToOne(() => Role, (role) => role.users)
-    user_level: Role
+  @Column({ nullable: true })
+  address: string;
 
-    @OneToMany(() => Cart, (cart) => cart.user)
-    cart: Cart[]
+  @CreateDateColumn()
+  registered_date: Date
 
-    @OneToMany(() => Transaction, (transaction) => transaction.user)
-    transactions: Transaction[]
+  @ManyToOne(() => Role)
+  @JoinColumn({ name: "user_level" })
+  role: Role;
+
+  @OneToMany(() => Cart, (cart) => cart.user)
+  cart: Cart[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.consumer)
+  transactions: Transaction[];
 }

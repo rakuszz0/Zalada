@@ -1,4 +1,4 @@
-import db from "../../ormconfig"
+import db from "@database"
 
 class DatabaseService {
     async init() {

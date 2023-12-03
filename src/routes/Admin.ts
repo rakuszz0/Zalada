@@ -1,18 +1,26 @@
 import { FastifyInstance, RouteOptions } from "fastify";
-import { Hello } from "../services/controller/AdminController";
+import * as AdminController from "../controller/AdminController";
 import { userSchema } from "../services/models/User";
 
 const routes: RouteOptions[] = [
     {
         method: ["GET"],
-        url: "/",
+        url: "/test",
         schema: {
             tags: ["Admin Services"],
             response: {
                 200: userSchema("helloSchema")
             }
         },
-        handler: Hello
+        handler: AdminController.Hello
+    },
+    {
+        method: ["GET"],
+        url: "/users",
+        schema: {
+            tags: ["Admin Services"]
+        },
+        handler: AdminController.getUsersHandler
     }
 ]
 

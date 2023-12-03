@@ -1,8 +1,8 @@
 import "dotenv/config"
 import fastify from 'fastify'
-import DatabaseService from './src/infrastructure/database'
-import SwaggerService from './src/infrastructure/swagger'
-import RoutesService from "./src/infrastructure/routes"
+import DatabaseService from '@infrastructure/database'
+import SwaggerService from '@infrastructure/swagger'
+import RoutesService from "@infrastructure/routes"
 import { envSchema } from "./src/config/app"
 
 const server = fastify({ logger: process.env.NODE_ENV == "development" ? true : false })

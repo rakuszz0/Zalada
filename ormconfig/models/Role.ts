@@ -10,6 +10,6 @@ export class Role {
     @Column({ unique: true })
     name: string
 
-    @OneToMany(() => User, (user) => user.user_level)
+    @OneToMany(() => User, (user) => user.role)
     users: User[]
 }

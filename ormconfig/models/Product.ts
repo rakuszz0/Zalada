@@ -1,31 +1,43 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
-import { Cart } from "./Cart"
-import { Store } from "./Store"
-import { Transaction } from "./Transaction"
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Cart } from "./Cart";
+import { Store } from "./Store";
+import { Transaction } from "./Transaction";
 
 @Entity({ name: "products" })
 export class Product {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string
+  @Column()
+  name: string;
 
-    @Column()
-    quantity: number
+  @Column()
+  quantity: number;
 
-    @Column()
-    description: string
+  @Column()
+  description: string;
 
-    @Column()
-    price: number
+  @Column()
+  price: number;
 
-    @OneToMany(() => Transaction, (transaction) => transaction.product)
-    transactions: Transaction[]
+  @CreateDateColumn()
+  created_at: Date
 
-    @OneToMany(() => Cart, (cart) => cart.product)
-    on_cart: Cart[]
+  @OneToMany(() => Transaction, (transaction) => transaction.product)
+  transactions: Transaction[];
 
-    @ManyToOne(() => Store, (store) => store.products)
-    store: Store
+  @OneToMany(() => Cart, (cart) => cart.product)
+  on_cart: Cart[];
+
+  @ManyToOne(() => Store, (store) => store.products)
+  @JoinColumn({ name: "store_id" })
+  store: Store;
 }
