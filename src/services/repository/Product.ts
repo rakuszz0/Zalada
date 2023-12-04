@@ -1,7 +1,7 @@
 import db from "@database";
-import { Product } from "@entities";
+import * as ProductDto from "../models/Product";
 
 export async function DBGetProducts() {
-  const product = await db.query<Product[]>("SELECT * FROM products");
+  const product = await db.query<ProductDto.GetProductResponse[]>("SELECT * FROM products");
   return product;
 }
