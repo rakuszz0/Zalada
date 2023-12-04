@@ -21,7 +21,7 @@ const getProductsResponse = z.array(getProductResponse)
 
 export type GetProductRequest = z.infer<typeof getProductRequest>
 
-export type GetProductResponse = z.infer<typeof getProductResponse>
+export type GetProductQueryResult = z.infer<typeof getProductResponse>
 
 export const { schemas: productSchemas, $ref: productSchema } = buildJsonSchemas(
     {
