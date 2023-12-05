@@ -1,11 +1,11 @@
 import { buildJsonSchemas } from "fastify-zod";
 import * as z from "zod";
 
-const customerOrderHistoryByDeliveryStatusRequest = z.object({
+export const customerOrderHistoryByDeliveryStatusRequest = z.object({
   status: z.string(),
 });
 
-const customerOrderHistoryByDeliveryStatusResponse = z.object({
+export const customerOrderHistoryByDeliveryStatusResponse = z.object({
   order_no: z.string(),
   product_id: z.number(),
   quantity: z.number(),
@@ -16,8 +16,7 @@ const customerOrderHistoryByDeliveryStatusResponse = z.object({
 });
 
 
-export type CustomerOrderHistoryByDeliveryStatusRequest = z.infer<typeof customerOrderHistoryByDeliveryStatusRequest>
-export type CustomerOrderHistoryByDeliveryStatusResponse = z.infer<typeof customerOrderHistoryByDeliveryStatusResponse>;
+
 
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas(
     {

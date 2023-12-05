@@ -1,5 +1,6 @@
 import { FastifyInstance, RouteOptions } from "fastify";
 import * as ConsumerController from "src/controller/ConsumerController";
+import { transactionSchema } from "src/services/models/Transaction"; 
 
 const routes: RouteOptions[] = [
   {
@@ -23,14 +24,11 @@ const routes: RouteOptions[] = [
     url: "/order/customer-order-history-by-delivery-status",
     schema: {
         tags: ["Consumer Services"],
-        body: {
-          type: 'object',
-          properties: {
-            status :{
-              type: 'string'
-            }
-          }
+        body: transactionSchema('customerOrderHistoryByDeliveryStatusRequest'),
+        response: {
+          200: transactionSchema('customerOrderHistoryByDeliveryStatusResponse')
         }
+
     },
     handler: ConsumerController.CustomerOrderHistoryByDeliveryStatusHandler,
   }

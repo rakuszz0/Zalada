@@ -1,3 +1,5 @@
-import { User } from "@entities";
+import { customerOrderHistoryByDeliveryStatusRequest, customerOrderHistoryByDeliveryStatusResponse } from "./schema";
+import * as z from "zod";
 
-export type GetUserResponse = Pick<User, "id" | "address" | "email" | "phone_number" | "username" | "registered_date">
+export type CustomerOrderHistoryByDeliveryStatusRequest = z.infer<typeof customerOrderHistoryByDeliveryStatusRequest>
+export type CustomerOrderHistoryByDeliveryStatusResponse = z.infer<typeof customerOrderHistoryByDeliveryStatusResponse>;
