@@ -6,22 +6,22 @@ export class Init1701748611310 implements MigrationInterface {
         //create carts table
         await queryRunner.query(
             `CREATE TABLE IF NOT EXISTS carts (
-                id PRIMARY KEY AUTO_INCREMENT,
+                id INT PRIMARY KEY AUTO_INCREMENT,
                 product_id INT NOT NULL,
                 quantity INT,
                 customer_id INT NOT NULL,
                 FOREIGN KEY (product_id) REFERENCES products(id),
-                FOREIGN KEY (customer_id) REFERENCES customers(id)
+                FOREIGN KEY (customer_id) REFERENCES users(id)
             )`
         )
 
         // Create banks table
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS banks (
-            id PRIMARY KEY AUTO_INCREMENT,
+            id INT PRIMARY KEY AUTO_INCREMENT,
             bank_name VARCHAR(255) UNIQUE,
             account INT NOT NULL
-            )`
+            );`
         )
     }
 
