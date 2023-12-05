@@ -18,6 +18,22 @@ const routes: RouteOptions[] = [
     },
     handler: ConsumerController.getProducstHandler,
   },
+  {
+    method: ["POST"],
+    url: "/order/customer-order-history-by-delivery-status",
+    schema: {
+        tags: ["Consumer Services"],
+        body: {
+          type: 'object',
+          properties: {
+            status :{
+              type: 'string'
+            }
+          }
+        }
+    },
+    handler: ConsumerController.CustomerOrderHistoryByDeliveryStatusHandler,
+  }
 ];
 
 export default async function ConsumerRoutes(server: FastifyInstance) {
