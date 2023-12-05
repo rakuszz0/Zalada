@@ -13,6 +13,15 @@ export class Init1701748611310 implements MigrationInterface {
             );`
         )
 
+        // Create banks table
+        await queryRunner.query(`
+            CREATE TABLE IF NOT EXISTS banks (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            bank_name VARCHAR(255) UNIQUE,
+            account INT NOT NULL
+            );`
+        )
+
         // Create stores
         await queryRunner.query(`CREATE TABLE IF NOT EXISTS stores (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -47,12 +56,24 @@ export class Init1701748611310 implements MigrationInterface {
             );`
         )
 
+        //create carts table
+        await queryRunner.query(
+            `CREATE TABLE IF NOT EXISTS carts (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                product_id INT NOT NULL,
+                quantity INT,
+                customer_id INT NOT NULL,
+                FOREIGN KEY (product_id) REFERENCES products(id),
+                FOREIGN KEY (customer_id) REFERENCES users(id)
+            );`
+        )
+
         // Create transactions table
         await queryRunner.query(`CREATE TABLE IF NOT EXISTS transactions (
             id INT PRIMARY KEY AUTO_INCREMENT,
             order_no VARCHAR(20) NOT NULL,
             order_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-            status ENUM(0, 1, 2, 3, 4, 5) NOT NULL,
+            status ENUM('0', '1', '2', '3', '4', '5') NOT NULL,
             product_id INT NOT NULL,
             customer_id INT NOT NULL,
             payment_type INT NOT NULL,
@@ -90,8 +111,25 @@ export class Init1701748611310 implements MigrationInterface {
         await queryRunner.query("INSERT INTO users (username, email, password, user_level) VALUES ?", [users])
 
         await queryRunner.query("INSERT INTO stores (name, address) VALUES (?, ?)", ["Zalada", "Jl. Pahlawan No. 123, Jakarta Barat DKI Jakarta, 12345 "])
+ 
+
+
+
+        const values = [
+            ["BCA", "2210089856"],
+            ["BRI", "1234567890"],
+            ["BNI", "7876766738"],
+            ["Mandiri", "9876543210"]  
+        ];
+          
+        
+        await queryRunner.query("INSERT INTO banks (bank_name, account) VALUES ?", [values]);
+        
+          
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`DROP TABLE carts`)
+        await queryRunner.query(`DROP TABLE banks`)
     }
 }
