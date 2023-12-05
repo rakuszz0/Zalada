@@ -1,5 +1,3 @@
-import db from "@database";
-import { User } from "@entities";
 import { FastifyReply, FastifyRequest } from "fastify";
 import * as ProductDomainService from "src/services/domain/Product";
 
