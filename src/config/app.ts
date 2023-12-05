@@ -5,7 +5,8 @@ export const envSchema = z.object({
     DB_HOST: z.string(),
     DB_PASSWORD: z.string(),
     DB_USERNAME: z.string(),
-    DB_NAME: z.string()
+    DB_NAME: z.string(),
+    JWT_SECRET_KEY: z.string()
 })
 
 

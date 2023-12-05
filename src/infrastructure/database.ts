@@ -4,8 +4,8 @@ class DatabaseService {
     async init() {
         await db.initialize()
     }
-
-    async getDatasource() {
+    
+    getDatasource() {
         return db
     }
 }
