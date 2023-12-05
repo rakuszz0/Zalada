@@ -12,7 +12,7 @@ export class Init1701748611310 implements MigrationInterface {
                 customer_id INT NOT NULL,
                 FOREIGN KEY (product_id) REFERENCES products(id),
                 FOREIGN KEY (customer_id) REFERENCES users(id)
-            )`
+            );`
         )
 
         // Create banks table
@@ -23,6 +23,18 @@ export class Init1701748611310 implements MigrationInterface {
             account INT NOT NULL
             );`
         )
+
+        const values = [
+            ["BCA", "2210089856"],
+            ["BRI", "1234567890"],
+            ["BNI", "7876766738"],
+            ["Mandiri", "9876543210"]  
+        ];
+          
+        
+        await queryRunner.query("INSERT INTO banks (bank_name, account) VALUES ?", [values]);
+        
+          
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
