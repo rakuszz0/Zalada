@@ -1,5 +1,4 @@
 import { NotFoundError, ServerError } from "src/config/error";
-import * as UserTypes from '../models/User'
 import * as UserRepository from "../repository/User";
 import * as UserTypes from "../models/User/type"
 

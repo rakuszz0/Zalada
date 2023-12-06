@@ -17,7 +17,7 @@ export async function CheckAuth(request: FastifyRequest) {
         throw new UnathorizedError("TOKEN_NOT_FOUND")
     }
 
-    const jwtPayload = await Jwt.verifyToken(token, process.env.JWT_SECRET_KEY)
+    const jwtPayload = await Jwt.verifyToken(token)
 
     const user = await UserRepository.DBCheckUserExist(jwtPayload.user_id);
 
@@ -31,8 +31,6 @@ export async function CheckAuth(request: FastifyRequest) {
 export function CheckRoles(role: number[]){
     return async (request: FastifyRequest) => {
         const user = request.user;
-
-        console.log(user);
 
         if(!role.includes(user.user_level)){
             throw new UnathorizedError("FORBIDDEN_ACCESS");
