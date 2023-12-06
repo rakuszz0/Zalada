@@ -1,6 +1,5 @@
 import DatabaseService from "@infrastructure/database"
 import * as UserTypes from "../models/User/type"
-
 const db = DatabaseService.getDatasource()
 
 export async function DBGetUsers() {
@@ -19,4 +18,13 @@ export async function DBGetStaffs() {
     )
 
     return query
+}
+
+export async function DBAddProductByAdmin(params: UserTypes.AddProductByAdmin  ) {
+  const {name,stock,description,price,store_id} = params
+  const query = await db.query<UserTypes.AddProductByAdmin[]>(
+    "INSERT INTO products( name, stock, description, price, store_id ) VALUES (?,?,?,?,1)",[name,stock,description,price,store_id]
+  )
+
+  return query
 }
