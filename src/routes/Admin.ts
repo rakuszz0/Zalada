@@ -18,6 +18,7 @@ const routes: RouteOptions[] = [
                 200: userSchema("helloSchema")
             }
         },
+        preHandler: Auth.CheckRoles([1]),
         handler: AdminController.Hello
     },
     {
@@ -32,6 +33,20 @@ const routes: RouteOptions[] = [
             ]
         },
         handler: AdminController.getUsersHandler
+    },
+    {
+        method: ["POST"],
+        url: "/add-products",
+        schema: {
+            tags: ["Admin Services"],
+            security:[
+                {
+                    authorization: []
+                }
+            ],
+            body: userSchema("addProductsSchema")
+        },
+        handler: AdminController.addProductsHandler
     }
 ]
 
