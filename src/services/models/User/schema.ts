@@ -13,9 +13,15 @@ const addProductsSchema = z.object({
 })
 
 
+export const loginRequest = z.object({
+  email: z.string().email(),
+  password: z.string()
+})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
+    loginRequest,
     addProductsSchema,
   },
   {

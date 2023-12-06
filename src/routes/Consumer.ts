@@ -1,5 +1,6 @@
 import { FastifyInstance, RouteOptions } from "fastify";
 import * as ConsumerController from "src/controller/ConsumerController";
+import { userSchema } from "src/services/models/User";
 import { productSchema } from "src/services/models/Product";
 
 const routes: RouteOptions[] = [
@@ -22,6 +23,15 @@ const routes: RouteOptions[] = [
     },
     handler: ConsumerController.getProductHandler,
   },
+  {
+    method: ["POST"],
+    url: "/login",
+    schema: {
+      tags: ["Consumer Services"],
+      body: userSchema("loginRequest")
+    },
+    handler: ConsumerController.loginHandler
+  }
 ];
 
 export default async function ConsumerRoutes(server: FastifyInstance) {

@@ -1,3 +1,6 @@
+import * as z from 'zod'
+import { loginRequest } from './schema'
+
 export type User = {
     id: number
     username: string
@@ -9,7 +12,14 @@ export type User = {
     user_level: number
 }
 
+export type LoginRequest = z.infer<typeof loginRequest>
+
 export type GetUserResponse = Omit<User, 'password' | "user_level">
+
+export type CheckUserByUsernameOrEmailParams = {
+    username: string
+    email: string
+}
 
 export type AddProductByAdmin = {
     name:string;
