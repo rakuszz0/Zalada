@@ -1,5 +1,6 @@
 import DatabaseService from "@infrastructure/database"
 import * as UserTypes from "../models/User/type"
+import { ResultSetHeader } from "mysql2"
 
 const db = DatabaseService.getDatasource()
 
@@ -19,4 +20,9 @@ export async function DBGetStaffs() {
     )
 
     return query
+}
+
+export async function DBCheckUserExistByEmail(email: string) {
+  const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE email = ?", [email])
+  return query
 }

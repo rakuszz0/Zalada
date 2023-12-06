@@ -2,7 +2,9 @@ import jwt from "jsonwebtoken"
 
 type JwtPayload = { user_id: number }
 
-export async function signToken(payload: JwtPayload, expiresIn?: number | "1d") {
+type SignTokenPayload = JwtPayload & {expiresIn?: number | string}
+
+export async function signToken({expiresIn = "1d", ...payload}: SignTokenPayload) {
     return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn })
 }
 

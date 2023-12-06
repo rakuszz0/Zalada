@@ -10,6 +10,12 @@ class BaseError extends Error {
     }
 }
 
+export class RequestError extends BaseError {
+    constructor(message: string) {
+        super(message)
+        this.statusCode = 400
+    }
+}
 
 export class UnathorizedError extends BaseError {
     constructor(message: string) {
@@ -22,5 +28,12 @@ export class NotFoundError extends BaseError {
     constructor(message: string) {
         super(message)
         this.statusCode = 404
+    }
+}
+
+export class ServerError extends BaseError {
+    constructor(message: string) {
+        super(message)
+        this.statusCode = 500
     }
 }
