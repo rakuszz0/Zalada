@@ -32,6 +32,20 @@ const routes: RouteOptions[] = [
             ]
         },
         handler: AdminController.getUsersHandler
+    },
+    {
+        method: ["POST"],
+        url: "/add-products",
+        schema: {
+            tags: ["Admin Services"],
+            security:[
+                {
+                    authorization: []
+                }
+            ],
+            body: userSchema("addProductsSchema")
+        },
+        handler: AdminController.addProductsHandler
     }
 ]
 
