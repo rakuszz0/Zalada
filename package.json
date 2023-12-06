@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/server.js",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc && tsc-alias",
     "dev": "nodemon -e ts --exec \"ts-node -r tsconfig-paths/register -r server.ts\"",
     "typeorm": "typeorm-ts-node-esm",
     "migrate:generate": "typeorm-ts-node-esm migration:generate ormconfig/migrations/init --d ormconfig/index",

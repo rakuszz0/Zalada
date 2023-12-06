@@ -1,5 +1,6 @@
 import { FastifyInstance, RouteOptions } from "fastify";
 import * as ConsumerController from "src/controller/ConsumerController";
+import { productSchema } from "src/services/models/Product";
 
 const routes: RouteOptions[] = [
   {
@@ -14,9 +15,12 @@ const routes: RouteOptions[] = [
     method: ["GET"],
     url: "/products",
     schema: {
-        tags: ["Consumer Services"]
+        tags: ["Consumer Services"],
+        response: {
+          200: productSchema("getProductsResponse")
+        }
     },
-    handler: ConsumerController.getProducstHandler,
+    handler: ConsumerController.getProductHandler,
   },
 ];
 
