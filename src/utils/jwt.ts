@@ -1,11 +1,16 @@
-import jwt from "jsonwebtoken"
+import { rejects } from "assert";
+import jwt, {Secret} from "jsonwebtoken"
 
-type JwtPayload = { user_id: number }
-
-export async function signToken(payload: JwtPayload, expiresIn?: number | "1d") {
-    return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn })
+type JwtPayload = { 
+    user_id: number;
+    user_level: number;
 }
 
-export async function verifyToken(token: string) {
-    return jwt.verify(token, process.env.JWT_SECRET_KEY) as JwtPayload
+export async function signToken(payload: JwtPayload, privateKey: Secret, expiresIn?: string) {
+    return jwt.sign(payload, privateKey, { expiresIn })
+    
+}
+
+export async function verifyToken(token: string, secret: string){
+    return jwt.verify(token, secret) as JwtPayload;
 }

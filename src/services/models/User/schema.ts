@@ -5,6 +5,10 @@ const helloSchema = z.object({
   message: z.string(),
 });
 
+export const UserClaims = z.object({
+  
+});
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
