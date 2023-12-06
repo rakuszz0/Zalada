@@ -5,13 +5,18 @@ const helloSchema = z.object({
   message: z.string(),
 });
 
-export const UserClaims = z.object({
-  
-});
+const addProductsSchema = z.object({
+  name:z.string(),
+  stock:z.number(),
+  description:z.string(),
+  price:z.number()
+})
+
 
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
+    addProductsSchema,
   },
   {
     $id: "userSchema",

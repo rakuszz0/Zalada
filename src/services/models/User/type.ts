@@ -10,3 +10,10 @@ export type User = {
 }
 
 export type GetUserResponse = Omit<User, 'password' | "user_level">
+
+export type AddProductByAdmin = {
+    name:string;
+    stock:number;
+    description:string;
+    price:number
+}
