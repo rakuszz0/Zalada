@@ -1,9 +1,11 @@
 import { buildJsonSchemas } from "fastify-zod";
 import * as z from "zod";
 
+
 export const customerOrderHistoryByDeliveryStatusRequest = z.object({
-  status: z.string(),
+  status: z.enum(["0", "1", "2", "3", "4", "5"]).describe("{0:pending, 1:packed, 2:onway, 3:arrived, 4:finished, 5:cancel}")
 });
+
 
 export const customerOrderHistoryByDeliveryStatusResponse = z.object({
   order_no: z.string(),

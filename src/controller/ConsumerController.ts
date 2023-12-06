@@ -15,11 +15,7 @@ export async function CustomerOrderHistoryByDeliveryStatusHandler(request: Fasti
     const {status} = request.body as CustomerOrderHistoryByDeliveryStatusRequest;
     // todo: tambahkan userid 
 
-    const deliveryStatus = z.enum(['pending', 'packed', 'onway', 'finished', 'cancel']);
-
-    await deliveryStatus.parse(status);
-
     const orderHistory = await TransactionDomainService.CustomerOrderHistoryByDeliveryStatusDomain(status);
 
-    reply.send(orderHistory);
+    reply.send(status);
 }
