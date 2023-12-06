@@ -15,12 +15,12 @@ const routes: RouteOptions[] = [
     method: ["GET"],
     url: "/products",
     schema: {
-      tags: ["Consumer Services"],
-      response: {
-        200: productSchema("getProductsResponse")
-      },
+        tags: ["Consumer Services"],
+        response: {
+          200: productSchema("getProductsResponse")
+        }
     },
-    handler: ConsumerController.getProducstHandler,
+    handler: ConsumerController.getProductHandler,
   },
 ];
 
