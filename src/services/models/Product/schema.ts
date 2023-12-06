@@ -6,7 +6,7 @@ export const baseSchema = {
     name: z.string(),
     description: z.string(),
     price: z.number(),
-    quantity: z.number(),
+    stock: z.number(),
     // created_at: z.date(),
     store_id: z.number()
 }
