@@ -20,3 +20,10 @@ export type CheckUserByUsernameOrEmailParams = {
     username: string
     email: string
 }
+
+export type AddProductByAdmin = {
+    name:string;
+    stock:number;
+    description:string;
+    price:number
+}

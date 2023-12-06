@@ -9,7 +9,7 @@ export async function DBGetUsers() {
     return query
 }
 
-export async function DBCheckUserExist(user_id: number) {
+export async function DBCheckUserExist(user_id: number):Promise<UserTypes.User[]> {
   const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE id = ?", [user_id])
   return query
 }
@@ -18,6 +18,15 @@ export async function DBGetStaffs() {
     const query = await db.query<UserTypes.GetUserResponse[]>(
       "SELECT id, username, email, phone_number, address, registered_date FROM users WHERE user_level = 2"
     )
+
+    return query
+}
+
+export async function DBAddProductByAdmin(params: UserTypes.AddProductByAdmin  ) {
+  const {name,stock,description,price} = params
+  const query = await db.query<UserTypes.AddProductByAdmin[]>(
+    "INSERT INTO products( name, stock, description, price,store_id ) VALUES (?,?,?,?,1)",[name,stock,description,price]
+  )
 
     return query
 }

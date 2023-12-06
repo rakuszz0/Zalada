@@ -1,6 +1,8 @@
 import { NotFoundError, ServerError } from "src/config/error";
 import * as UserTypes from '../models/User'
 import * as UserRepository from "../repository/User";
+import * as UserTypes from "../models/User/type"
+
 
 export async function getUsersDomain() {
   return await UserRepository.DBGetUsers()
@@ -14,6 +16,11 @@ export async function checkUserExistDomain(user_id: number) {
   }
 
   return user[0]
+}
+
+export async function addProductByAdmin(params:UserTypes.AddProductByAdmin) {
+  const addProductByAdmin = await UserRepository.DBAddProductByAdmin(params)
+  return addProductByAdmin
 }
 
 export async function getStaffsDomain() {

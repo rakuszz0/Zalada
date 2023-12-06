@@ -7,9 +7,14 @@ import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
 
 
-export async function getProducstHandler(request: FastifyRequest, reply: FastifyReply) {
-    const product = await ProductDomainService.getProducts();
-    reply.send(product);
+export async function getProductHandler() {
+    try {
+        const product = await ProductDomainService.getProductsDomain();
+        return product
+    } catch (error) {
+        throw error
+    }
+
 }
 
 export async function loginHandler(request: FastifyRequest) {
@@ -24,7 +29,7 @@ export async function loginHandler(request: FastifyRequest) {
             throw new RequestError("INVALID_CREDENTIALS")
         }
 
-        const token = await Jwt.signToken({user_id: user.id})
+        const token = await Jwt.signToken({user_id: user.id, user_level: user.user_level})
 
         return {message: token}
     } catch (error) {
