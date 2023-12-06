@@ -17,11 +17,25 @@ export async function CheckAuth(request: FastifyRequest) {
         throw new UnathorizedError("TOKEN_NOT_FOUND")
     }
 
-    const jwtPayload = await Jwt.verifyToken(token)
+    const jwtPayload = await Jwt.verifyToken(token, process.env.JWT_SECRET_KEY)
 
-    const [user] = await UserRepository.DBCheckUserExist(jwtPayload.user_id)
+    const user = await UserRepository.DBCheckUserExist(jwtPayload.user_id);
 
     if (user == undefined) {
         throw new UnathorizedError("USER_NOT_EXIST")
+    }
+
+    request.user = user[0];
+}
+
+export function CheckRoles(role: number[]){
+    return async (request: FastifyRequest) => {
+        const user = request.user;
+
+        console.log(user);
+
+        if(!role.includes(user.user_level)){
+            throw new UnathorizedError("FORBIDDEN_ACCESS");
+        }
     }
 }

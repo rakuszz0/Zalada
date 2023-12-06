@@ -18,6 +18,7 @@ const routes: RouteOptions[] = [
                 200: userSchema("helloSchema")
             }
         },
+        preHandler: Auth.CheckRoles([1]),
         handler: AdminController.Hello
     },
     {

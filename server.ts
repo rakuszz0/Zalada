@@ -4,6 +4,7 @@ import DatabaseService from '@infrastructure/database'
 import SwaggerService from '@infrastructure/swagger'
 import RoutesService from "@infrastructure/routes"
 import { envSchema } from "./src/config/app"
+import { signToken, verifyToken } from "src/utils/jwt"
 
 const server = fastify({ logger: process.env.NODE_ENV == "development" ? true : false })
 
@@ -12,7 +13,7 @@ async function main() {
     await envSchema.parseAsync(process.env)
 
     await server.register(SwaggerService)
-
+    
     // Register all routes
     await server.register(RoutesService)
 

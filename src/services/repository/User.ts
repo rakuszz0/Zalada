@@ -7,7 +7,7 @@ export async function DBGetUsers() {
     return query
 }
 
-export async function DBCheckUserExist(user_id: number) {
+export async function DBCheckUserExist(user_id: number):Promise<UserTypes.User[]> {
   const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE id = ?", [user_id])
   return query
 }
