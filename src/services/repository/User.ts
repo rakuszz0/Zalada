@@ -21,9 +21,9 @@ export async function DBGetStaffs() {
 }
 
 export async function DBAddProductByAdmin(params: UserTypes.AddProductByAdmin  ) {
-  const {name,stock,description,price,store_id} = params
+  const {name,stock,description,price} = params
   const query = await db.query<UserTypes.AddProductByAdmin[]>(
-    "INSERT INTO products( name, stock, description, price, store_id ) VALUES (?,?,?,?,1)",[name,stock,description,price,store_id]
+    "INSERT INTO products( name, stock, description, price,store_id ) VALUES (?,?,?,?,1)",[name,stock,description,price]
   )
 
   return query
