@@ -1,7 +1,7 @@
 import { FastifyRequest } from "fastify";
 import * as UserRepository from "src/services/repository/User";
 import * as Jwt from "src/utils/jwt";
-import { UnathorizedError } from "./error";
+import { ForbiddenAccessError, UnathorizedError } from "./error";
 import { User } from "src/services/models/User";
 
 declare module "fastify" {
@@ -37,3 +37,16 @@ export function CheckRoles(role: number[]){
         }
     }
 }
+
+
+export function CheckRules(...rules: number[]) {
+    return async (request: FastifyRequest) => {
+        const user = request.user
+        const access = await UserRepository.DBGetUserRules(user.id)
+        const isVerified = rules.some(rule => access.includes(rule))
+
+        if(!isVerified) {
+            throw new ForbiddenAccessError("FORBIDDEN_ACCESS")
+        }
+    }
+} 

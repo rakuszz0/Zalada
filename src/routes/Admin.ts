@@ -2,6 +2,7 @@ import { FastifyInstance, RouteOptions } from "fastify";
 import * as AdminController from "../controller/AdminController";
 import { userSchema } from "../services/models/User";
 import * as Auth from "src/config/auth";
+import { ListRules } from "src/config/rules";
 
 const routes: RouteOptions[] = [
     {
@@ -18,7 +19,6 @@ const routes: RouteOptions[] = [
                 200: userSchema("helloSchema")
             }
         },
-        preHandler: Auth.CheckRoles([1]),
         handler: AdminController.Hello
     },
     {
@@ -32,6 +32,7 @@ const routes: RouteOptions[] = [
                 }
             ]
         },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_USER),
         handler: AdminController.getUsersHandler
     },
     {
@@ -46,6 +47,7 @@ const routes: RouteOptions[] = [
             ],
             body: userSchema("addProductsSchema")
         },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_ADD_PRODUCT),
         handler: AdminController.addProductsHandler
     }
 ]
