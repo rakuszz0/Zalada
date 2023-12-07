@@ -1,6 +1,7 @@
 import { NotFoundError, ServerError } from "src/config/error";
 import * as UserRepository from "../repository/User";
 import * as UserTypes from "../models/User/type"
+import * as UserDto from "src/services/models/User";
 
 
 export async function getUsersDomain() {
@@ -34,4 +35,19 @@ export async function checkUserExistByEmailDomain(email: string) {
   }
 
   return user[0]
+}
+
+export async function checkEmailExistDomain(email: string) {
+  const user = await UserRepository.DBCheckUserExistByEmail(email)
+  return user;
+}
+
+export async function register(user: UserDto.registerParams) {
+  const result = await UserRepository.DBRegister(user);
+
+  if (result.affectedRows < 1) {
+    throw new NotFoundError("USER_NOT_FOUND")
+  }
+
+  return result.insertId;
 }

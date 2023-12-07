@@ -1,6 +1,7 @@
 import DatabaseService from "@infrastructure/database"
 import * as UserTypes from "../models/User/type"
 import { ResultSetHeader } from "mysql2"
+import * as UserDto from "src/services/models/User";
 
 const db = DatabaseService.getDatasource()
 
@@ -33,5 +34,10 @@ export async function DBAddProductByAdmin(params: UserTypes.AddProductByAdmin  )
 
 export async function DBCheckUserExistByEmail(email: string) {
   const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE email = ?", [email])
+  return query
+}
+
+export async function DBRegister(user: UserDto.registerParams) {
+  const query = await db.query("INSERT INTO users (username, email, password, phone_number, address, user_level) VALUES(?, ?, ?, ?, ?, ?)", [user.username, user.email, user.password, user.phone_number, user.address, user.user_level])
   return query
 }
