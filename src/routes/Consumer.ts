@@ -31,21 +31,6 @@ const routes: RouteOptions[] = [
       body: userSchema("loginRequest")
     },
     handler: ConsumerController.loginHandler
-  },
-  {
-    method: ["POST"],
-    url: "/register",
-    schema: {
-      tags: ["Consumer Services"],
-      security : [{
-        authorization: []
-      }],
-      body: userSchema("registerRequest"),
-      response: {
-        200 : userSchema("registerResponse")
-      }
-    },
-    handler: ConsumerController.registerHandler
   }
 ];
 

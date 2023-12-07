@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { loginRequest, registerRequest } from './schema'
+import { loginRequest } from './schema'
 
 export type User = {
     id: number
@@ -12,18 +12,7 @@ export type User = {
     user_level: number
 }
 
-export type registerParams = {
-    username: string
-    email: string
-    password: string
-    phone_number: string
-    address: string
-    user_level: number
-}
-
 export type LoginRequest = z.infer<typeof loginRequest>
-
-export type RegisterRequest = z.infer<typeof registerRequest>
 
 export type GetUserResponse = Omit<User, 'password' | "user_level">
 
