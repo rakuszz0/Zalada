@@ -35,3 +35,16 @@ export async function checkUserExistByEmailDomain(email: string) {
 
   return user[0]
 }
+
+
+export async function createUserByAdmin(params:UserTypes.CreateUserByAdmin){
+  const createUserByAdmin = await UserRepository.DBCreateUserByAdmin(params)
+
+  return createUserByAdmin
+}
+
+export async function checkEmailExistDomain(email:string){
+  const emailExist = await UserRepository.DBCheckUserExistByEmail(email)
+
+  return emailExist[0]
+}

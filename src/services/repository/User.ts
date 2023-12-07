@@ -24,7 +24,7 @@ export async function DBGetStaffs() {
 
 export async function DBAddProductByAdmin(params: UserTypes.AddProductByAdmin  ) {
   const {name,stock,description,price} = params
-  const query = await db.query<UserTypes.AddProductByAdmin[]>(
+  const query = await db.query<ResultSetHeader>(
     "INSERT INTO products( name, stock, description, price,store_id ) VALUES (?,?,?,?,1)",[name,stock,description,price]
   )
 
@@ -33,5 +33,14 @@ export async function DBAddProductByAdmin(params: UserTypes.AddProductByAdmin  )
 
 export async function DBCheckUserExistByEmail(email: string) {
   const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE email = ?", [email])
+  return query
+}
+
+export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
+  const {username,email,password,user_level} = params
+  const query = await db.query<ResultSetHeader>(
+    "INSERT INTO users( username,email,password,user_level ) VALUES (?,?,?,?)",[username,email,password,user_level]
+  )
+
   return query
 }

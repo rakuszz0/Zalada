@@ -27,3 +27,11 @@ export type AddProductByAdmin = {
     description:string;
     price:number
 }
+
+export type CreateUserByAdmin = {
+    username:string;
+    email:string;
+    password:string;
+    password_confirmation:string;
+    user_level:number;
+}
