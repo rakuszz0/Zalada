@@ -2,6 +2,8 @@ import { FastifyInstance, RouteOptions } from "fastify";
 import * as AdminController from "../controller/AdminController";
 import { userSchema } from "../services/models/User";
 import * as Auth from "src/config/auth";
+import { productSchema } from "src/services/models/Product";
+import { ListRules } from "src/config/rules";
 
 const routes: RouteOptions[] = [
     {
@@ -18,7 +20,6 @@ const routes: RouteOptions[] = [
                 200: userSchema("helloSchema")
             }
         },
-        preHandler: Auth.CheckRoles([1]),
         handler: AdminController.Hello
     },
     {
@@ -32,6 +33,7 @@ const routes: RouteOptions[] = [
                 }
             ]
         },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_USER),
         handler: AdminController.getUsersHandler
     },
     {
@@ -44,8 +46,12 @@ const routes: RouteOptions[] = [
                     authorization: []
                 }
             ],
-            body: userSchema("addProductsSchema")
+            body: userSchema("addProductsSchema"),
+            response:{
+                200: productSchema("addProductsResponse")
+            }
         },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_PRODUCT),
         handler: AdminController.addProductsHandler
     },
     {

@@ -8,6 +8,7 @@
     "build": "tsc && tsc-alias",
     "dev": "nodemon -e ts --exec \"ts-node -r tsconfig-paths/register -r server.ts\"",
     "typeorm": "typeorm-ts-node-esm",
+    "migrate:revert": "typeorm-ts-node-esm migration:revert --d ormconfig/index",
     "migrate:generate": "typeorm-ts-node-esm migration:generate ormconfig/migrations/init --d ormconfig/index",
     "premigrate:run": "npm run build",
     "migrate:run": "typeorm-ts-node-esm migration:run -d ormconfig/index",

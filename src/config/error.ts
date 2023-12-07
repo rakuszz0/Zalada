@@ -24,6 +24,13 @@ export class UnathorizedError extends BaseError {
     }
 }
 
+export class ForbiddenAccessError extends BaseError {
+    constructor(message: string) {
+        super(message)
+        this.statusCode = 403
+    }
+}
+
 export class NotFoundError extends BaseError {
     constructor(message: string) {
         super(message)

@@ -28,6 +28,7 @@ const routes: RouteOptions[] = [
       ],
       tags: ["Staff Services"],
     },
+    
     handler: StaffController.getStaffsHandler,
   },
 ];

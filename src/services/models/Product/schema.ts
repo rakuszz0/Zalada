@@ -17,6 +17,8 @@ export const getProductRequest = z.object({
 
 export const getProductResponse = z.object({ ...baseSchema })
 
+export const addProductsResponse = z.object({ message:z.boolean() })
+
 export const getProductsResponse = z.array(getProductResponse)
 
 export const addProductsRequest = z.object({
@@ -31,7 +33,8 @@ export const { schemas: productSchemas, $ref: productSchema } = buildJsonSchemas
         getProductRequest,
         getProductResponse,
         getProductsResponse,
-        addProductsRequest
+        addProductsRequest,
+        addProductsResponse,
     },
     {
         $id: "productSchema",

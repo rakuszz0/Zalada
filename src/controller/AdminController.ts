@@ -1,8 +1,9 @@
 import { FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
-import { AddProductByAdmin, CreateUserByAdmin } from "src/services/models/User";
-import * as BYCRYP from "src/utils/password"
+import { AddProductByAdmin } from "src/services/models/Product";
+import { CreateUserByAdmin } from "src/services/models/User";
+import * as Bcrypt from "src/utils/password"
 
 export async function Hello(request: FastifyRequest) {
     return { message: "Hello" }
@@ -34,7 +35,7 @@ export async function createUserByAdmin(request: FastifyRequest) {
             throw new RequestError("EMAIL_ALREADY_EXIST")
         } 
 
-        const hashPassword = await BYCRYP.hashPassword(password)
+        const hashPassword = await Bcrypt.hashPassword(password)
 
         const createUserByAdmin = await UserDomainService.createUserByAdmin({
             username,
