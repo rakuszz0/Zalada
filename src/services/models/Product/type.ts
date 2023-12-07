@@ -6,3 +6,8 @@ export type GetProductQueryResult = z.infer<typeof getProductResponse>
 export type GetProductsQueryResult = z.infer<typeof getProductsResponse>
 
 export type AddProductsRequest = z.infer<typeof addProductsRequest>
+
+export type UpdateStockQueryParams = {
+    stock: number
+    product_id: number
+}
