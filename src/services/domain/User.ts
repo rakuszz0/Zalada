@@ -37,9 +37,10 @@ export async function checkUserExistByEmailDomain(email: string) {
   return user[0]
 }
 
-export async function checkEmailExistDomain(email: string) {
-  const user = await UserRepository.DBCheckUserExistByEmail(email)
-  return user;
+export async function checkEmailExistDomain(email:string){
+  const emailExist = await UserRepository.DBCheckUserExistByEmail(email)
+
+  return emailExist[0]
 }
 
 export async function register(user: UserDto.registerParams) {

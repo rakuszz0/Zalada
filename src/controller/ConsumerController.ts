@@ -51,10 +51,10 @@ export async function registerHandler(request: FastifyRequest) {
             throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH");
         }
 
-        const user = await UserDomainService.checkEmailExistDomain(email)
+        const checkEmail = await UserDomainService.checkEmailExistDomain(email)
 
-        if(user.length > 0){
-            throw new ServerError("EMAIL_ALREADY_EXIST")
+        if (checkEmail) {
+            throw new RequestError("EMAIL_ALREADY_EXIST")
         }
 
         const hashPassword = await Bcrypt.hashPassword(password);
