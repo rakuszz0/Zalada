@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { RequestError } from "src/config/error";
+import { RequestError, ServerError } from "src/config/error";
 import * as ProductDomainService from "src/services/domain/Product";
 import * as UserDomainService from "src/services/domain/User";
 import * as UserDto from "src/services/models/User";
@@ -32,6 +32,44 @@ export async function loginHandler(request: FastifyRequest) {
         const token = await Jwt.signToken({user_id: user.id, user_level: user.user_level})
 
         return {message: token}
+    } catch (error) {
+        throw error
+    }
+
+}
+
+export async function registerHandler(request: FastifyRequest) {
+    try {
+        const { username, email, password, password_confirmation, phone_number, address } = request.body as UserDto.RegisterRequest;
+
+        // cek jika request ""
+        if(username == "" || email == "" || password == "" || password_confirmation == "" || phone_number == "" || address == ""){
+            throw new RequestError("REQUEST_CANNOT_BE_EMPTY");
+        }
+
+        if(password != password_confirmation){
+            throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH");
+        }
+
+        const checkEmail = await UserDomainService.checkEmailExistDomain(email)
+
+        if (checkEmail) {
+            throw new RequestError("EMAIL_ALREADY_EXIST")
+        }
+
+        const hashPassword = await Bcrypt.hashPassword(password);
+
+        await UserDomainService.register({
+            username,
+            email,
+            password: hashPassword,
+            phone_number,
+            address,
+            user_level: 6
+        })
+
+
+        return {message: true}
     } catch (error) {
         throw error
     }
