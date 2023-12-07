@@ -2,6 +2,7 @@ import { FastifyInstance, RouteOptions } from "fastify";
 import * as AdminController from "../controller/AdminController";
 import { userSchema } from "../services/models/User";
 import * as Auth from "src/config/auth";
+import { productSchema } from "src/services/models/Product";
 
 const routes: RouteOptions[] = [
     {
@@ -44,7 +45,10 @@ const routes: RouteOptions[] = [
                     authorization: []
                 }
             ],
-            body: userSchema("addProductsSchema")
+            body: userSchema("addProductsSchema"),
+            response:{
+                200: productSchema("addProductsResponse")
+            }
         },
         handler: AdminController.addProductsHandler
     }

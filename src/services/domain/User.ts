@@ -1,6 +1,10 @@
 import { NotFoundError, ServerError } from "src/config/error";
 import * as UserRepository from "../repository/User";
 import * as UserTypes from "../models/User/type"
+import * as ProductDto from "../models/Product";
+import * as ProductRepository from "../repository/Product";
+
+
 
 
 export async function getUsersDomain() {
@@ -17,8 +21,8 @@ export async function checkUserExistDomain(user_id: number) {
   return user[0]
 }
 
-export async function addProductByAdmin(params:UserTypes.AddProductByAdmin) {
-  const addProductByAdmin = await UserRepository.DBAddProductByAdmin(params)
+export async function addProductByAdmin(params:ProductDto.AddProductByAdmin) {
+  const addProductByAdmin = await ProductRepository.DBAddProductByAdmin(params)
   return addProductByAdmin
 }
 

@@ -1,6 +1,6 @@
 import { FastifyRequest } from "fastify";
 import * as UserDomainService from "src/services/domain/User";
-import { AddProductByAdmin } from "src/services/models/User";
+import { AddProductByAdmin } from "src/services/models/Product";
 
 export async function Hello(request: FastifyRequest) {
     return { message: "Hello" }
