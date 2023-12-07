@@ -47,7 +47,7 @@ const routes: RouteOptions[] = [
             ],
             body: userSchema("addProductsSchema")
         },
-        preHandler: Auth.CheckRules(ListRules.ACCESS_ADD_PRODUCT),
+        preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_PRODUCT),
         handler: AdminController.addProductsHandler
     }
 ]

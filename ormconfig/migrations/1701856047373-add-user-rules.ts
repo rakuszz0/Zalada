@@ -1,4 +1,4 @@
-import { CustomerRules, ListRules, StaffInventoryRules, StaffShippingRules, StaffTransactionRules, SuperAdminRules } from "src/config/rules"
+import { ListRules, StaffCustomerRules, StaffInventoryRules, StaffShippingRules, StaffTransactionRules, SuperAdminRules } from "src/config/rules"
 import { MigrationInterface, QueryRunner } from "typeorm"
 
 export class AddUserRules1701856047373 implements MigrationInterface {
@@ -40,9 +40,9 @@ export class AddUserRules1701856047373 implements MigrationInterface {
             Object.values(StaffTransactionRules).map(rule => [4, rule])
         ])
 
-        // add customer rules
+        // add staff_customer rules
         await queryRunner.query(`INSERT INTO user_group_rules (role_id, rules_id) VALUES ?`, [
-            Object.values(CustomerRules).map(rule => [5, rule])
+            Object.values(StaffCustomerRules).map(rule => [5, rule])
         ])
     }
 

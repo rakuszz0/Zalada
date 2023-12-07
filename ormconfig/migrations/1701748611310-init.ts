@@ -86,6 +86,7 @@ export class Init1701748611310 implements MigrationInterface {
         const { insertId: staff_shipping }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff_shipping"])
         const { insertId: staff_inventory }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff_inventory"])
         const { insertId: staff_transaction }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff_transaction"])
+        const { insertId: staff_customer }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff_customer"])
         const { insertId: customer }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["customer"])
 
         const users = [
@@ -93,6 +94,7 @@ export class Init1701748611310 implements MigrationInterface {
             ["staffinv", "staffinv@gmail.com", await hashPassword("12345"), staff_inventory],
             ["stafftrans", "stafftrans@gmail.com", await hashPassword("12345"), staff_transaction],
             ["staffkurir", "staffkurir@gmail.com", await hashPassword("12345"), staff_shipping],
+            ["staffcustomer", "staffcustomer@gmail.com", await hashPassword("12345"), staff_customer],
             ["consumer", "consumer@gmail.com", await hashPassword("12345"), customer]
         ]
 
