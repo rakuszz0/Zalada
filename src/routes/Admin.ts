@@ -66,10 +66,10 @@ const routes: RouteOptions[] = [
             ],
             body: userSchema("createUsers"),
             response: {
-                200: userSchema("createUsers")
+                200: userSchema("createUsersResponse")
               }
         },
-        preHandler: Auth.CheckRoles([1]),
+        preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_USER),
         handler: AdminController.createUserByAdmin
     }
 ]

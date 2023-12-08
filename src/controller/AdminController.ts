@@ -37,7 +37,7 @@ export async function createUserByAdmin(request: FastifyRequest) {
 
         const hashPassword = await Bcrypt.hashPassword(password)
 
-        const createUserByAdmin = await UserDomainService.createUserByAdmin({
+        await UserDomainService.createUserByAdmin({
             username,
             email,
             password: hashPassword,
