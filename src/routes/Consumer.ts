@@ -2,6 +2,8 @@ import { FastifyInstance, RouteOptions } from "fastify";
 import * as ConsumerController from "src/controller/ConsumerController";
 import { userSchema } from "src/services/models/User";
 import { productSchema } from "src/services/models/Product";
+import { transactionSchema } from "src/services/models/Transaction";
+import * as Auth from "src/config/auth";
 
 const routes: RouteOptions[] = [
   {
@@ -19,7 +21,7 @@ const routes: RouteOptions[] = [
         tags: ["Consumer Services"],
         response: {
           200: productSchema("getProductsResponse")
-        }
+        },
     },
     handler: ConsumerController.getProductHandler,
   },
@@ -31,6 +33,24 @@ const routes: RouteOptions[] = [
       body: userSchema("loginRequest")
     },
     handler: ConsumerController.loginHandler
+  },
+  {
+    method: ["POST"],
+    url: "/orders/payment",
+    schema: {
+      tags: ["Consumer Services"],
+      body: transactionSchema("paymentOrderRequest"),
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: {
+        200: transactionSchema("paymentOrderResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.paymentOrderHandler
   }
 ];
 
