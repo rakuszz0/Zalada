@@ -74,12 +74,14 @@ export class Init1701748611310 implements MigrationInterface {
             order_no VARCHAR(20) NOT NULL,
             order_time DATETIME DEFAULT CURRENT_TIMESTAMP,
             status ENUM('0', '1', '2', '3', '4', '5') NOT NULL,
-            product_id INT NOT NULL,
-            customer_id INT NOT NULL,
-            payment_type INT NOT NULL,
-            FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (customer_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (payment_type) REFERENCES banks(id) ON UPDATE CASCADE ON DELETE CASCADE
+            product_id INT,
+            customer_id INT,
+            payment_type INT,
+            verified_by INT,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE SET NULL,
+            FOREIGN KEY (customer_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL,
+            FOREIGN KEY (payment_type) REFERENCES banks(id) ON UPDATE CASCADE ON DELETE SET NULL,
+            FOREIGN KEY (verified_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL
         );`)
 
         const { insertId: super_admin }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["super_admin"])
