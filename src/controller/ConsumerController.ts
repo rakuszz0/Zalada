@@ -41,7 +41,6 @@ export async function loginHandler(request: FastifyRequest) {
 
 }
 
-
 export async function orderProductsHandler(request: FastifyRequest, reply: FastifyReply) {
     const { id: customer_id } = request.user
     const { order, payment_type } = request.body as TransactionDto.CreateOrderRequest
@@ -54,6 +53,8 @@ export async function orderProductsHandler(request: FastifyRequest, reply: Fasti
 
         let total_price = 0
         let stock: any  = {}
+
+        await TransactionDomainService.checkPaymentExistDomain(payment_type)
 
         // If user order more than 1 type of product
         if(Array.isArray(order)) {
@@ -96,5 +97,14 @@ export async function orderProductsHandler(request: FastifyRequest, reply: Fasti
         throw error  
     } finally {
         await queryRunner.release()
+    }
+}
+
+export async function getPaymentTypesHandler() {
+    try {
+        const payments = await TransactionDomainService.getPaymentTypesDomain()
+        return payments
+    } catch (error) {
+        throw error
     }
 }

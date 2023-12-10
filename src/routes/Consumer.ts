@@ -51,6 +51,18 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.orderProductsHandler
+  },
+  {
+    method: ["GET"],
+    url: "/orders/payment",
+    schema: {
+      tags: ["Consumer Services"],
+      summary: "Customer Get Payment Type",
+      response: {
+        200: transactionSchema("getPaymentTypesResponse")
+      }
+    },
+    handler: ConsumerController.getPaymentTypesHandler
   }
 ];
 

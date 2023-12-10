@@ -21,9 +21,18 @@ export const createOrderResponse = z.object({
     })
 })
 
+const getPaymentType = z.object({
+    id: z.number(),
+    bank_name: z.string(),
+    account: z.string()
+})
+
+export const getPaymentTypesResponse = z.array(getPaymentType)
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
-    createOrderResponse
+    createOrderResponse,
+    getPaymentTypesResponse
 }, {
     $id: "transactionSchemas"
 })

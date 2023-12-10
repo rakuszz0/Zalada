@@ -20,3 +20,9 @@ export type CreateTransactionQueryParams = {
     payment_type: number
     quantity: number
 }
+
+export type GetPaymentTypeQueryResult = {
+    id: number
+    bank_name: string
+    account: string
+}
