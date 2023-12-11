@@ -30,11 +30,10 @@ export class AddTrashTableAndChangeRelationalContrainst1702102395166 implements 
             );`
         )
 
-        const rules = Object.values(SuperAdminRules).map(rule => [1, rule])
-
-        // ADD NEW RULES
-        await queryRunner.query(`INSERT IGNORE INTO user_rules (name, id) VALUES ?`, [Object.entries(SuperAdminRules)])
-        await queryRunner.query(`INSERT IGNORE INTO user_group_rules (role_id, rules_id) VALUES ?`, [rules])
+        await queryRunner.query(`ALTER TABLE transactions ADD COLUMN price INT`)
+        
+        await queryRunner.query(`ALTER TABLE users ADD COLUMN first_name VARCHAR(50)`)
+        await queryRunner.query("ALTER TABLE users ADD COLUMN last_name VARCHAR(50)")
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
