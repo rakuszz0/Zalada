@@ -40,6 +40,7 @@ const routes: RouteOptions[] = [
     schema: {
       tags: ["Consumer Services"],
       body: transactionSchema("createOrderRequest"),
+      summary: "Customer Create New Order",
       security: [
         {
           authorization: []

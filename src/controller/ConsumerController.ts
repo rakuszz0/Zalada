@@ -62,7 +62,7 @@ export async function orderProductsHandler(request: FastifyRequest, reply: Fasti
                 const product = await ProductDomainService.checkProductExistDomain(item.product_id)
 
                 if (product.stock < item.quantity) {
-                    throw new RequestError("QUANTITY_EXCEEDS_STOCK")
+                    throw new RequestError(`${product.name.toUpperCase()}_QUANTITY_EXCEEDS_STOCK`)
                 }
 
                 await TransactionDomainService.createTransactionDomain({ customer_id, order_no, payment_type, product_id: product.id, quantity: item.quantity, status: TransactionDto.TransactionStatus.PENDING }, queryRunner)
