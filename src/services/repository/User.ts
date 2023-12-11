@@ -1,6 +1,7 @@
 import DatabaseService from "@infrastructure/database"
 import * as UserTypes from "../models/User/type"
 import { ResultSetHeader } from "mysql2"
+import { QueryRunner } from "typeorm"
 
 const db = DatabaseService.getDatasource()
 
@@ -39,5 +40,13 @@ export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
     "INSERT INTO users( username,email,password,user_level ) VALUES (?,?,?,?)",[username,email,password,user_level]
   )
 
+  return query
+}
+
+export async function changePassword(params:UserTypes.ChangePassQueryParams,queryRunner:QueryRunner){
+  const {user_id,new_password} = params
+  const query = await db.query<ResultSetHeader>(
+    "UPDATE users SET password = ? WHERE id = ? ",[new_password, user_id, queryRunner]
+  )
   return query
 }

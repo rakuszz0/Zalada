@@ -37,3 +37,17 @@ export async function loginHandler(request: FastifyRequest) {
     }
 
 }
+
+export async function changePassword(request: FastifyRequest) {
+    try {
+        const {old_password,new_password,password_confirmation} = request.body as UserDto.ChangePassRequest
+        const user = request.user
+        const changePassword = await UserDomainService.changePasswordDomain({
+            old_password,new_password,password_confirmation,user_id:user.id
+        })
+
+        return {message:changePassword}
+    } catch (error){
+        throw (error)
+    }
+}

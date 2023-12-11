@@ -29,6 +29,15 @@ export const createUsersResponse = z.object({
   message: z.boolean()
 })
 
+export const changePassRequest = z.object({
+  old_password:z.string(),
+  new_password: z.string().min(6).max(12),
+  password_confirmation: z.string().min(6).max(12),
+})
+
+export const changePassResponse = z.object({
+  message: z.boolean()
+})
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -36,6 +45,8 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     addProductsSchema,
     createUsers,
     createUsersResponse,
+    changePassRequest,
+    changePassResponse,
   },
   {
     $id: "userSchema",
