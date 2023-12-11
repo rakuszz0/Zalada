@@ -9,7 +9,7 @@ export const StaffTransactionRules = {
 }
 
 export const StaffShippingRules = {
-    "ACCESS_HANDLE_CONTROL": 3025,
+    "ACCESS_HANDLE_SHIPPING": 3025,
 }
 
 export const StaffCustomerRules = {
@@ -27,6 +27,10 @@ export const SuperAdminRules = {
     ...StaffShippingRules,
     ...StaffCustomerRules,
     "ACCESS_DELETE_PRODUCT": 1023,
+    "ACCESS_VIEW_RULES": 5020,
+    "ACCESS_CREATE_RULES": 5021,
+    "ACCESS_EDIT_RULES": 5022,
+    "ACCESS_DELETE_RULES": 5023
 }
 
 export const ListRules = {

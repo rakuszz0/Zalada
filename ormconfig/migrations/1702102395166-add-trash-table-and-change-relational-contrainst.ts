@@ -1,3 +1,4 @@
+import { SuperAdminRules } from "src/config/rules"
 import { MigrationInterface, QueryRunner } from "typeorm"
 
 export class AddTrashTableAndChangeRelationalContrainst1702102395166 implements MigrationInterface {
@@ -28,6 +29,12 @@ export class AddTrashTableAndChangeRelationalContrainst1702102395166 implements 
             FOREIGN KEY (store_id) REFERENCES stores(id) ON UPDATE CASCADE ON DELETE CASCADE
             );`
         )
+
+        const rules = Object.values(SuperAdminRules).map(rule => [1, rule])
+
+        // ADD NEW RULES
+        await queryRunner.query(`INSERT IGNORE INTO user_rules (name, id) VALUES ?`, [Object.entries(SuperAdminRules)])
+        await queryRunner.query(`INSERT IGNORE INTO user_group_rules (role_id, rules_id) VALUES ?`, [rules])
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
