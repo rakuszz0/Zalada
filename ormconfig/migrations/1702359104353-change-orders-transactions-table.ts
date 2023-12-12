@@ -24,9 +24,6 @@ export class ChangeOrdersTransactionsTable1702359104353 implements MigrationInte
             verified_by INT,
             order_time DATETIME DEFAULT CURRENT_TIMESTAMP
         )`)
-
-
-        await queryRunner.query(`ALTER TABLE orders ADD COLUMN order_no VARCHAR(25)`)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
