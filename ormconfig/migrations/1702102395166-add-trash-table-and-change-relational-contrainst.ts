@@ -1,4 +1,3 @@
-import { SuperAdminRules } from "src/config/rules"
 import { MigrationInterface, QueryRunner } from "typeorm"
 
 export class AddTrashTableAndChangeRelationalContrainst1702102395166 implements MigrationInterface {

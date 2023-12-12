@@ -22,7 +22,6 @@ export const StaffCustomerRules = {
 
 export const SuperAdminRules = {
     ...StaffInventoryRules,
-    ...StaffInventoryRules,
     ...StaffTransactionRules,
     ...StaffShippingRules,
     ...StaffCustomerRules,
