@@ -1,9 +1,12 @@
 import * as z from "zod"
-import { addProductsRequest, getProductRequest, getProductResponse, getProductsResponse } from "./schema"
+import { addProductsRequest, getProductDetails, getProductRequest, getProductResponse, getProductsResponse, getProductDetailsResponse } from "./schema"
 
 export type GetProductRequest = z.infer<typeof getProductRequest>
 export type GetProductQueryResult = z.infer<typeof getProductResponse>
 export type GetProductsQueryResult = z.infer<typeof getProductsResponse>
+export type GetProductDetails = z.infer<typeof getProductDetails>
+export type GetProductDetailsQueryResult = z.infer<typeof getProductDetailsResponse>
+
 
 export type AddProductsRequest = z.infer<typeof addProductsRequest>
 

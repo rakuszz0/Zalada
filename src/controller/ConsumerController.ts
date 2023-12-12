@@ -5,6 +5,8 @@ import * as UserDomainService from "src/services/domain/User";
 import * as UserDto from "src/services/models/User";
 import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
+import * as ProductDto from "src/services/models/Product"
+import { number } from "zod";
 
 
 export async function getProductHandler() {
@@ -36,4 +38,16 @@ export async function loginHandler(request: FastifyRequest) {
         throw error
     }
 
+}
+
+export async function getProductDetailsHandler(request: FastifyRequest){
+    try {
+        const {id} = request.body as ProductDto.GetProductDetails
+
+        const getProductDetails = await ProductDomainService.getProductDetailsDomain(id)
+
+        return getProductDetails
+    } catch (error){
+        throw error
+    }
 }

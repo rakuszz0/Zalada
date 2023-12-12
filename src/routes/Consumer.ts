@@ -2,6 +2,7 @@ import { FastifyInstance, RouteOptions } from "fastify";
 import * as ConsumerController from "src/controller/ConsumerController";
 import { userSchema } from "src/services/models/User";
 import { productSchema } from "src/services/models/Product";
+import * as Auth from "src/config/auth";
 
 const routes: RouteOptions[] = [
   {
@@ -31,6 +32,19 @@ const routes: RouteOptions[] = [
       body: userSchema("loginRequest")
     },
     handler: ConsumerController.loginHandler
+  },
+  {
+    method: ["POST"],
+    url: "/product-details",
+    schema:{
+      tags: ["Consumer Services"],
+      body: productSchema("getProductDetails"),
+      response:{
+        200: productSchema("getProductDetailsResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.getProductDetailsHandler
   }
 ];
 
