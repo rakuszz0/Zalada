@@ -51,3 +51,37 @@ export async function changePassword(request: FastifyRequest) {
         throw (error)
     }
 }
+
+export async function registerHandler(request: FastifyRequest) {
+    try {
+        const { username, email, password, password_confirmation, phone_number, address, first_name, last_name } = request.body as UserDto.RegisterRequest;
+
+        if (password != password_confirmation) {
+            throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH");
+        }
+
+        const checkEmail = await UserDomainService.checkEmailExistDomain(email)
+
+        if (checkEmail) {
+            throw new RequestError("EMAIL_ALREADY_EXIST")
+        }
+
+        const hashPassword = await Bcrypt.hashPassword(password);
+
+        await UserDomainService.registerDomain({
+            username,
+            email,
+            first_name,
+            last_name,
+            password: hashPassword,
+            phone_number,
+            address,
+        })
+
+
+        return { message: true }
+    } catch (error) {
+        throw error
+    }
+
+}

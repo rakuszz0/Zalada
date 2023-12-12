@@ -39,7 +39,14 @@ export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
   const query = await db.query<ResultSetHeader>(
     "INSERT INTO users( username,email,first_name,last_name,password,user_level ) VALUES (?,?,?,?,?,?)",[username,email,first_name,last_name,password,user_level]
   )
+}
 
+export async function DBRegister({ address, email, password, phone_number, username, first_name, last_name }: UserTypes.RegisterQueryParams) {
+  const [customerRole] = await db.query<Array<{ id: number, name: string }>>("SELECT * FROM user_roles WHERE name = ?", ['customer'])
+  const params = [
+    [username, email, password, first_name, last_name, phone_number, address, customerRole.id]
+  ]
+  const query = await db.query<ResultSetHeader>("INSERT INTO users (username, email, password, first_name, last_name, phone_number, address, user_level) VALUES ?", [params])
   return query
 }
 
