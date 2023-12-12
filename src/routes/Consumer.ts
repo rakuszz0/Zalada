@@ -2,6 +2,7 @@ import { FastifyInstance, RouteOptions } from "fastify";
 import * as ConsumerController from "src/controller/ConsumerController";
 import { userSchema } from "src/services/models/User";
 import { productSchema } from "src/services/models/Product";
+import * as Auth from "src/config/auth";
 
 const routes: RouteOptions[] = [
   {
@@ -31,6 +32,24 @@ const routes: RouteOptions[] = [
       body: userSchema("loginRequest")
     },
     handler: ConsumerController.loginHandler
+  },
+  {
+    method: ["POST"],
+    url: "/change-pass",
+    schema: {
+      tags: ["Consumer Services"],
+      body: userSchema("changePassRequest"),
+      security:[
+        {
+          authorization:[]
+        }
+      ],
+      response: {
+        200:userSchema("changePassResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.changePassword
   }
 ];
 
