@@ -20,6 +20,8 @@ export const loginRequest = z.object({
 
 export const createUsers = z.object({
   email: z.string().email(),
+  first_name:z.string(),
+  last_name:z.string(),
   username: z.string(),
   password:z.string().min(6).max(12),
   password_confirmation: z.string().min(6).max(12),
