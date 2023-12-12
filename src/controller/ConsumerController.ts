@@ -1,8 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as ProductDomainService from "src/services/domain/Product";
+import * as TransactionDomainService from "src/services/domain/Transaction";
 import * as UserDomainService from "src/services/domain/User";
 import * as UserDto from "src/services/models/User";
+import * as TransactionDto from "src/services/models/Transaction";
 import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
 
@@ -35,5 +37,16 @@ export async function loginHandler(request: FastifyRequest) {
     } catch (error) {
         throw error
     }
+}
 
+export async function getOrderDetailsHandler(request: FastifyRequest) {
+    try {
+        const {id: customer_id} = request.user
+        const {order_no} = request.params as TransactionDto.GetOrderDetailsRequest
+        const transaction = await TransactionDomainService.getTransactionDetailsDomain({customer_id, order_no})
+
+        return {message: transaction}
+    } catch (error) {
+        throw error
+    }
 }
