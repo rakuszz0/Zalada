@@ -25,7 +25,7 @@ export async function addProductsHandler(request: FastifyRequest) {
 
 export async function createUserByAdmin(request: FastifyRequest) {
     try{
-        const {username,email,password,password_confirmation,user_level} = request.body as CreateUserByAdmin
+        const {username,email,first_name,last_name,password,password_confirmation,user_level} = request.body as CreateUserByAdmin
         if (password != password_confirmation) {
             throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH")
         }
@@ -40,6 +40,8 @@ export async function createUserByAdmin(request: FastifyRequest) {
         await UserDomainService.createUserByAdmin({
             username,
             email,
+            first_name,
+            last_name,
             password: hashPassword,
             user_level,
             password_confirmation

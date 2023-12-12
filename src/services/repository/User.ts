@@ -35,9 +35,9 @@ export async function DBGetUserRules(user_id: number) {
 }
 
 export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
-  const {username,email,password,user_level} = params
+  const {username,email,first_name,last_name,password,user_level} = params
   const query = await db.query<ResultSetHeader>(
-    "INSERT INTO users( username,email,password,user_level ) VALUES (?,?,?,?)",[username,email,password,user_level]
+    "INSERT INTO users( username,email,first_name,last_name,password,user_level ) VALUES (?,?,?,?,?,?)",[username,email,first_name,last_name,password,user_level]
   )
 
   return query
