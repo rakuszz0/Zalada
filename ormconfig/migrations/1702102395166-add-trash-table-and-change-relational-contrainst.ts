@@ -28,11 +28,6 @@ export class AddTrashTableAndChangeRelationalContrainst1702102395166 implements 
             FOREIGN KEY (store_id) REFERENCES stores(id) ON UPDATE CASCADE ON DELETE CASCADE
             );`
         )
-
-        await queryRunner.query(`ALTER TABLE transactions ADD COLUMN price INT`)
-        
-        await queryRunner.query(`ALTER TABLE users ADD COLUMN first_name VARCHAR(50)`)
-        await queryRunner.query("ALTER TABLE users ADD COLUMN last_name VARCHAR(50)")
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
