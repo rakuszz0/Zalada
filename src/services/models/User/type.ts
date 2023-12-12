@@ -12,13 +12,14 @@ export type User = {
     user_level: number
 }
 
-export type registerParams = {
+export type RegisterQueryParams = {
     username: string
     email: string
     password: string
     phone_number: string
     address: string
-    user_level: number
+    first_name: string
+    last_name: string
 }
 
 export type LoginRequest = z.infer<typeof loginRequest>

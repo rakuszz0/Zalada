@@ -21,6 +21,8 @@ export const loginRequest = z.object({
 export const registerRequest = z.object({
   username: z.string().min(2).max(50).regex(/^[a-zA-Z ]+$/),
   email: z.string().email(),
+  first_name: z.string(),
+  last_name: z.string(),
   password: z.string().min(6).max(12),
   password_confirmation: z.string().min(6).max(12),
   phone_number: z.string().min(10).max(15).regex(/^[0-9]+$/),

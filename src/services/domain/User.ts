@@ -43,12 +43,12 @@ export async function checkEmailExistDomain(email:string){
   return emailExist[0]
 }
 
-export async function register(user: UserDto.registerParams) {
+export async function registerDomain(user: UserDto.RegisterQueryParams) {
   const result = await UserRepository.DBRegister(user);
 
   if (result.affectedRows < 1) {
-    throw new NotFoundError("USER_NOT_FOUND")
+    throw new NotFoundError("FAILED_REGISTER")
   }
 
-  return result.insertId;
+  return result
 }

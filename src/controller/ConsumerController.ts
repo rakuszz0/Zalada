@@ -40,12 +40,7 @@ export async function loginHandler(request: FastifyRequest) {
 
 export async function registerHandler(request: FastifyRequest) {
     try {
-        const { username, email, password, password_confirmation, phone_number, address } = request.body as UserDto.RegisterRequest;
-
-        // cek jika request ""
-        if(username == "" || email == "" || password == "" || password_confirmation == "" || phone_number == "" || address == ""){
-            throw new RequestError("REQUEST_CANNOT_BE_EMPTY");
-        }
+        const { username, email, password, password_confirmation, phone_number, address, first_name, last_name } = request.body as UserDto.RegisterRequest;
 
         if(password != password_confirmation){
             throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH");
@@ -59,13 +54,14 @@ export async function registerHandler(request: FastifyRequest) {
 
         const hashPassword = await Bcrypt.hashPassword(password);
 
-        await UserDomainService.register({
+        await UserDomainService.registerDomain({
             username,
             email,
+            first_name, 
+            last_name,
             password: hashPassword,
             phone_number,
             address,
-            user_level: 5
         })
 
 

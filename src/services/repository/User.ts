@@ -37,7 +37,11 @@ export async function DBCheckUserExistByEmail(email: string) {
   return query
 }
 
-export async function DBRegister(user: UserDto.registerParams) {
-  const query = await db.query("INSERT INTO users (username, email, password, phone_number, address, user_level) VALUES(?, ?, ?, ?, ?, ?)", [user.username, user.email, user.password, user.phone_number, user.address, user.user_level])
+export async function DBRegister({ address, email, password, phone_number, username, first_name, last_name }: UserDto.RegisterQueryParams) {
+  const [customerRole] = await db.query<Array<{ id: number, name: string }>>("SELECT * FROM user_roles WHERE name = ?", ['customer'])
+  const params = [
+    [username, email, password, first_name, last_name, phone_number, address, customerRole.id]
+  ]
+  const query = await db.query<ResultSetHeader>("INSERT INTO users (username, email, password, first_name, last_name, phone_number, address, user_level) VALUES ?", [params])
   return query
 }
