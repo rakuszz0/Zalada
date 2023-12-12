@@ -59,23 +59,29 @@ export async function orderProductsHandler(request: FastifyRequest, reply: Fasti
         // If user order more than 1 type of product
         if(Array.isArray(order)) {
             for (const item of order) {
+                // Check Product Exist
                 const product = await ProductDomainService.checkProductExistDomain(item.product_id)
 
+                // Check product stock is more than quantity
                 if (product.stock < item.quantity) {
                     throw new RequestError(`${product.name.toUpperCase()}_QUANTITY_EXCEEDS_STOCK`)
                 }
 
-                await TransactionDomainService.createTransactionDomain({ customer_id, order_no, payment_type, product_id: product.id, quantity: item.quantity, status: TransactionDto.TransactionStatus.PENDING }, queryRunner)
+                // Create new transaction
+                await TransactionDomainService.createTransactionDomain({ customer_id, order_no, payment_type, product_id: product.id, quantity: item.quantity, status: 1, price: product.price }, queryRunner)
 
-                await ProductDomainService.updateStockProduct({ product_id: product.id, stock: product.stock - item.quantity }, queryRunner)
+                // Update product stock after transaction has been created
+                await ProductDomainService.updateStockProductDomain({ product_id: product.id, stock: product.stock - item.quantity }, queryRunner)
 
                 stock[product.name] = product.stock - item.quantity
 
                 total_price += product.price * item.quantity
             }
         } else {
+            // Check product exists
             const product = await ProductDomainService.checkProductExistDomain(order.product_id)
 
+            // Check product stock is more than quantity
             if (product.stock < order.quantity) {
                 throw new RequestError("QUANTITY_EXCEEDS_STOCK")
             }
@@ -84,9 +90,11 @@ export async function orderProductsHandler(request: FastifyRequest, reply: Fasti
 
             stock = product.stock - order.quantity
 
-            await TransactionDomainService.createTransactionDomain({ customer_id, order_no, payment_type, product_id: product.id, quantity: order.quantity, status: TransactionDto.TransactionStatus.PENDING }, queryRunner)
+            // Create new transaction
+            await TransactionDomainService.createTransactionDomain({ customer_id, order_no, payment_type, product_id: product.id, quantity: order.quantity, status: 1, price: product.price }, queryRunner)
 
-            await ProductDomainService.updateStockProduct({ product_id: product.id, stock: product.stock - order.quantity }, queryRunner)
+            // Update product stock after transaction has been created
+            await ProductDomainService.updateStockProductDomain({ product_id: product.id, stock: product.stock - order.quantity }, queryRunner)
         }
 
         await queryRunner.commitTransaction()

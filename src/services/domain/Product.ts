@@ -17,7 +17,7 @@ export async function checkProductExistDomain(product_id: number) {
     return product
 }
 
-export async function updateStockProduct({ product_id, stock }: ProductDto.UpdateStockQueryParams, queryRunner?: QueryRunner) {
+export async function updateStockProductDomain({ product_id, stock }: ProductDto.UpdateStockQueryParams, queryRunner?: QueryRunner) {
     const result = await ProductRepository.DBUpdateStockProduct({product_id, stock}, queryRunner)
 
     if(result.affectedRows < 1) {

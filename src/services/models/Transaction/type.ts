@@ -2,19 +2,21 @@ import * as z from "zod"
 import { createOrderRequest } from "./schema"
 
 export enum TransactionStatus {
-    PENDING = "0",
-    PACKING = "1",
-    DELIVERY = "2",
-    ARRIVED = "3",
-    FINISHED = "4",
-    CANCEL = "5"
+    PENDING_PAYMENT = 1,
+    PENDING_APPROVAL = 2,
+    PACKING = 3,
+    DELIVERY = 4,
+    ARRIVED = 5,
+    FINISHED = 6,
+    CANCEL = 7
 }
 
 export type CreateOrderRequest = z.infer<typeof createOrderRequest>
 
 export type CreateTransactionQueryParams = {
     order_no: string
-    status: TransactionStatus
+    price: number
+    status: TransactionStatus | number
     product_id: number
     customer_id: number
     payment_type: number
