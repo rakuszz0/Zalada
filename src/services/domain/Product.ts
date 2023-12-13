@@ -1,39 +1,15 @@
-import { NotFoundError, ServerError } from "src/config/error";
 import * as ProductRepository from "../repository/Product";
 import * as ProductDto from "../models/Product";
-import { QueryRunner } from "typeorm";
 
 export async function getProductsDomain() {
     return await ProductRepository.DBGetProducts()
 }
 
-export async function checkProductExistDomain(product_id: number)  {
-    const product = await ProductRepository.DBCheckProductExist(product_id)
+export async function updateProductDomain({ description, name, price, product_id, stock }: ProductDto.UpdateProductDomainParams) {
+    // Check Product Exist
+    await ProductRepository.DBCheckProductExist(product_id)
 
-    if(product.length < 1) {
-        throw new NotFoundError("PRODUCT_NOT_FOUND")
-    }
+    await ProductRepository.DBUpdateProduct({description, name, price, product_id, stock})
 
-    return product[0]
-}
-
-export async function updateProductDomain(product: ProductDto.UpdateProductQueryParams, queryRunner?: QueryRunner) {
-    const result = await ProductRepository.DBUpdateProduct(product, queryRunner)
-
-    if(result.affectedRows < 1) {
-        throw new ServerError("FAILED_UPDATE_PRODUCT")
-    }
-
-    return result
+    return true
 } 
-
-
-export async function updateStockProductDomain({ product_id, stock }: ProductDto.UpdateStockQueryParams, queryRunner?: QueryRunner) {
-    const result = await ProductRepository.DBUpdateStockProduct({product_id, stock}, queryRunner)
-
-    if(result.affectedRows < 1) {
-        throw new ServerError("FAILED_UPDATE_STOCK")
-    }
-
-    return result
-}

@@ -15,16 +15,22 @@ export type CreateOrderRequest = z.infer<typeof createOrderRequest>
 
 export type CreateTransactionQueryParams = {
     order_no: string
-    price: number
     status: TransactionStatus | number
-    product_id: number
     customer_id: number
     payment_type: number
-    quantity: number
 }
+
+export type CreateTransactionDomainParams = CreateOrderRequest & {customer_id: number}
 
 export type GetPaymentTypeQueryResult = {
     id: number
     bank_name: string
     account: string
+}
+
+export type CreateOrderQueryParams = {
+    order_no: string
+    product_id: number
+    price: number
+    quantity: number
 }

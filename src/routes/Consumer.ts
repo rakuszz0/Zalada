@@ -77,11 +77,11 @@ const routes: RouteOptions[] = [
         }
       ],
       response: {
-        200: transactionSchema("createOrderResponse")
+        201: transactionSchema("createOrderResponse")
       }
     },
     preHandler: Auth.CheckAuth,
-    handler: ConsumerController.orderProductsHandler
+    handler: ConsumerController.createOrderHandler
   },
   {
     method: ["GET"],

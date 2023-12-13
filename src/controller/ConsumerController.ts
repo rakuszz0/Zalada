@@ -88,77 +88,22 @@ export async function registerHandler(request: FastifyRequest) {
 
 }
 
-export async function orderProductsHandler(request: FastifyRequest, reply: FastifyReply) {
+export async function createOrderHandler(request: FastifyRequest, reply: FastifyReply) {
     const { id: customer_id } = request.user
     const { order, payment_type } = request.body as TransactionDto.CreateOrderRequest
-    const order_no = `ORD/${customer_id}/${Date.now()}`
-
-    const queryRunner = db.createQueryRunner()
-    await queryRunner.connect()
     try {
-        await queryRunner.startTransaction()
+        const transaction = await TransactionDomainService.createTransactionDomain({customer_id, order, payment_type})
 
-        let total_price = 0
-        let stock: any  = {}
-
-        await TransactionDomainService.checkPaymentExistDomain(payment_type)
-
-        // If user order more than 1 type of product
-        if(Array.isArray(order)) {
-            for (const item of order) {
-                // Check Product Exist
-                const product = await ProductDomainService.checkProductExistDomain(item.product_id)
-
-                // Check product stock is more than quantity
-                if (product.stock < item.quantity) {
-                    throw new RequestError(`${product.name.toUpperCase()}_QUANTITY_EXCEEDS_STOCK`)
-                }
-
-                // Create new transaction
-                await TransactionDomainService.createTransactionDomain({ customer_id, order_no, payment_type, product_id: product.id, quantity: item.quantity, status: 1, price: product.price }, queryRunner)
-
-                // Update product stock after transaction has been created
-                await ProductDomainService.updateStockProductDomain({ product_id: product.id, stock: product.stock - item.quantity }, queryRunner)
-
-                stock[product.name] = product.stock - item.quantity
-
-                total_price += product.price * item.quantity
-            }
-        } else {
-            // Check product exists
-            const product = await ProductDomainService.checkProductExistDomain(order.product_id)
-
-            // Check product stock is more than quantity
-            if (product.stock < order.quantity) {
-                throw new RequestError("QUANTITY_EXCEEDS_STOCK")
-            }
-
-            total_price += product.price * order.quantity
-
-            stock = product.stock - order.quantity
-
-            // Create new transaction
-            await TransactionDomainService.createTransactionDomain({ customer_id, order_no, payment_type, product_id: product.id, quantity: order.quantity, status: 1, price: product.price }, queryRunner)
-
-            // Update product stock after transaction has been created
-            await ProductDomainService.updateStockProductDomain({ product_id: product.id, stock: product.stock - order.quantity }, queryRunner)
-        }
-
-        await queryRunner.commitTransaction()
-
-        reply.code(201).send({ message: { order_no, total_price, stock } })
+        reply.code(201).send({ message: transaction })
     } catch (error) {
-        await queryRunner.rollbackTransaction()
         throw error  
-    } finally {
-        await queryRunner.release()
     }
 }
 
 export async function getPaymentTypesHandler() {
     try {
         const payments = await TransactionDomainService.getPaymentTypesDomain()
-        return payments
+        return {message: payments}
     } catch (error) {
         throw error
     }

@@ -16,6 +16,8 @@ export type AddProductByAdmin = {
 
 export type UpdateProductRequest = z.infer<typeof updateProductRequest>
 
+export type UpdateProductDomainParams = UpdateProductRequest
+
 export type UpdateProductQueryParams = {
     name: string
     stock: number
