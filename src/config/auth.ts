@@ -43,7 +43,7 @@ export function CheckRules(...rules: number[]) {
     return async (request: FastifyRequest) => {
         const user = request.user
         const access = await UserRepository.DBGetUserRules(user.id)
-        const isVerified = rules.some(rule => access.includes(rule))
+        const isVerified = rules.some(rule => access.map(acc => acc.rules_id).includes(rule))
 
         if(!isVerified) {
             throw new ForbiddenAccessError("FORBIDDEN_ACCESS")
