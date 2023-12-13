@@ -21,16 +21,16 @@ const routes: RouteOptions[] = [
   },
   {
     method: ["POST"],
-    url: "/order/customer-order-history-by-delivery-status",
+    url: "/transaction/transaction-history",
     schema: {
         tags: ["Consumer Services"],
-        body: transactionSchema('customerOrderHistoryByDeliveryStatusRequest'),
+        body: transactionSchema('transactionHistoryRequest'),
         response: {
-          200: transactionSchema('customerOrderHistoryByDeliveryStatusResponse')
+          200: transactionSchema('transactionHistoryResponse')
         }
 
     },
-    handler: ConsumerController.CustomerOrderHistoryByDeliveryStatusHandler,
+    handler: ConsumerController.TransactionHistoryHandler,
   }
 ];
 

@@ -1,7 +1,8 @@
 import db from "@database";
-import { CustomerOrderHistoryByDeliveryStatusResponse, CustomerOrderHistoryByDeliveryStatusParams } from "../models/Transaction";
+import { TransactionHistoryResult, TransactionHistoryParams } from "../models/Transaction";
 
-export async function DBCustomerOrderHistoryByDeliveryStatus(params: CustomerOrderHistoryByDeliveryStatusParams) {
-  const orderHistory = await db.query<CustomerOrderHistoryByDeliveryStatusResponse>(`SELECT order_no, product_id, quantity, order_time, status, customer_id, payment_type FROM transactions WHERE customer_id = ? ${params.status ? 'AND status = ?':'' } `, [params.userid, params.status]);
-  return orderHistory;
+export async function DBTransactionHistory(params: TransactionHistoryParams) {
+  const transactionHistory = await db.query<TransactionHistoryResult[]>(`SELECT t.status, t.customer_id, t.payment_type, t.verified_by, t.order_time, o.order_no, o.product_id, o.price, o.quantity FROM transactions t INNER JOIN orders o ON t.order_no = o.order_no WHERE t.customer_id = ? ${params.status ? `AND t.status = ${params.status}`: ''}`, [params.userid]);
+
+  return transactionHistory;
 }

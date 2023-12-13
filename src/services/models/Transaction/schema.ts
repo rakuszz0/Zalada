@@ -2,34 +2,34 @@ import { buildJsonSchemas } from "fastify-zod";
 import * as z from "zod";
 
 
-export const customerOrderHistoryByDeliveryStatusRequest = z.object({
-  status: z.enum(["0", "1", "2", "3", "4", "5"]).describe("{0:pending, 1:packed, 2:onway, 3:arrived, 4:finished, 5:cancel}").optional()
+export const transactionHistoryRequest = z.object({
+  status: z.number().optional()
 });
 
-export const customerOrderHistoryByDeliveryStatusParams = z.object({
-  userid: z.number(),
-  status: z.enum(["0", "1", "2", "3", "4", "5"]).optional()
+export const productList = z.object({
+  product_id: z.number(),
+  price: z.number(),
+  quantity: z.number()
 })
 
-
-export const customerOrderHistoryByDeliveryStatusResponse = z.object({
+export const transactionHistoryResponse = z.record(z.string(), z.object({
   order_no: z.string(),
-  product_id: z.number(),
-  quantity: z.number(),
-  order_time: z.number(),
-  status: z.string(),
+  product: z.array(productList),
+  order_time: z.string(),
+  status: z.number(),
   customer_id: z.number(),
-  payment_type: z.number()
-}).array()
+  payment_type: z.number(),
+  verified_by: z.number()
+}))
+
 
 
 
 
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas(
     {
-      customerOrderHistoryByDeliveryStatusRequest,
-      customerOrderHistoryByDeliveryStatusParams,
-      customerOrderHistoryByDeliveryStatusResponse
+      transactionHistoryRequest,
+      transactionHistoryResponse
     },
     {
       $id: "transactionSchema",
