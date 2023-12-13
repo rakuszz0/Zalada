@@ -19,7 +19,7 @@ export class DropAllForeignKey1702464613720 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE user_group_rules DROP FOREIGN KEY user_group_rules_ibfk_1`)
         // Drop foreign key user_group_rules rules_id
         await queryRunner.query(`ALTER TABLE user_group_rules DROP FOREIGN KEY user_group_rules_ibfk_2`)
-        // Drop foreign key user_group_rules user_level
+        // Drop foreign key users user_level
         await queryRunner.query(`ALTER TABLE users DROP FOREIGN KEY users_ibfk_1`)
 
 
@@ -31,6 +31,22 @@ export class DropAllForeignKey1702464613720 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+      ALTER TABLE trash_users
+      DROP COLUMN first_name,
+      DROP COLUMN last_name;
+    `);
+
+        // Add back foreign keys
+        await queryRunner.query(`ALTER TABLE carts ADD FOREIGN KEY (product_id) REFERENCES products(id)`);
+        await queryRunner.query(`ALTER TABLE carts ADD FOREIGN KEY (user_id) REFERENCES users(id)`);
+        await queryRunner.query(`ALTER TABLE orders ADD FOREIGN KEY (product_id) REFERENCES products(id)`);
+        await queryRunner.query(`ALTER TABLE products ADD FOREIGN KEY (store_id) REFERENCES stores(id)`);
+        await queryRunner.query(`ALTER TABLE trash_products ADD FOREIGN KEY (store_id) REFERENCES stores(id)`);
+        await queryRunner.query(`ALTER TABLE trash_users ADD FOREIGN KEY (user_level) REFERENCES user_level(id)`);
+        await queryRunner.query(`ALTER TABLE user_group_rules ADD FOREIGN KEY (rule_id) REFERENCES rules(id)`);
+        await queryRunner.query(`ALTER TABLE user_group_rules ADD FOREIGN KEY (rules_id) REFERENCES rules(id)`);
+        await queryRunner.query(`ALTER TABLE users ADD FOREIGN KEY (user_level) REFERENCES user_level(id)`);
     }
 
 }
