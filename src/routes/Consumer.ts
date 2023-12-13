@@ -39,6 +39,7 @@ const routes: RouteOptions[] = [
     url: "/orders/:order_no",
     schema: {
       tags: ["Consumer Services"],
+      summary: "Get Order Information",
       security: [
         {
           authorization: []

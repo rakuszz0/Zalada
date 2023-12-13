@@ -5,17 +5,20 @@ export const getOrderDetailsRequest = z.object({
     order_no: z.string()
 })
 
-export const getOrderDetails = z.object({
+
+const orders = z.object({
     product_name: z.string(),
-    quantity: z.number(),
     price: z.number(),
-    order_time: z.date(),
-    bank_name: z.string(),
-    account: z.string()
+    quantity: z.number()
 })
 
 export const getOrderDetailsResponse = z.object({
-    message: z.array(getOrderDetails)
+    message: z.object({
+        order_no: z.string(),
+        payment_type: z.string(),
+        status: z.number(),
+        items: z.array(orders)
+    })
 })
 
 export const {schemas: transactionSchemas, $ref: transactionSchema} = buildJsonSchemas({
