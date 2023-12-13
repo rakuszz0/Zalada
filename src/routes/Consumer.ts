@@ -1,6 +1,7 @@
 import { FastifyInstance, RouteOptions } from "fastify";
 import * as ConsumerController from "src/controller/ConsumerController";
 import { userSchema } from "src/services/models/User";
+import { cartSchema } from "src/services/models/Cart";
 import { productSchema } from "src/services/models/Product";
 import * as Auth from "src/config/auth";
 
@@ -62,6 +63,24 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.changePassword
+  },
+  {
+    method: ["POST"],
+    url: "/add-product-to-cart",
+    schema: {
+      tags: ["Consumer Services"],
+      body: cartSchema("addProductToCartRequest"),
+      security:[
+        {
+          authorization:[]
+        }
+      ],
+      response: {
+        200: cartSchema("addProductToCartResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.addProductToCart
   }
 ];
 
