@@ -2,7 +2,7 @@ import { FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
 import { AddProductByAdmin } from "src/services/models/Product";
-import { CreateUserByAdmin } from "src/services/models/User";
+import { CreateUserByAdmin, EditUserByAdmin } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
 
 export async function Hello(request: FastifyRequest) {
@@ -48,6 +48,23 @@ export async function createUserByAdmin(request: FastifyRequest) {
         return {message:true}
 
     } catch (error){
+        throw error
+    }
+}
+
+export async function editUserByAdminController(request: FastifyRequest) {
+    try {
+        const {id,email,first_name,last_name,user_level,username,address,phone_number} = request.body as EditUserByAdmin
+        
+        const editUser = await UserDomainService.editUserDomain({            
+            id,
+            email,first_name,last_name,
+            user_level,address,username,
+            phone_number
+        })
+        return {message:editUser}
+
+    } catch (error) {
         throw error
     }
 }

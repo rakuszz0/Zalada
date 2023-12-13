@@ -71,6 +71,24 @@ const routes: RouteOptions[] = [
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_USER),
         handler: AdminController.createUserByAdmin
+    },
+    {
+        method: ["POST"],
+        url: "/edit-users",
+        schema:{
+            tags: ["Admin Services"],
+            security:[
+                {
+                    authorization:[]
+                }
+            ],
+            body: userSchema("editUserByAdmin"),
+            response:{
+                200:userSchema("editUserByAdminResponse")
+            }
+        },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_USER),
+        handler: AdminController.editUserByAdminController
     }
 ]
 

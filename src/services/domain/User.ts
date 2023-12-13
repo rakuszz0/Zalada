@@ -52,3 +52,19 @@ export async function checkEmailExistDomain(email:string){
 
   return emailExist[0]
 }
+
+export async function editUserDomain(params:UserTypes.EditUserByAdmin){
+  const {id,user_level,username,email,first_name,last_name,phone_number,address} = params
+  let user_id = params.id
+
+  await UserRepository.DBCheckUserExist(user_id)
+
+  // Check user level, if not exist will throw an error
+  await UserRepository.DBCheckUserLevel(user_level)
+
+  const editUser = await UserRepository.DBEditUserByAdmin({
+    id,user_level,username,email,first_name,last_name,phone_number,address
+  })
+
+  return editUser
+}

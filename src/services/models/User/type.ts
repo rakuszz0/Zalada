@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { loginRequest } from './schema'
+import { editUserByAdmin, loginRequest } from './schema'
 
 export type User = {
     id: number
@@ -28,4 +28,21 @@ export type CreateUserByAdmin = {
     password:string;
     password_confirmation:string;
     user_level:number;
+}
+
+export type EditUserByAdmin = z.infer<typeof editUserByAdmin> 
+
+export type CheckRoles = {
+    id:number;
+}
+
+export type EditUserQueryParams = {
+    id:number;
+    email: string;
+    first_name:string;
+    last_name: string;
+    username: string;
+    user_level: number;
+    phone_number:string;
+    address:string;
 }

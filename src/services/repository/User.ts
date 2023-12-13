@@ -1,6 +1,7 @@
 import DatabaseService from "@infrastructure/database"
 import * as UserTypes from "../models/User/type"
 import { ResultSetHeader } from "mysql2"
+import { NotFoundError, ServerError } from "src/config/error";
 
 const db = DatabaseService.getDatasource()
 
@@ -11,6 +12,10 @@ export async function DBGetUsers() {
 
 export async function DBCheckUserExist(user_id: number): Promise<UserTypes.User[]> {
   const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE id = ?", [user_id])
+  if (query.length < 1 ){
+    throw new NotFoundError("USER_NOT_FOUND")
+  }
+
   return query
 }
 
@@ -37,6 +42,28 @@ export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
   const {username,email,password,user_level} = params
   const query = await db.query<ResultSetHeader>(
     "INSERT INTO users( username,email,password,user_level ) VALUES (?,?,?,?)",[username,email,password,user_level]
+  )
+
+  return query
+}
+
+export async function DBCheckUserLevel(id:number){
+  const query = await db.query<UserTypes.CheckRoles[]>(
+    "SELECT id FROM user_roles WHERE id = ?",[id]
+  )
+
+  if(query.length < 1) {
+    throw new NotFoundError("USER_LEVEL_NOT_EXIST")
+  }
+  return query
+}
+
+export async function DBEditUserByAdmin({id,user_level,username,email,first_name,last_name,phone_number,address}:UserTypes.EditUserQueryParams){
+  
+  const values=[user_level,username,email,first_name,last_name,phone_number,address,id] 
+  const query = await db.query<ResultSetHeader>(
+    "UPDATE users SET user_level = ?,username = ?,email = ?,first_name = ?,last_name =?,phone_number=?,address = ? WHERE id=? ",
+    values
   )
 
   return query

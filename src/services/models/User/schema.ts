@@ -29,6 +29,19 @@ export const createUsersResponse = z.object({
   message: z.boolean()
 })
 
+export const editUserByAdmin = z.object({
+  id:z.number(),
+  email: z.string().email(),
+  first_name:z.string(),
+  last_name: z.string(),
+  username: z.string(),
+  user_level: z.number(),
+  phone_number:z.string(),
+  address:z.string(),
+})
+
+export const editUserByAdminResponse = z.object({ message: z.boolean()})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -36,6 +49,8 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     addProductsSchema,
     createUsers,
     createUsersResponse,
+    editUserByAdmin,
+    editUserByAdminResponse,
   },
   {
     $id: "userSchema",
