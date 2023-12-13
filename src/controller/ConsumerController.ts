@@ -38,6 +38,53 @@ export async function loginHandler(request: FastifyRequest) {
     } catch (error) {
         throw error
     }
+}
+
+export async function changePassword(request: FastifyRequest) {
+    try {
+        const { old_password, new_password, password_confirmation } = request.body as UserDto.ChangePassRequest
+        const user = request.user
+        const changePassword = await UserDomainService.changePasswordDomain({
+            old_password, new_password, password_confirmation, user_id: user.id
+        })
+
+        return { message: changePassword }
+    } catch (error) {
+        throw (error)
+    }
+}
+
+export async function registerHandler(request: FastifyRequest) {
+    try {
+        const { username, email, password, password_confirmation, phone_number, address, first_name, last_name } = request.body as UserDto.RegisterRequest;
+
+        if (password != password_confirmation) {
+            throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH");
+        }
+
+        const checkEmail = await UserDomainService.checkEmailExistDomain(email)
+
+        if (checkEmail) {
+            throw new RequestError("EMAIL_ALREADY_EXIST")
+        }
+
+        const hashPassword = await Bcrypt.hashPassword(password);
+
+        await UserDomainService.registerDomain({
+            username,
+            email,
+            first_name,
+            last_name,
+            password: hashPassword,
+            phone_number,
+            address,
+        })
+
+
+        return { message: true }
+    } catch (error) {
+        throw error
+    }
 
 }
 
@@ -116,3 +163,4 @@ export async function getPaymentTypesHandler() {
         throw error
     }
 }
+

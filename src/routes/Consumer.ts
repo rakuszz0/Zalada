@@ -36,6 +36,36 @@ const routes: RouteOptions[] = [
   },
   {
     method: ["POST"],
+    url: "/register",
+    schema: {
+      tags: ["Consumer Services"],
+      body: userSchema("registerRequest"),
+      response: {
+        200: userSchema("registerResponse")
+      }
+    },
+    handler: ConsumerController.registerHandler
+  },
+  {
+    method: ["POST"],
+    url: "/change-pass",
+    schema: {
+      tags: ["Consumer Services"],
+      body: userSchema("changePassRequest"),
+      security:[
+        {
+          authorization:[]
+        }
+      ],
+      response: {
+        200:userSchema("changePassResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.changePassword
+  },
+  {
+    method: ["POST"],
     url: "/orders",
     schema: {
       tags: ["Consumer Services"],

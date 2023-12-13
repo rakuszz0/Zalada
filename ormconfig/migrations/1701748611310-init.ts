@@ -38,7 +38,7 @@ export class Init1701748611310 implements MigrationInterface {
             description TEXT,
             price INT NOT NULL,
             store_id INT NOT NULL,
-            FOREIGN KEY (store_id) REFERENCES stores(id)
+            FOREIGN KEY (store_id) REFERENCES stores(id) ON UPDATE CASCADE ON DELETE CASCADE
             );`
         )
 
@@ -48,11 +48,13 @@ export class Init1701748611310 implements MigrationInterface {
             username VARCHAR(50) NOT NULL UNIQUE,
             email VARCHAR(50) NOT NULL UNIQUE,
             password VARCHAR(255) NOT NULL,
+            first_name VARCHAR(50) NOT NULL,
+            last_name VARCHAR(50) NOT NULL,
             phone_number VARCHAR(20),
             registered_date DATETIME DEFAULT CURRENT_TIMESTAMP,
             address VARCHAR(255),
             user_level INT NOT NULL,
-            FOREIGN KEY (user_level) REFERENCES user_roles(id)
+            FOREIGN KEY (user_level) REFERENCES user_roles(id) ON UPDATE CASCADE ON DELETE CASCADE
             );`
         )
 
@@ -63,8 +65,8 @@ export class Init1701748611310 implements MigrationInterface {
                 product_id INT NOT NULL,
                 quantity INT,
                 customer_id INT NOT NULL,
-                FOREIGN KEY (product_id) REFERENCES products(id),
-                FOREIGN KEY (customer_id) REFERENCES users(id)
+                FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE,
+                FOREIGN KEY (customer_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
             );`
         )
 
@@ -73,45 +75,37 @@ export class Init1701748611310 implements MigrationInterface {
             id INT PRIMARY KEY AUTO_INCREMENT,
             order_no VARCHAR(20) NOT NULL,
             order_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-            status ENUM('0', '1', '2', '3', '4', '5') NOT NULL,
-            product_id INT NOT NULL,
-            customer_id INT NOT NULL,
-            payment_type INT NOT NULL,
-            FOREIGN KEY (product_id) REFERENCES products(id),
-            FOREIGN KEY (customer_id) REFERENCES users(id),
-            FOREIGN KEY (payment_type) REFERENCES banks(id)
+            status INT NOT NULL DEFAULT 0,
+            product_id INT,
+            customer_id INT,
+            payment_type INT,
+            verified_by INT,
+            price INT,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE SET NULL,
+            FOREIGN KEY (customer_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL,
+            FOREIGN KEY (payment_type) REFERENCES banks(id) ON UPDATE CASCADE ON DELETE SET NULL,
+            FOREIGN KEY (verified_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL
         );`)
 
         const { insertId: super_admin }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["super_admin"])
-        const { insertId: admin }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["admin"])
-        const { insertId: staff }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff"])
+        const { insertId: staff_shipping }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff_shipping"])
+        const { insertId: staff_inventory }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff_inventory"])
+        const { insertId: staff_transaction }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff_transaction"])
+        const { insertId: staff_customer }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["staff_customer"])
         const { insertId: customer }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["customer"])
 
         const users = [
             ["superadmin", "superadmin@gmail.com", await hashPassword("superadmin"), super_admin],
-            ["admin", "admin@gmail.com", await hashPassword("admin"), admin],
-            ["staff", "stafftoko@gmail.com", await hashPassword("stafftoko"), staff],
+            ["staffinv", "staffinv@gmail.com", await hashPassword("12345"), staff_inventory],
+            ["stafftrans", "stafftrans@gmail.com", await hashPassword("12345"), staff_transaction],
+            ["staffkurir", "staffkurir@gmail.com", await hashPassword("12345"), staff_shipping],
+            ["staffcustomer", "staffcustomer@gmail.com", await hashPassword("12345"), staff_customer],
+            ["consumer", "consumer@gmail.com", await hashPassword("12345"), customer]
         ]
-
-        if (process.env.NODE_ENV == "development") {
-            // Add example user
-            users.push(
-                ["stafftoko2", "stafftoko2@gmail.com", await hashPassword("stafftoko2"), staff],
-                ["stafftoko3", "stafftoko3@gmail.com", await hashPassword("stafftoko3"), staff],
-                ["customer", "customer@gmail.com", await hashPassword("customer"), customer],
-                ["customer1", "customer1@gmail.com", await hashPassword("customer1"), customer],
-                ["customer2", "customer2@gmail.com", await hashPassword("customer2"), customer],
-                ["customer3", "customer3@gmail.com", await hashPassword("customer3"), customer],
-                ["customer4", "customer4@gmail.com", await hashPassword("customer4"), customer]
-            )
-        }
-
-
 
         await queryRunner.query("INSERT INTO users (username, email, password, user_level) VALUES ?", [users])
 
         await queryRunner.query("INSERT INTO stores (name, address) VALUES (?, ?)", ["Zalada", "Jl. Pahlawan No. 123, Jakarta Barat DKI Jakarta, 12345 "])
- 
 
 
 
