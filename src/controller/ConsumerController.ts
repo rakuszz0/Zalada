@@ -92,7 +92,7 @@ export async function addProductToCart(request: FastifyRequest) {
     try {
         const {product_id, quantity} = request.body as CartDto.AddProductToCartRequest
         const user = request.user
-        console.log(user)
+
         await CartDomainService.AddProductToCartDomain({
             product_id,
             quantity,
