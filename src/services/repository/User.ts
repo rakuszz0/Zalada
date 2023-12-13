@@ -30,8 +30,8 @@ export async function DBCheckUserExistByEmail(email: string) {
 }
 
 export async function DBGetUserRules(user_id: number) {
-  const query = await db.query<Array<{ rules: number }>>(`SELECT ugr.rules_id rules FROM users u LEFT JOIN user_roles ur ON ur.id = u.user_level LEFT JOIN user_group_rules ugr ON ugr.role_id = ur.id  WHERE u.id = ?`, [user_id])
-  return query.map(rule => rule.rules)
+  const query = await db.query<Array<{ rules_id: number, rules_name: string }>>(`SELECT ugr.rules_id rules_id, uru.name rules_name FROM users u LEFT JOIN user_roles ur ON ur.id = u.user_level INNER JOIN user_group_rules ugr ON ugr.role_id = ur.id LEFT JOIN user_rules uru ON uru.id = ugr.rules_id WHERE u.id = ?`, [user_id])
+  return query
 }
 
 export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
