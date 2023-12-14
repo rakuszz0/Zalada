@@ -55,6 +55,15 @@ export const changePassRequest = z.object({
 export const changePassResponse = z.object({
   message: z.boolean()
 })
+
+export const deleteUserRequest = z.object({
+  email:z.string()
+})
+
+export const deleteUserResponse = z.object({
+  message:z.boolean()
+})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -66,6 +75,8 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     createUsersResponse,
     changePassRequest,
     changePassResponse,
+    deleteUserRequest,
+    deleteUserResponse,
   },
   {
     $id: "userSchema",
