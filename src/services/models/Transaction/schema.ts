@@ -41,6 +41,10 @@ export const productList = z.object({
   quantity: z.number()
 })
 
+export const confirmOrderRequest = z.object({
+  order_no: z.string(),
+})
+
 export const transactionHistoryResponse = z.record(z.string(), z.object({
   order_no: z.string(),
   product: z.array(productList),
@@ -57,7 +61,8 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     getPaymentTypesResponse,
     transactionHistoryRequest,
     productList,
-    transactionHistoryResponse
+    transactionHistoryResponse,
+    confirmOrderRequest
 }, {
     $id: "transactionSchemas"
 })

@@ -100,3 +100,11 @@ export async function TransactionHistoryDomain(params: TransactionDto.Transactio
 
     return result;
 }
+
+export async function confirmOrderDomain({order_no, user_id}: TransactionDto.ConfirmOrderDomain) {
+    // Check order exist
+
+    // const transaction = await TransactionRepository.
+
+    // Update order to packing
+}

@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { createOrderRequest, productList, transactionHistoryRequest, transactionHistoryResponse } from "./schema"
+import { confirmOrderRequest, createOrderRequest, productList, transactionHistoryRequest, transactionHistoryResponse } from "./schema"
 
 export enum TransactionStatus {
     PENDING_PAYMENT = 1,
@@ -55,3 +55,7 @@ export type TransactionHistoryResult = {
     price: number;
     quantity: number;
 }
+
+export type ConfirmOrderRequest = z.infer<typeof confirmOrderRequest>
+
+export type ConfirmOrderDomain = ConfirmOrderRequest & { user_id: number }
