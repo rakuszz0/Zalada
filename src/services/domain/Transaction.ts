@@ -1,25 +1,30 @@
-import { NotFoundError, RequestError } from "src/config/error";
+import { RequestError } from "src/config/error";
 import * as TransactionDto from "../models/Transaction";
 import * as TransactionRepository from "../repository/Transaction";
-import { QueryRunner } from "typeorm";
 
+export async function paymentOrderDomain({amount, order_no, customer_id}: TransactionDto.PaymentOrderDomainParams) {
+    const transaction = await TransactionRepository.DBCheckTransactionExist({customer_id, order_no})
 
-export async function checkOrderExistDomain({order_no, status, customer_id}: TransactionDto.CheckOrderExistQueryParams) {
-    const query = await TransactionRepository.DBCheckOrderExist({order_no, status, customer_id}) 
-
-    if(query.length < 1) {
-        throw new NotFoundError("ORDER_NOT_FOUND")
-    } 
-
-    return query
-}
-
-export async function updateOrderStatusDomain({order_no, status}: TransactionDto.UpdateOrderStatusQueryParams, queryRunner?: QueryRunner) {
-    const query = await TransactionRepository.DBUpdateOrderStatus({order_no, status}, queryRunner)
-
-    if(query.affectedRows < 1) {
-        throw new RequestError("FAILED_UPDATE_ORDER_STATUS")
+    // Check if transaction has been paid
+    if (transaction.status == 2) {
+        throw new RequestError("TRANSACTION_HAS_BEEN_PAID")
     }
 
-    return query
+    // Check if transaction is pending
+    if(transaction.status != 1) {
+        throw new RequestError("INVALID_SESSION_PLEASE_CHECK_YOUR_TRANSACTION_STATUS")
+    }
+
+    const orders = await TransactionRepository.DBGetOrders(transaction.order_no)
+
+    const total_price = orders.map(order => order.quantity * order.price).reduce((acc, curr) => acc + curr, 0)
+
+    if(total_price != amount) {
+        throw new RequestError("INVALID_AMOUNT")
+    }
+
+    // Set transaction to pending approval 
+    await TransactionRepository.DBUpdateTransactionStatus({order_no, status: 2})
+
+    return true
 }

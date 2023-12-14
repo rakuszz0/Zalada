@@ -44,21 +44,9 @@ export async function paymentOrderHandler(request: FastifyRequest) {
     try {
         const { id: customer_id } = request.user
         const { amount, order_no } = request.body as TransactionDto.PaymentOrderRequest
+        const payment = await TransactionDomainService.paymentOrderDomain({amount, order_no, customer_id})
 
-        // Check Pending Order 
-        const order = await TransactionDomainService.checkOrderExistDomain({ order_no, status: TransactionDto.TransactionStatus.PENDING, customer_id })
-
-        // Total amount price from order
-        const total_price = order.map(v => v.price * v.quantity).reduce((acc, curr) => acc + curr, 0)
-
-        if (total_price != amount) {
-            throw new RequestError("INVALID_AMOUNT")
-        }
-
-        // Update order to packing
-        await TransactionDomainService.updateOrderStatusDomain({ order_no, status: TransactionDto.TransactionStatus.PACKING })
-
-        return { message: true }
+        return {message: payment}
     } catch (error) {
         throw error
     }

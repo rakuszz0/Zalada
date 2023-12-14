@@ -20,5 +20,12 @@ export type CheckOrderExistQueryParams = {
 
 export type UpdateOrderStatusQueryParams = {
     order_no: string
-    status: TransactionStatus
+    status: TransactionStatus | number
 }
+
+export type CheckTransactionExistQueryParams = {
+    customer_id: number
+    order_no: string
+}
+
+export type PaymentOrderDomainParams = PaymentOrderRequest & { customer_id: number }
