@@ -13,3 +13,7 @@ export async function updateProductDomain({ description, name, price, product_id
 
     return true
 } 
+
+export async function orderHistoryByDeliveryStatusHandler() {
+    return await ProductRepository.DBGetProducts()
+}

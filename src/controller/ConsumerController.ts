@@ -8,7 +8,7 @@ import * as UserDto from "src/services/models/User";
 import * as TransactionDto from "src/services/models/Transaction";
 import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
-
+import * as z from "zod";
 
 export async function getProductHandler() {
     try {
@@ -109,3 +109,21 @@ export async function getPaymentTypesHandler() {
     }
 }
 
+
+export async function TransactionHistoryHandler(request: FastifyRequest, reply: FastifyReply) {
+    // const user = request.user;
+    const {status} = request.body as TransactionDto.TransactionHistoryRequest;
+    // const userid = user.id;
+
+    if(status){
+        return await TransactionDomainService.TransactionHistoryDomain({
+            userid: 6,
+            status
+        })
+    }else{
+        return await TransactionDomainService.TransactionHistoryDomain({
+            userid: 6
+        })
+    }
+
+}
