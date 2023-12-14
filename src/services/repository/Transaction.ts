@@ -1,8 +1,8 @@
 import db from "@database"
-import * as ProductDto from "../models/Transaction"
+import * as TransactionDto from "../models/Transaction"
 import { NotFoundError } from "src/config/error"
 
-export async function DBCheckTransactionExist({customer_id, order_no}: ProductDto.GetTransactionDetailsQueryParams) {
+export async function DBCheckTransactionExist({customer_id, order_no}: TransactionDto.GetTransactionDetailsQueryParams) {
     const query = await db.query<Array<{order_no: string, order_time: Date, status: number, payment_type: number}>>(`SELECT t.order_no, t.order_time, t.status, t.payment_type FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
 
     if(query.length < 1) {

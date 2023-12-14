@@ -16,7 +16,7 @@ export const getOrderDetailsResponse = z.object({
     message: z.object({
         order_no: z.string(),
         payment_type: z.string(),
-        status: z.number(),
+        status: z.string(),
         items: z.array(orders)
     })
 })
