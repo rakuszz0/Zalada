@@ -10,8 +10,8 @@ export async function getPaymentTypesDomain() {
 
 export async function createTransactionDomain({customer_id, order, payment_type}: TransactionDto.CreateTransactionDomainParams) {
     const order_no = `ORD/${customer_id}/${Date.now()}`
+    let stock: Record<string, number> | number = {}
     let total_price = 0
-    let stock: any = {}
 
     const queryRunner = db.createQueryRunner()
     await queryRunner.connect()
@@ -25,7 +25,7 @@ export async function createTransactionDomain({customer_id, order, payment_type}
                 // Check product exists
                 const product = await ProductRepository.DBCheckProductExist(item.product_id)
 
-                // Check product stock is more than quantity
+                // Check quantity is more than product stock
                 if (product.stock < item.quantity) {
                     throw new RequestError(`${product.name.split(" ").join("_").toUpperCase()}_EXCEEDS_STOCK`)
                 }
@@ -43,7 +43,7 @@ export async function createTransactionDomain({customer_id, order, payment_type}
             // Check product exists
             const product = await ProductRepository.DBCheckProductExist(order.product_id)
 
-            // Check product stock is more than quantity
+            // Check quantity is more than product stock
             if (product.stock < order.quantity) {
                 throw new RequestError(`${product.name.split(" ").join("_").toUpperCase()}_EXCEEDS_STOCK`)
             }
