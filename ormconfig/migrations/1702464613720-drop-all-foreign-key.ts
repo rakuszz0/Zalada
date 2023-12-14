@@ -28,6 +28,15 @@ export class DropAllForeignKey1702464613720 implements MigrationInterface {
             ADD COLUMN first_name VARCHAR(50) AFTER password,
             ADD COLUMN last_name VARCHAR(50) AFTER password;
         `)
+
+        await queryRunner.query(`
+            ALTER TABLE transactions
+            ADD COLUMN payment_at DATETIME,
+            ADD COLUMN shipping_at DATETIME,
+            ADD COLUMN arrived_at DATETIME;
+        `)
+
+        await queryRunner.query(`ALTER TABLE transactions CHANGE COLUMN order_time created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -36,6 +45,16 @@ export class DropAllForeignKey1702464613720 implements MigrationInterface {
       DROP COLUMN first_name,
       DROP COLUMN last_name;
     `);
+
+        await queryRunner.query(`
+            ALTER TABLE transactions
+            DROP COLUMN payment_at,
+            DROP COLUMN shipping_at,
+            DROP COLUMN arrived_at;
+        `)
+
+        await queryRunner.query(`ALTER TABLE transactions CHANGE COLUMN created_at order_time DATETIME DEFAULT CURRENT_TIMESTAMP`)
+
 
         // Add back foreign keys
         await queryRunner.query(`ALTER TABLE carts ADD FOREIGN KEY (product_id) REFERENCES products(id)`);
