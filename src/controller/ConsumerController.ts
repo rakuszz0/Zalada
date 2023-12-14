@@ -1,8 +1,11 @@
+import db from "@database"
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as ProductDomainService from "src/services/domain/Product";
+import * as TransactionDomainService from "src/services/domain/Transaction";
 import * as UserDomainService from "src/services/domain/User";
 import * as UserDto from "src/services/models/User";
+import * as TransactionDto from "src/services/models/Transaction";
 import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
 
@@ -35,19 +38,18 @@ export async function loginHandler(request: FastifyRequest) {
     } catch (error) {
         throw error
     }
-
 }
 
 export async function changePassword(request: FastifyRequest) {
     try {
-        const {old_password,new_password,password_confirmation} = request.body as UserDto.ChangePassRequest
+        const { old_password, new_password, password_confirmation } = request.body as UserDto.ChangePassRequest
         const user = request.user
         const changePassword = await UserDomainService.changePasswordDomain({
-            old_password,new_password,password_confirmation,user_id:user.id
+            old_password, new_password, password_confirmation, user_id: user.id
         })
 
-        return {message:changePassword}
-    } catch (error){
+        return { message: changePassword }
+    } catch (error) {
         throw (error)
     }
 }
@@ -85,3 +87,25 @@ export async function registerHandler(request: FastifyRequest) {
     }
 
 }
+
+export async function createOrderHandler(request: FastifyRequest, reply: FastifyReply) {
+    const { id: customer_id } = request.user
+    const { order, payment_type } = request.body as TransactionDto.CreateOrderRequest
+    try {
+        const transaction = await TransactionDomainService.createTransactionDomain({customer_id, order, payment_type})
+
+        reply.code(201).send({ message: transaction })
+    } catch (error) {
+        throw error  
+    }
+}
+
+export async function getPaymentTypesHandler() {
+    try {
+        const payments = await TransactionDomainService.getPaymentTypesDomain()
+        return {message: payments}
+    } catch (error) {
+        throw error
+    }
+}
+

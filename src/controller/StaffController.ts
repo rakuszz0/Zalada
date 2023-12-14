@@ -13,11 +13,9 @@ export async function updateProductHandler(request: FastifyRequest) {
   try {
     const { product_id, description, name, price, stock } = request.body as ProductDto.UpdateProductRequest
 
-    await ProductDomainService.checkProductExistDomain(product_id)
-
-    await ProductDomainService.updateProductDomain({description, name, price, stock, product_id})
+    const product = await ProductDomainService.updateProductDomain({description, name, price, stock, product_id})
     
-    return {message: true}
+    return {message: product}
   } catch (error) {
     throw error
   }
