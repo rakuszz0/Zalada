@@ -53,20 +53,6 @@ export type ChangePassQueryParams ={
     user_id:number;
 }
 
-export type DataUserQueryResult = {
-    user_id:number
-    id: number
-    username: string
-    email: string
-    password: string
-    first_name: string
-    last_name: string
-    phone_number: string
-    address: string
-    registered_date: Date
-    user_level: number 
-}
-
 export type DeleteUserQueryParams = {
     id: number
     username: string

@@ -46,7 +46,7 @@ const routes: RouteOptions[] = [
                     authorization: []
                 }
             ],
-            body: userSchema("addProductsSchema"),
+            body: productSchema("addProductsSchema"),
             response:{
                 200: productSchema("addProductsResponse")
             }
@@ -79,7 +79,7 @@ const routes: RouteOptions[] = [
             tags:["Admin Services"],
             security:[
                 {
-                    authorrization:[]
+                    authorization:[]
                 }
             ],
             body: userSchema("deleteUserRequest"),

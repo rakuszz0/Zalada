@@ -67,7 +67,7 @@ export async function DBInsertToTrashedUser({id,email,username,password,first_na
     [id,email,username,password,first_name,last_name,phone_number,registered_date,address,user_level]
   ]
   const query = await db.query<ResultSetHeader>(
-    "INSERT INTO trash_users (INSERT INTO users (id,username, email, password, first_name, last_name, phone_number, address, user_level) values ?",[params],queryRunner
+    "INSERT INTO trash_users (id,username, email, password, first_name, last_name, phone_number,registered_date, address, user_level) values ?",[params],queryRunner
   )
   return query
 }
