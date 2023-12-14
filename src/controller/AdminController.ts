@@ -2,7 +2,7 @@ import { FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
 import { AddProductByAdmin } from "src/services/models/Product";
-import { CreateUserByAdmin } from "src/services/models/User";
+import { CreateUserByAdmin, RestoreTrashedUser } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
 
 export async function Hello(request: FastifyRequest) {
@@ -53,3 +53,17 @@ export async function createUserByAdmin(request: FastifyRequest) {
         throw error
     }
 }
+
+export async function restoreTrashedUserController(request: FastifyRequest){
+    try{
+        const {username,email} = request.body as RestoreTrashedUser
+        const restoreUser = await UserDomainService.restoreTrashedUser({
+            username,
+            email
+        })
+
+        return {message:restoreUser}
+    } catch (error) {
+        throw error
+    }
+} 

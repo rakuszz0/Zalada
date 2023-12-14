@@ -2,6 +2,8 @@ import DatabaseService from "@infrastructure/database"
 import * as UserTypes from "../models/User/type"
 import { ResultSetHeader } from "mysql2"
 import { QueryRunner } from "typeorm"
+import { NotFoundError, RequestError, ServerError } from "src/config/error";
+
 
 const db = DatabaseService.getDatasource()
 
@@ -39,6 +41,7 @@ export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
   const query = await db.query<ResultSetHeader>(
     "INSERT INTO users( username,email,first_name,last_name,password,user_level ) VALUES (?,?,?,?,?,?)",[username,email,first_name,last_name,password,user_level]
   )
+  return query
 }
 
 export async function DBRegister({ address, email, password, phone_number, username, first_name, last_name }: UserTypes.RegisterQueryParams) {
@@ -56,4 +59,40 @@ export async function changePassword(params:UserTypes.ChangePassQueryParams,quer
     "UPDATE users SET password = ? WHERE id = ? ",[new_password, user_id, queryRunner]
   )
   return query
+}
+
+export async function DBGetTrashedUser(params:UserTypes.GetTrashedUserQueryParams) {
+  const {username,email} = params
+  const query = await db.query<UserTypes.RestoreTrashedUserQueryParams[]>(
+    "SELECT * FROM trash_users WHERE username = ? OR email = ?",[username,email]
+  )
+  
+  if (query.length < 1){
+    throw new NotFoundError("USER_NOT_FOUND")
+  }
+  
+  
+  return query
+}
+
+export async function DBRestoreTrashedUser(params:UserTypes.RestoreTrashedUserQueryParams,queryRunner:QueryRunner){
+  if (!queryRunner?.isTransactionActive) {
+    throw new ServerError("Must in Transaction");
+  }
+  const {id,username, email, first_name, last_name, password, phone_number,registered_date, address, user_level} =params
+  const result = await db.query<ResultSetHeader>(
+    "INSERT INTO users (id,username, email, first_name, last_name, password, phone_number,registered_date, address, user_level) VALUES (?,?,?,?,?,?,?,?,?,?)",[id,username, email, first_name, last_name, password, phone_number,registered_date, address, user_level],queryRunner
+  )
+
+  return result
+}
+
+export async function DBDeleteTrashedUser(username:string,queryRunner:QueryRunner){
+  if (!queryRunner?.isTransactionActive) {
+    throw new ServerError("Must in Transaction");
+  }
+
+  const delete_trashed_user = await db.query<ResultSetHeader>(`DELETE FROM trash_users WHERE username=?`,[username],queryRunner)
+
+  return delete_trashed_user
 }
