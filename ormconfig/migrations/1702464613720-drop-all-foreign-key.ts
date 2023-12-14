@@ -36,6 +36,8 @@ export class DropAllForeignKey1702464613720 implements MigrationInterface {
             ADD COLUMN arrived_at DATETIME;
         `)
 
+        await queryRunner.query(`ALTER TABLE products MODIFY COLUMN stock INT UNSIGNED`)
+
         await queryRunner.query(`ALTER TABLE transactions CHANGE COLUMN order_time created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
     }
 
@@ -55,6 +57,7 @@ export class DropAllForeignKey1702464613720 implements MigrationInterface {
 
         await queryRunner.query(`ALTER TABLE transactions CHANGE COLUMN created_at order_time DATETIME DEFAULT CURRENT_TIMESTAMP`)
 
+        await queryRunner.query(`ALTER TABLE transactions DROP CONSTRAINT check_positive_value`)
 
         // Add back foreign keys
         await queryRunner.query(`ALTER TABLE carts ADD FOREIGN KEY (product_id) REFERENCES products(id)`);
