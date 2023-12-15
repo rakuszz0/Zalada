@@ -3,6 +3,7 @@ import * as Auth from "src/config/auth";
 import { ListRules } from "src/config/rules";
 import * as StaffController from "src/controller/StaffController";
 import { productSchema } from "src/services/models/Product";
+import { transactionSchema } from "src/services/models/Transaction";
 
 
 const routes: RouteOptions[] = [
@@ -49,6 +50,24 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_PRODUCT),
     handler: StaffController.updateProductHandler
+  },
+  {
+    method: ["GET"],
+    url: "/transaction/transaction-list",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Get Transaction List",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: {
+        200: transactionSchema('transactionListResponse')
+      }
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_TRANSACTION),
+    handler: StaffController.transactionListHandler
   }
 ];
 

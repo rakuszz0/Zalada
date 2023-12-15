@@ -95,19 +95,19 @@ const routes: RouteOptions[] = [
     },
     handler: ConsumerController.getPaymentTypesHandler
   },
-  {
-    method: ["POST"],
-    url: "/transaction/transaction-history",
-    schema: {
-        tags: ["Consumer Services"],
-        body: transactionSchema('transactionHistoryRequest'),
-        response: {
-          200: transactionSchema('transactionHistoryResponse')
-        }
+  // {
+  //   method: ["POST"],
+  //   url: "/transaction/transaction-history",
+  //   schema: {
+  //       tags: ["Consumer Services"],
+  //       body: transactionSchema('transactionHistoryRequest'),
+  //       response: {
+  //         200: transactionSchema('transactionHistoryResponse')
+  //       }
 
-    },
-    handler: ConsumerController.TransactionHistoryHandler,
-  }
+  //   },
+  //   handler: ConsumerController.TransactionHistoryHandler,
+  // }
 ];
 
 export default async function ConsumerRoutes(server: FastifyInstance) {

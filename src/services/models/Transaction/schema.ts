@@ -31,33 +31,51 @@ export const getPaymentTypesResponse = z.object({
     message: z.array(getPaymentType)
 })
 
-export const transactionHistoryRequest = z.object({
-  status: z.number().optional()
-});
+// export const transactionHistoryRequest = z.object({
+//   status: z.number().optional()
+// });
+
+// export const productList = z.object({
+//   product_id: z.number(),
+//   price: z.number(),
+//   quantity: z.number()
+// })
+
+// export const transactionHistoryResponse = z.record(z.string(), z.object({
+//   order_no: z.string(),
+//   product: z.array(productList),
+//   order_time: z.string(),
+//   status: z.number(),
+//   customer_id: z.number(),
+//   payment_type: z.number(),
+//   verified_by: z.number()
+// }))
 
 export const productList = z.object({
-  product_id: z.number(),
-  price: z.number(),
-  quantity: z.number()
+    product_name: z.string(),
+    price: z.number(),
+    quantity: z.number()
 })
 
-export const transactionHistoryResponse = z.record(z.string(), z.object({
-  order_no: z.string(),
-  product: z.array(productList),
-  order_time: z.string(),
-  status: z.number(),
-  customer_id: z.number(),
-  payment_type: z.number(),
-  verified_by: z.number()
-}))
+export const transactionListResponse = z.object({
+    message: z.object({
+        order_no: z.string(),
+        items: z.array(productList),
+        status: z.number(),
+        customer_name: z.string(),
+        order_time: z.string(),
+        payment_type: z.string(),
+        verified_by: z.string(),
+        total_price: z.number()
+    }).array()
+})
 
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
     getPaymentTypesResponse,
-    transactionHistoryRequest,
     productList,
-    transactionHistoryResponse
+    transactionListResponse
 }, {
     $id: "transactionSchemas"
 })
