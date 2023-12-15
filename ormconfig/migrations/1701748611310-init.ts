@@ -95,15 +95,15 @@ export class Init1701748611310 implements MigrationInterface {
         const { insertId: customer }: ResultSetHeader = await queryRunner.query("INSERT INTO user_roles (name) VALUES (?)", ["customer"])
 
         const users = [
-            ["superadmin", "superadmin@gmail.com", await hashPassword("superadmin"), super_admin],
-            ["staffinv", "staffinv@gmail.com", await hashPassword("12345"), staff_inventory],
-            ["stafftrans", "stafftrans@gmail.com", await hashPassword("12345"), staff_transaction],
-            ["staffkurir", "staffkurir@gmail.com", await hashPassword("12345"), staff_shipping],
-            ["staffcustomer", "staffcustomer@gmail.com", await hashPassword("12345"), staff_customer],
-            ["consumer", "consumer@gmail.com", await hashPassword("12345"), customer]
+            ["superadmin", "superadmin@gmail.com", "Super", "Admin", await hashPassword("superadmin"), super_admin],
+            ["staffinv", "staffinv@gmail.com", "Staff", "Inventory", await hashPassword("12345"), staff_inventory],
+            ["stafftrans", "stafftrans@gmail.com", "Staff", "Transaction", await hashPassword("12345"), staff_transaction],
+            ["staffkurir", "staffkurir@gmail.com", "Staff", "Kurir", await hashPassword("12345"), staff_shipping],
+            ["staffcustomer", "staffcustomer@gmail.com", "Staff", "Customer", await hashPassword("12345"), staff_customer],
+            ["consumer", "consumer@gmail.com", "Customer", "Langganan", await hashPassword("12345"), customer]
         ]
 
-        await queryRunner.query("INSERT INTO users (username, email, password, user_level) VALUES ?", [users])
+        await queryRunner.query("INSERT INTO users (username, email, first_name, last_name, password, user_level) VALUES ?", [users])
 
         await queryRunner.query("INSERT INTO stores (name, address) VALUES (?, ?)", ["Zalada", "Jl. Pahlawan No. 123, Jakarta Barat DKI Jakarta, 12345 "])
 
