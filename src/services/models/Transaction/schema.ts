@@ -51,13 +51,26 @@ export const transactionHistoryResponse = z.record(z.string(), z.object({
   verified_by: z.number()
 }))
 
+
+
+export const paymentOrderRequest = z.object({
+    order_no: z.string(),
+    amount: z.number().min(1)
+})
+
+export const paymentOrderResponse = z.object({
+    message: z.boolean()
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
     getPaymentTypesResponse,
     transactionHistoryRequest,
     productList,
-    transactionHistoryResponse
+    transactionHistoryResponse,
+    paymentOrderRequest,
+    paymentOrderResponse
 }, {
     $id: "transactionSchemas"
 })

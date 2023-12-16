@@ -21,7 +21,7 @@ const routes: RouteOptions[] = [
         tags: ["Consumer Services"],
         response: {
           200: productSchema("getProductsResponse")
-        }
+        },
     },
     handler: ConsumerController.getProductHandler,
   },
@@ -107,6 +107,25 @@ const routes: RouteOptions[] = [
 
     },
     handler: ConsumerController.TransactionHistoryHandler,
+  },
+  {
+    method: ["POST"],
+    url: "/orders/payment",
+    schema: {
+      tags: ["Consumer Services"],
+      summary: "Customer Payment Order",
+      body: transactionSchema("paymentOrderRequest"),
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: {
+        200: transactionSchema("paymentOrderResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.paymentOrderHandler
   }
 ];
 

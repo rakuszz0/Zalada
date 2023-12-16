@@ -8,7 +8,7 @@ import * as UserDto from "src/services/models/User";
 import * as TransactionDto from "src/services/models/Transaction";
 import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
-import * as z from "zod";
+
 
 export async function getProductHandler() {
     try {
@@ -126,4 +126,16 @@ export async function TransactionHistoryHandler(request: FastifyRequest, reply: 
         })
     }
 
+}
+
+export async function paymentOrderHandler(request: FastifyRequest) {
+    try {
+        const { id: customer_id } = request.user
+        const { amount, order_no } = request.body as TransactionDto.PaymentOrderRequest
+        const payment = await TransactionDomainService.paymentOrderDomain({amount, order_no, customer_id})
+
+        return {message: payment}
+    } catch (error) {
+        throw error
+    }
 }
