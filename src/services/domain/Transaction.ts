@@ -9,6 +9,10 @@ export async function getTransactionDetailsDomain({customer_id, order_no}: Trans
     return {
         order_no,
         payment_type: payment.bank_name,
+        payment_at: transaction.payment_at,
+        created_at: transaction.created_at,
+        shipping_at: transaction.shipping_at,
+        arrived_at: transaction.arrived_at,
         status: TransactionDto.TransactionStatus[transaction.status],
         items: orders
     }

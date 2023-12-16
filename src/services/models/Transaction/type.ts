@@ -11,6 +11,8 @@ export enum TransactionStatus {
     CANCEL = 7
 }
 
+export type Transaction = { order_no: string, created_at: Date, status: number, payment_type: number, verified_by: Date, payment_at: Date, shipping_at: Date, arrived_at: Date }
+
 export type GetOrderDetailsRequest = z.infer<typeof getOrderDetailsRequest>
 
 export type GetTransactionDetailsQueryParams = {

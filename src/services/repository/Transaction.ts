@@ -3,7 +3,7 @@ import * as TransactionDto from "../models/Transaction"
 import { NotFoundError } from "src/config/error"
 
 export async function DBCheckTransactionExist({customer_id, order_no}: TransactionDto.GetTransactionDetailsQueryParams) {
-    const query = await db.query<Array<{order_no: string, order_time: Date, status: number, payment_type: number}>>(`SELECT t.order_no, t.order_time, t.status, t.payment_type FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
+    const query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
 
     if(query.length < 1) {
         throw new NotFoundError("TRANSACTION_NOT_FOUND")
