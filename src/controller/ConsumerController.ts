@@ -4,8 +4,10 @@ import { RequestError } from "src/config/error";
 import * as ProductDomainService from "src/services/domain/Product";
 import * as TransactionDomainService from "src/services/domain/Transaction";
 import * as UserDomainService from "src/services/domain/User";
+import * as CartDomainService from "src/services/domain/Cart";
 import * as UserDto from "src/services/models/User";
 import * as TransactionDto from "src/services/models/Transaction";
+import * as CartDto from "src/services/models/Cart";
 import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
 
@@ -137,5 +139,22 @@ export async function paymentOrderHandler(request: FastifyRequest) {
         return {message: payment}
     } catch (error) {
         throw error
+    }
+}
+
+export async function addProductToCart(request: FastifyRequest) {
+    try {
+        const {product_id, quantity} = request.body as CartDto.AddProductToCartRequest
+        const user = request.user
+
+        await CartDomainService.AddProductToCartDomain({
+            product_id,
+            quantity,
+            userid: user.id
+        })
+
+        return { message: true }
+    } catch (error){
+        throw (error)
     }
 }
