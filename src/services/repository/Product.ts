@@ -4,9 +4,8 @@ import { ResultSetHeader } from "mysql2";
 import { QueryRunner } from "typeorm";
 import { NotFoundError, ServerError } from "src/config/error";
 
-export async function DBGetProducts() {
-  const product = await db.query<ProductDto.GetProductsQueryResult>("SELECT * FROM products");
-  return product;
+export async function DBGetProducts({limit = 500, search = "1=1", sort = "DESC"}: ProductDto.GetProductsQueryParams) {
+  return await db.query<ProductDto.GetProductsQueryResult>(`SELECT * FROM products WHERE ${search} ORDER BY id ${sort} LIMIT ${limit + 1}`);
 }
 
 export async function DBAddProductByAdmin(params: ProductDto.AddProductByAdmin  ) {

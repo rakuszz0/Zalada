@@ -4,10 +4,11 @@ import fp from "fastify-plugin"
 import { userSchemas } from "../services/models/User"
 import { productSchemas } from "src/services/models/Product"
 import { transactionSchemas } from "src/services/models/Transaction"
+import { commonSchemas } from "src/services/models/Common"
 
 
 export default fp(async (server) => {
-    for (const schema of [...userSchemas, ...productSchemas, ...transactionSchemas]) {
+    for (const schema of [...userSchemas, ...productSchemas, ...transactionSchemas, ...commonSchemas]) {
         server.addSchema(schema)
     }
 

@@ -9,12 +9,20 @@ import * as TransactionDto from "src/services/models/Transaction";
 import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
 import * as z from "zod";
+import * as CommonDto from "src/services/models/Common";
+import { QueryFailedError } from "typeorm";
 
-export async function getProductHandler() {
+
+export async function getProductHandler(request: FastifyRequest) {
     try {
-        const product = await ProductDomainService.getProductsDomain();
+        const {lastId, limit, sort, search} = request.body as CommonDto.PaginationRequest
+        const product = await ProductDomainService.getProductsDomain({limit,search, sort, lastId});
         return product
     } catch (error) {
+        // Error Handling when query error on search
+        if(error instanceof QueryFailedError) {
+            throw new RequestError("INVALID_SEARCH_PROPERTIES")
+        }
         throw error
     }
 

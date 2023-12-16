@@ -1,5 +1,6 @@
 import * as z from "zod"
 import { addProductsRequest, getProductRequest, getProductResponse, getProductsResponse, updateProductRequest } from "./schema"
+import { PaginationRequest } from "../Common"
 
 export type GetProductRequest = z.infer<typeof getProductRequest>
 export type GetProductQueryResult = z.infer<typeof getProductResponse>
@@ -30,3 +31,11 @@ export type UpdateStockQueryParams = {
     stock: number
     product_id: number
 }
+
+export type GetProductsQueryParams = {
+    search?: string
+    limit?: number
+    sort?: string
+}
+
+export type GetProductsDomainParams = PaginationRequest
