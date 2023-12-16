@@ -156,5 +156,16 @@ export async function addProductToCart(request: FastifyRequest) {
         return { message: true }
     } catch (error){
         throw (error)
+    }}
+
+export async function getOrderDetailsHandler(request: FastifyRequest) {
+    try {
+        const {id: customer_id} = request.user
+        const {order_no} = request.params as TransactionDto.GetOrderDetailsRequest
+        const transaction = await TransactionDomainService.getTransactionDetailsDomain({customer_id, order_no})
+
+        return {message: transaction}
+    } catch (error) {
+        throw error
     }
 }

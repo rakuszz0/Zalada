@@ -145,6 +145,32 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.addProductToCart
+  },
+  {
+    method: ["GET"],
+    url: "/orders/:order_no",
+    schema: {
+      tags: ["Consumer Services"],
+      summary: "Get Order Information",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      params: {
+        type: "object",
+        properties: {
+          order_no: {
+            type: "string"
+          }
+        }
+      },
+      response: {
+        200: transactionSchema("getOrderDetailsResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.getOrderDetailsHandler
   }
 ];
 
