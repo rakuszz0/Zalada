@@ -58,6 +58,8 @@ export async function createTransactionDomain({customer_id, order, payment_type}
             await ProductRepository.DBUpdateStockProduct({ product_id: product.id, stock: product.stock - order.quantity }, queryRunner)   
         }
 
+        await queryRunner.commitTransaction()
+
         await TransactionRepository.DBCreateTransaction({order_no, customer_id, payment_type, status: 1}, queryRunner)
 
         return { order_no, total_price, stock }

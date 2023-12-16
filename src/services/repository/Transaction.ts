@@ -59,7 +59,19 @@ export async function DBCheckOrderExist({order_no, status, customer_id}: Transac
 }
 
 export async function DBUpdateTransactionStatus({order_no, status}: TransactionDto.UpdateOrderStatusQueryParams, queryRunner?: QueryRunner) {
-    const query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ? WHERE order_no = ?`, [status, order_no], queryRunner)
+    let query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ? WHERE order_no = ?`, [status, order_no], queryRunner)
+
+    if (status == 2) {
+        // Update status after payment
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, payment_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
+    } else if (status == 4) {
+        // Update status on shipping
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, shipping_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
+    } else if (status == 5) {
+        // Update status on arrived
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, arrived_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
+    }
+
 
     if(query.affectedRows < 1) {
       throw new ServerError("FAILED_UPDATE_TRANSACTION_STATUS")
