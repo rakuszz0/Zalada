@@ -71,7 +71,62 @@ const routes: RouteOptions[] = [
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_USER),
         handler: AdminController.createUserByAdmin
-    }
+    },
+    {
+        method: ["GET"],
+        url: "/groups",
+        schema: {
+            tags: ["Admin Services"],
+            summary: "Get Roles List",
+            security: [
+                {
+                    authorization: []
+                }
+            ],
+            response: {
+                200: userSchema("getRolesListResponse")
+            }
+        },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_RULES),
+        handler: AdminController.getRolesList
+    },
+    {
+        method: ["GET"],
+        url: "/rules",
+        schema: {
+            tags: ["Admin Services"],
+            summary: "Get Rules List",
+            security: [
+                {
+                    authorization: []
+                }
+            ],
+            response: {
+                200: userSchema("getRulesListResponse")
+            }
+        },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_RULES),
+        handler: AdminController.getRulesList
+    },
+    {
+        method: ["POST"],
+        url: "/groups/rules",
+        schema: {
+            tags: ["Admin Services"],
+            security: [
+                {
+                    authorization: []
+                }
+            ],
+            summary: "Add Group Rules",
+            body: userSchema("createGroupRules"),
+            response: {
+                200: userSchema("createGroupRulesResponse") 
+            }
+        },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_RULES),
+        handler: AdminController.addGroupRulesHandler
+    },
 ]
 
 export default async function AdminRoutes(server: FastifyInstance) {
