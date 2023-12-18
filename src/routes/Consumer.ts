@@ -31,6 +31,7 @@ const routes: RouteOptions[] = [
     url: "/login",
     schema: {
       tags: ["Consumer Services"],
+      summary: "Customer Login",
       body: userSchema("loginRequest")
     },
     handler: ConsumerController.loginHandler
@@ -40,6 +41,7 @@ const routes: RouteOptions[] = [
     url: "/register",
     schema: {
       tags: ["Consumer Services"],
+      summary: "Customer Register",
       body: userSchema("registerRequest"),
       response: {
         200: userSchema("registerResponse")
