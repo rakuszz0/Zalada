@@ -62,7 +62,10 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
-      body: transactionSchema("confirmOrderRequest")
+      body: transactionSchema("confirmOrderRequest"),
+      response: {
+        200: transactionSchema("confirmOrderResponse")
+      }
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_TRANSACTION),
     handler: StaffController.confirmOrderHandler
