@@ -1,7 +1,8 @@
 import { FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
-import { AddProductByAdmin } from "src/services/models/Product";
+import * as ProductDomainService from "src/services/domain/Product";
+import { AddProductByAdmin, DeleteProductRequest } from "src/services/models/Product";
 import { CreateUserByAdmin } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
 
@@ -49,6 +50,20 @@ export async function createUserByAdmin(request: FastifyRequest) {
 
         return {message:true}
 
+    } catch (error){
+        throw error
+    }
+}
+
+
+export async function deleteProductController(request:FastifyRequest){
+    try{
+        const {product_id} = request.body as DeleteProductRequest
+        const delete_product = await ProductDomainService.deleteProductByAdmin({
+            product_id
+        })
+
+        return {message:delete_product}
     } catch (error){
         throw error
     }

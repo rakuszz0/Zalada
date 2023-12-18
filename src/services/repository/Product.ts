@@ -50,3 +50,29 @@ export async function DBUpdateStockProduct({product_id, stock}: ProductDto.Updat
 
   return query
 }
+
+export async function DBInsertToTrashedProduct({name, description, price, product_id,store_id}:ProductDto.InsertProductTrashResult,queryRunner:QueryRunner){
+  const values = [product_id,name, description, price,store_id]
+  const query = await db.query<ResultSetHeader>(
+    "INSERT INTO trash_products(id,name,description,price,store_id) VALUES (?) ",[values],queryRunner
+  )
+
+  if(query.affectedRows < 1) {
+    throw new ServerError("FAILED_TO_INSERT_TRASH_PRODUCT")
+  } 
+
+  return query
+}
+
+export async function DBDeleteProduct(params:ProductDto.DeleteProductQuery,queryRunner:QueryRunner){
+  const {product_id} = params 
+
+  const query = await db.query<ResultSetHeader>(
+    "DELETE FROM products where id=? ",[product_id],queryRunner
+  )
+
+  if(query.affectedRows < 1) {
+    throw new ServerError("FAILED_TO_DELETE_PRODUCT")
+  } 
+  return query
+}
