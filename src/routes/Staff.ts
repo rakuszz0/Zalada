@@ -56,6 +56,7 @@ const routes: RouteOptions[] = [
     url: "/orders/confirm",
     schema: {
       tags: ["Staff Services"],
+      summary: "Staff & Admin Confirm Orders",
       security: [
         {
           authorization: []
@@ -63,6 +64,7 @@ const routes: RouteOptions[] = [
       ],
       body: transactionSchema("confirmOrderRequest")
     },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_TRANSACTION),
     handler: StaffController.confirmOrderHandler
   }
 ];

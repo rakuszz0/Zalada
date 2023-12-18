@@ -66,10 +66,16 @@ export type CheckOrderExistQueryParams = {
     customer_id: number
 }
 
+export type ConfirmOrderUpdate = {
+    status: TransactionStatus.PACKING | 3
+    order_no: string
+    verified_by: number
+}
+
 export type UpdateOrderStatusQueryParams = {
     order_no: string
     status: TransactionStatus | number
-}
+} | ConfirmOrderUpdate
 
 export type CheckTransactionExistQueryParams = {
     customer_id: number

@@ -26,11 +26,11 @@ export async function updateProductHandler(request: FastifyRequest) {
 
 export async function confirmOrderHandler(request: FastifyRequest) {
   try {
-    const { id } = request.user
-    const {order_no} = request.body as TransactionDto.ConfirmOrderRequest
-    const response = await TransactionDomainService.confirmOrderDomain({order_no, user_id: id })
-    return {message: true}
+    const { id: user_id } = request.user
+    const { order_no } = request.body as TransactionDto.ConfirmOrderRequest
+    const response = await TransactionDomainService.confirmOrderDomain({ order_no, user_id })
+    return { message: response }
   } catch (error) {
-    
+    throw error
   }
 }

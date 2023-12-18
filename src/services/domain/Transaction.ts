@@ -153,8 +153,15 @@ export async function getOrdersDomain(order_no: string) {
 
 export async function confirmOrderDomain({order_no, user_id}: TransactionDto.ConfirmOrderDomain) {
     // Check order exist
+    const transaction = await TransactionRepository.DBCheckPendingTransaction(order_no)
 
-    // const transaction = await TransactionRepository.
+    // Check Transaction Status
+    if(transaction.status != 2) {
+        throw new RequestError("PLEASE_FINISH_PREVIOUS_STEP_FIRST")
+    }
 
     // Update order to packing
+    await TransactionRepository.DBUpdateTransactionStatus({order_no, status: 3, verified_by: user_id})
+
+    return true
 }
