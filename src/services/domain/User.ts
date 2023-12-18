@@ -97,3 +97,47 @@ export async function changePasswordDomain(params: UserTypes.ChangePassRequest) 
     throw error
   }
 }
+
+export async function getRolesListDomain() {
+  const roles = await UserRepository.DBGetRoles()
+  return roles
+}
+
+export async function getRulesListDomain() {
+  const rules = await UserRepository.DBGetRules()
+  return rules
+}
+
+export async function addGroupRulesDomain({ role_id, rules }: UserTypes.CreateRulesDomainParams) {
+  const groupRules = await UserRepository.DBGetGroupRules(role_id)
+
+  // Check Roles
+  await UserRepository.DBCheckUserLevel(role_id)
+
+  // If admin add more than 1 rule at once
+  if (Array.isArray(rules)) {
+    for (const rule of rules) {
+      const isExist = groupRules.find(gr => gr.rules_id = rule)
+
+      await UserRepository.DBCheckRulesExist(rule)
+
+      if (isExist) {
+        throw new RequestError(`${isExist.rules_name}_WAS_ALREADY_EXIST`)
+      }
+
+      await UserRepository.DBAddGroupRules({ role_id, rules_id: rule })
+    }
+  } else {
+    const isExist = groupRules.find(rule => rule.rules_id = rules)
+
+    await UserRepository.DBCheckRulesExist(rules)
+
+    if (isExist) {
+      throw new RequestError(`${isExist.rules_name}_WAS_ALREADY_EXIST`)
+    }
+
+    await UserRepository.DBAddGroupRules({ role_id, rules_id: rules })
+  }
+
+  return true
+}

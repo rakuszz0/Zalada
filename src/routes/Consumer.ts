@@ -1,6 +1,7 @@
 import { FastifyInstance, RouteOptions } from "fastify";
 import * as ConsumerController from "src/controller/ConsumerController";
 import { userSchema } from "src/services/models/User";
+import { cartSchema } from "src/services/models/Cart";
 import { productSchema } from "src/services/models/Product";
 import { transactionSchema } from "src/services/models/Transaction";
 import * as Auth from "src/config/auth";
@@ -21,7 +22,7 @@ const routes: RouteOptions[] = [
         tags: ["Consumer Services"],
         response: {
           200: productSchema("getProductsResponse")
-        }
+        },
     },
     handler: ConsumerController.getProductHandler,
   },
@@ -107,6 +108,69 @@ const routes: RouteOptions[] = [
 
     },
     handler: ConsumerController.TransactionHistoryHandler,
+  },
+  {
+    method: ["POST"],
+    url: "/orders/payment",
+    schema: {
+      tags: ["Consumer Services"],
+      summary: "Customer Payment Order",
+      body: transactionSchema("paymentOrderRequest"),
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: {
+        200: transactionSchema("paymentOrderResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.paymentOrderHandler
+  },
+  {
+    method: ["POST"],
+    url: "/add-product-to-cart",
+    schema: {
+      tags: ["Consumer Services"],
+      body: cartSchema("addProductToCartRequest"),
+      security:[
+        {
+          authorization:[]
+        }
+      ],
+      response: {
+        200: cartSchema("addProductToCartResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.addProductToCart
+  },
+  {
+    method: ["GET"],
+    url: "/orders/:order_no",
+    schema: {
+      tags: ["Consumer Services"],
+      summary: "Get Order Information",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      params: {
+        type: "object",
+        properties: {
+          order_no: {
+            type: "string"
+          }
+        }
+      },
+      response: {
+        200: transactionSchema("getOrderDetailsResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.getOrderDetailsHandler
   }
 ];
 

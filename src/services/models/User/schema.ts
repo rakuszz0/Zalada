@@ -55,6 +55,30 @@ export const changePassRequest = z.object({
 export const changePassResponse = z.object({
   message: z.boolean()
 })
+
+export const getRolesListResponse = z.object({
+  message: z.object({
+    id: z.number(),
+    name: z.string()
+  }).array()
+})
+
+export const getRulesListResponse = z.object({
+  message: z.object({
+    id: z.number(),
+    name: z.string()
+  }).array()
+})
+
+export const createGroupRules = z.object({
+  rules: z.union([z.number(), z.number().array()]),
+  role_id: z.number()
+})
+
+export const createGroupRulesResponse = z.object({
+  message: z.boolean()
+})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -66,6 +90,10 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     createUsersResponse,
     changePassRequest,
     changePassResponse,
+    createGroupRules,
+    createGroupRulesResponse,
+    getRolesListResponse,
+    getRulesListResponse
   },
   {
     $id: "userSchema",
