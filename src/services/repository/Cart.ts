@@ -12,3 +12,13 @@ export async function DBAddProductToCart(params: CartDto.AddProductToCartParams)
 
   return addProductToCart
 }
+
+export async function DBDeleteProductFromCart(params: CartDto.DeleteProductFromCartParams) {
+  const deleteProductFromCart = await db.query("DELETE FROM carts WHERE product_id = ? AND customer_id = ?", [params.product_id, params.userid]);
+  
+  if (deleteProductFromCart.affectedRows < 1) {
+    throw new ServerError("FAILED_DELETE_PRODUCT_FROM_CART")
+  }
+
+  return deleteProductFromCart
+}

@@ -130,7 +130,7 @@ const routes: RouteOptions[] = [
   },
   {
     method: ["POST"],
-    url: "/add-product-to-cart",
+    url: "/cart/add-product-to-cart",
     schema: {
       tags: ["Consumer Services"],
       body: cartSchema("addProductToCartRequest"),
@@ -144,7 +144,7 @@ const routes: RouteOptions[] = [
       }
     },
     preHandler: Auth.CheckAuth,
-    handler: ConsumerController.addProductToCart
+    handler: ConsumerController.addProductToCartHandler
   },
   {
     method: ["GET"],
@@ -171,7 +171,25 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.getOrderDetailsHandler
-  }
+  },
+  {
+    method: ["DELETE"],
+    url: "/cart/delete-product-from-cart",
+    schema: {
+      tags: ["Consumer Services"],
+      body: cartSchema('deleteProductFromCartRequest'),
+      security:[
+        {
+          authorization:[]
+        }
+      ],
+      response: {
+        200: cartSchema('deleteProductFromCartResponse')
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.deleteProductFromCartHandler
+  },
 ];
 
 export default async function ConsumerRoutes(server: FastifyInstance) {
