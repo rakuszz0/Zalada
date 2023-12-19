@@ -55,7 +55,9 @@ export async function createUserByAdmin(request: FastifyRequest) {
 export async function editUserByAdminController(request: FastifyRequest) {
     try {
         const {id,email,first_name,last_name,user_level,username,address,phone_number} = request.body as EditUserByAdmin
-        
+        if(user_level == 1 && request.user.user_level != 1) {
+            throw new RequestError("NOT_ENOUGH_RIGHT")
+        }
         const editUser = await UserDomainService.editUserDomain({            
             id,
             email,first_name,last_name,
