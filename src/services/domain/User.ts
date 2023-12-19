@@ -1,6 +1,6 @@
 import { NotFoundError, RequestError, ServerError } from "src/config/error";
 import * as UserRepository from "../repository/User";
-import * as UserTypes from "../models/User/type"
+import * as UserTypes from "../models/User"
 import * as ProductDto from "../models/Product";
 import * as ProductRepository from "../repository/Product";
 import database from "@infrastructure/database";
@@ -152,4 +152,20 @@ export async function loginDomain({ email, password }: UserTypes.LoginDomain) {
   const token = await Jwt.signToken({ user_id: user.id, user_level: user.user_level })
 
   return token
+}
+
+export async function editUserDomain(params:UserTypes.EditUserDomain){
+  const {id,user_level,username,email,first_name,last_name,phone_number,address} = params
+  let user_id = params.id
+
+  await UserRepository.DBCheckUserExist(user_id)
+
+  // Check user level, if not exist will throw an error
+  await UserRepository.DBCheckUserLevel(user_level)
+
+  const editUser = await UserRepository.DBEditUserByAdmin({
+    id,user_level,username,email,first_name,last_name,phone_number,address
+  })
+
+  return editUser
 }

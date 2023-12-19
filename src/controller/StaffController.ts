@@ -2,6 +2,9 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import * as UserDomainService from "src/services/domain/User";
 import * as ProductDomainService from "src/services/domain/Product";
 import * as ProductDto from "src/services/models/Product";
+import * as UserDto from "src/services/models/User";
+import { RequestError } from "src/config/error";
+
 
 
 export async function getStaffsHandler( request: FastifyRequest, reply: FastifyReply) {
@@ -16,6 +19,27 @@ export async function updateProductHandler(request: FastifyRequest) {
     const product = await ProductDomainService.updateProductDomain({description, name, price, stock, product_id})
     
     return {message: product}
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function editUserHandler(request: FastifyRequest) {
+  try {
+    const { id, email, first_name, last_name, user_level, username, address, phone_number } = request.body as UserDto.EditUserRequest
+
+    if (user_level == 1 && request.user.user_level != 1) {
+      throw new RequestError("NOT_ENOUGH_RIGHT")
+    }
+    
+    const editUser = await UserDomainService.editUserDomain({
+      id,
+      email, first_name, last_name,
+      user_level, address, username,
+      phone_number
+    })
+    return { message: editUser }
+
   } catch (error) {
     throw error
   }

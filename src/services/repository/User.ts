@@ -121,3 +121,15 @@ export async function DBAddGroupRules({role_id, rules_id}: UserTypes.AddGroupRul
 
   return query
 }
+
+
+export async function DBEditUserByAdmin({id,user_level,username,email,first_name,last_name,phone_number,address}:UserTypes.EditUserQueryParams){
+  
+  const values=[user_level,username,email,first_name,last_name,phone_number,address,id] 
+  const query = await db.query<ResultSetHeader>(
+    "UPDATE users SET user_level = ?,username = ?,email = ?,first_name = ?,last_name =?,phone_number=?,address = ? WHERE id=? ",
+    values
+  )
+  return query
+}
+

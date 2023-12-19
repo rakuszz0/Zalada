@@ -79,6 +79,19 @@ export const createGroupRulesResponse = z.object({
   message: z.boolean()
 })
 
+export const editUserRequest = z.object({
+  id:z.number(),
+  email: z.string().email(),
+  first_name:z.string(),
+  last_name: z.string(),
+  username: z.string(),
+  user_level: z.number(),
+  phone_number:z.string(),
+  address:z.string(),
+})
+
+export const editUserResponse = z.object({ message: z.boolean()})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -93,7 +106,9 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     createGroupRules,
     createGroupRulesResponse,
     getRolesListResponse,
-    getRulesListResponse
+    getRulesListResponse,
+    editUserRequest,
+    editUserResponse,
   },
   {
     $id: "userSchema",
