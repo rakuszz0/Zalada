@@ -25,18 +25,9 @@ export async function getProductHandler() {
 export async function loginHandler(request: FastifyRequest) {
     try {
         const { email, password } = request.body as UserDto.LoginRequest
+        const login = await UserDomainService.loginDomain({email, password})
 
-        const user = await UserDomainService.checkUserExistByEmailDomain(email)
-
-        const isPassword = await Bcrypt.checkPassword({ hash: user.password, password })
-
-        if(!isPassword) {
-            throw new RequestError("INVALID_CREDENTIALS")
-        }
-
-        const token = await Jwt.signToken({user_id: user.id, user_level: user.user_level})
-
-        return {message: token}
+        return { message: login }
     } catch (error) {
         throw error
     }
@@ -60,30 +51,9 @@ export async function registerHandler(request: FastifyRequest) {
     try {
         const { username, email, password, password_confirmation, phone_number, address, first_name, last_name } = request.body as UserDto.RegisterRequest;
 
-        if (password != password_confirmation) {
-            throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH");
-        }
+        const register = await UserDomainService.registerDomain({address, username, email, password, password_confirmation, phone_number, first_name, last_name})
 
-        const checkEmail = await UserDomainService.checkEmailExistDomain(email)
-
-        if (checkEmail) {
-            throw new RequestError("EMAIL_ALREADY_EXIST")
-        }
-
-        const hashPassword = await Bcrypt.hashPassword(password);
-
-        await UserDomainService.registerDomain({
-            username,
-            email,
-            first_name,
-            last_name,
-            password: hashPassword,
-            phone_number,
-            address,
-        })
-
-
-        return { message: true }
+        return { message: register }
     } catch (error) {
         throw error
     }

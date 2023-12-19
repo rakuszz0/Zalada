@@ -5,19 +5,15 @@ import * as ProductDto from "../models/Product";
 import * as ProductRepository from "../repository/Product";
 import database from "@infrastructure/database";
 import * as Bcrypt from "src/utils/password";
+import * as Jwt from "src/utils/jwt";
+
 
 export async function getUsersDomain() {
   return await UserRepository.DBGetUsers()
 }
 
 export async function checkUserExistDomain(user_id: number) {
-  const user = await UserRepository.DBCheckUserExist(user_id)
-
-  if(user.length < 1) {
-    throw new NotFoundError("USER_NOT_FOUND")
-  }
-
-  return user[0]
+  return await UserRepository.DBCheckUserExist(user_id)
 }
 
 export async function addProductByAdmin(params:ProductDto.AddProductByAdmin) {
@@ -29,15 +25,6 @@ export async function getStaffsDomain() {
     return await UserRepository.DBGetStaffs()
 }
 
-export async function checkUserExistByEmailDomain(email: string) {
-  const user = await UserRepository.DBCheckUserExistByEmail(email)
-
-  if (user.length < 1) {
-    throw new NotFoundError("USER_NOT_FOUND")
-  }
-
-  return user[0]
-}
 
 
 export async function createUserByAdmin(params:UserTypes.CreateUserByAdmin){
@@ -46,20 +33,31 @@ export async function createUserByAdmin(params:UserTypes.CreateUserByAdmin){
   return createUserByAdmin
 }
 
-export async function checkEmailExistDomain(email:string){
-  const emailExist = await UserRepository.DBCheckUserExistByEmail(email)
-
-  return emailExist[0]
+export async function checkEmailExistDomain(email: string){
+  return await UserRepository.DBCheckUserExistByEmail(email)
 }
 
-export async function registerDomain(user: UserTypes.RegisterQueryParams) {
-  const result = await UserRepository.DBRegister(user);
-
-  if (result.affectedRows < 1) {
-    throw new NotFoundError("FAILED_REGISTER")
+export async function registerDomain({address, email, first_name, last_name, password, phone_number, username, password_confirmation}: UserTypes.RegisterDomain) {
+  if(password !== password_confirmation) {
+    throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH")
   }
 
-  return result
+  await UserRepository.DBCheckUserExistByEmail(email)
+
+  const hashPassword = await Bcrypt.hashPassword(password)
+  
+  await UserRepository.DBRegister({
+    address,
+    email,
+    first_name,
+    last_name,
+    password: hashPassword,
+    phone_number,
+    username
+  })
+
+
+  return true
 }
 
 export async function changePasswordDomain(params: UserTypes.ChangePassRequest) {
@@ -71,7 +69,7 @@ export async function changePasswordDomain(params: UserTypes.ChangePassRequest) 
 
   const data_user = await UserRepository.DBCheckUserExist(user_id)
 
-  const checkPass = await Bcrypt.checkPassword({ hash: data_user[0].password, password: old_password })
+  const checkPass = await Bcrypt.checkPassword({ hash: data_user.password, password: old_password })
   if (!checkPass) {
     throw new RequestError("INVALID_PASSWORD")
   }
@@ -140,4 +138,18 @@ export async function addGroupRulesDomain({ role_id, rules }: UserTypes.CreateRu
   }
 
   return true
+}
+
+export async function loginDomain({ email, password }: UserTypes.LoginDomain) {
+  const user = await UserRepository.DBCheckUserExistByEmail(email)
+
+  const isPassword = await Bcrypt.checkPassword({hash: user.password, password})
+
+  if(!isPassword) {
+    throw new RequestError("INVALID_PASSWORD")
+  }
+
+  const token = await Jwt.signToken({ user_id: user.id, user_level: user.user_level })
+
+  return token
 }

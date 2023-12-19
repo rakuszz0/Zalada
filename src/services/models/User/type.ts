@@ -64,3 +64,7 @@ export type CheckRoles = {
     id: number
     name: string
 }
+
+export type LoginDomain = LoginRequest
+
+export type RegisterDomain = RegisterRequest

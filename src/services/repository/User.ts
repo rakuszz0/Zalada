@@ -11,9 +11,14 @@ export async function DBGetUsers() {
   return query
 }
 
-export async function DBCheckUserExist(user_id: number): Promise<UserTypes.User[]> {
+export async function DBCheckUserExist(user_id: number) {
   const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE id = ?", [user_id])
-  return query
+
+  if(query.length < 1) {
+    throw new NotFoundError("USER_NOT_FOUND")
+  }
+
+  return query[0]
 }
 
 export async function DBGetStaffs() {
@@ -27,7 +32,12 @@ export async function DBGetStaffs() {
 
 export async function DBCheckUserExistByEmail(email: string) {
   const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE email = ?", [email])
-  return query
+
+  if(query.length < 1) {
+    throw new NotFoundError("EMAIL_ALREADY_EXIST")
+  }
+
+  return query[0]
 }
 
 export async function DBGetUserRules(user_id: number) {
@@ -48,6 +58,11 @@ export async function DBRegister({ address, email, password, phone_number, usern
     [username, email, password, first_name, last_name, phone_number, address, customerRole.id]
   ]
   const query = await db.query<ResultSetHeader>("INSERT INTO users (username, email, password, first_name, last_name, phone_number, address, user_level) VALUES ?", [params])
+
+  if(query.affectedRows < 1) {
+    throw new ServerError("FAILED_REGISTER")
+  }
+
   return query
 }
 
