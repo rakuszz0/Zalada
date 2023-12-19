@@ -6,7 +6,11 @@ export const envSchema = z.object({
     DB_PASSWORD: z.string(),
     DB_USERNAME: z.string(),
     DB_NAME: z.string(),
-    JWT_SECRET_KEY: z.string()
+    JWT_SECRET_KEY: z.string(),
+    MAILER_PASSWORD: z.string(),
+    MAILER_HOST: z.string(),
+    MAILER_USER: z.string(),
+    MAILER_PORT: z.preprocess(data => parseInt(data as string), z.number())
 })
 
 

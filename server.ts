@@ -1,6 +1,7 @@
 import "dotenv/config"
 import fastify from 'fastify'
 import DatabaseService from '@infrastructure/database'
+import MailerService from '@infrastructure/mailer'
 import SwaggerService from '@infrastructure/swagger'
 import RoutesService from "@infrastructure/routes"
 import { envSchema } from "./src/config/app"
@@ -11,6 +12,9 @@ const server = fastify({ logger: process.env.NODE_ENV == "development" ? true : 
 async function main() {
     // Env Validation
     await envSchema.parseAsync(process.env)
+
+    // Register Mail Service
+    await MailerService.init()
 
     await server.register(SwaggerService)
     
