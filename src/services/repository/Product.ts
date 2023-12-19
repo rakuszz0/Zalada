@@ -18,8 +18,14 @@ export async function DBAddProductByAdmin(params: ProductDto.AddProductByAdmin  
   return query
 }
 
-export async function DBCheckProductExist(product_id: number) {
-  const query = await db.query<ProductDto.GetProductQueryResult[]>("SELECT * FROM products WHERE id = ?", [product_id])
+export async function DBCheckProductExist(product_id: number, options?: { lock: boolean }) {
+  let sql = `SELECT * FROM products WHERE id = ?`
+  
+  if(options?.lock) {
+    sql += " FOR UPDATE"
+  }
+  
+  const query = await db.query<ProductDto.GetProductQueryResult[]>(sql, [product_id])
 
   if(query.length < 1) {
     throw new NotFoundError("PRODUCT_NOT_FOUND")

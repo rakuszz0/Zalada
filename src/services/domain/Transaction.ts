@@ -23,7 +23,7 @@ export async function createTransactionDomain({customer_id, order, payment_type}
         if(Array.isArray(order)) {
             for (const item of order) {
                 // Check product exists
-                const product = await ProductRepository.DBCheckProductExist(item.product_id)
+                const product = await ProductRepository.DBCheckProductExist(item.product_id, { lock: true })
 
                 // Check quantity is more than product stock
                 if (product.stock < item.quantity) {
@@ -41,7 +41,7 @@ export async function createTransactionDomain({customer_id, order, payment_type}
             }
         } else {
             // Check product exists
-            const product = await ProductRepository.DBCheckProductExist(order.product_id)
+            const product = await ProductRepository.DBCheckProductExist(order.product_id, { lock: true })
 
             // Check quantity is more than product stock
             if (product.stock < order.quantity) {
