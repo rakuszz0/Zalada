@@ -150,3 +150,22 @@ export async function getTransactionDetailsDomain({customer_id, order_no}: Trans
 export async function getOrdersDomain(order_no: string) {
     return await TransactionRepository.DBGetOrders(order_no)
 }
+
+export async function changeDeliveryStatusHandler({order_no, user_id: delivered_by}: TransactionDto.ChangeDeliveryStatusDomain) {
+    // check transaction exists
+    const transaction = await TransactionRepository.DBCheckTransactionExist({order_no})
+
+    // if transaction is not on packing, throw error
+    if (transaction.status < 3) {
+        throw new RequestError("ORDER_WAS_NOT_IN_PACKING_YET")
+    } else if (transaction.status == 3) {
+        // If transaction on packing, update to delivery
+        await TransactionRepository.DBUpdateTransactionStatus({ order_no, status: 4, delivered_by })
+    } else if (transaction.status == 4) {
+        await TransactionRepository.DBUpdateTransactionStatus({ order_no, status: 5 })
+    } else if (transaction.status > 4) {
+        throw new RequestError("ORDER_HAS_ARRIVED")
+    }
+
+    return true
+}

@@ -58,18 +58,19 @@ export async function DBCheckOrderExist({order_no, status, customer_id}: Transac
     return query
 }
 
-export async function DBUpdateTransactionStatus({order_no, status}: TransactionDto.UpdateOrderStatusQueryParams, queryRunner?: QueryRunner) {
+export async function DBUpdateTransactionStatus(params: TransactionDto.UpdateOrderStatusQueryParams, queryRunner?: QueryRunner) {
+    const { order_no, status } = params
     let query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ? WHERE order_no = ?`, [status, order_no], queryRunner)
 
     if (status == 2) {
         // Update status after payment
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, payment_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
-    } else if (status == 4) {
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, payment_at = ? WHERE order_no = ?`, [status, new Date().toISOString(), order_no], queryRunner)
+    } else if (status == 4 && "delivered_by" in params) {
         // Update status on shipping
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, shipping_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, shipping_at = ?, delivered_by = ? WHERE order_no = ?`, [status, new Date().toISOString(), params.delivered_by, order_no], queryRunner)
     } else if (status == 5) {
         // Update status on arrived
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, arrived_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, arrived_at = ? WHERE order_no = ?`, [status, new Date().toISOString(), order_no], queryRunner)
     }
 
 
@@ -80,8 +81,12 @@ export async function DBUpdateTransactionStatus({order_no, status}: TransactionD
     return query
 }
 
-export async function DBCheckTransactionExist({ customer_id, order_no }: TransactionDto.GetTransactionDetailsQueryParams) {
-    const query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
+export async function DBCheckTransactionExist({ customer_id = 0, order_no }: TransactionDto.CheckTransactionExistQueryParams) {
+    let query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.order_no = ?`, [order_no])
+
+    if(customer_id > 0) {
+        query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
+    }
 
     if (query.length < 1) {
         throw new NotFoundError("TRANSACTION_NOT_FOUND")

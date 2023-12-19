@@ -88,6 +88,10 @@ export const getOrderDetailsResponse = z.object({
     })
 })
 
+export const changeDeliveryStatusRequest = z.object({
+    order_no: z.string(),
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
@@ -98,7 +102,8 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     paymentOrderRequest,
     paymentOrderResponse,
     getOrderDetailsRequest,
-    getOrderDetailsResponse
+    getOrderDetailsResponse,
+    changeDeliveryStatusRequest
 }, {
     $id: "transactionSchemas"
 })
