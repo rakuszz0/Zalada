@@ -3,13 +3,14 @@ import * as TransactionDto from "../models/Transaction";
 import * as ProductRepository  from "../repository/Product"
 import { RequestError } from "src/config/error";
 import db from "@database"
+import moment from "moment"
 
 export async function getPaymentTypesDomain() {
     return await TransactionRepository.DBGetPaymentTypes()
 }
 
 export async function createTransactionDomain({customer_id, order, payment_type}: TransactionDto.CreateTransactionDomainParams) {
-    const order_no = `ORD/${customer_id}/${Date.now()}`
+    const order_no = `ORD/${customer_id}/${moment().unix()}`
     let stock: Record<string, number> | number = {}
     let total_price = 0
 
@@ -134,6 +135,8 @@ export async function getTransactionDetailsDomain({customer_id, order_no}: Trans
     const transaction = await TransactionRepository.DBCheckTransactionExist({customer_id, order_no})
     const payment = await TransactionRepository.DBCheckPaymentTypeExist(transaction.payment_type)
     const orders = await TransactionRepository.DBGetOrders(order_no)
+
+    console.log({tr: new Date(transaction.created_at).getTime()})
 
     return {
         order_no,
