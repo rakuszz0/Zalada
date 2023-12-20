@@ -29,8 +29,6 @@ export async function addReviewProduct({customer_id,product_id,message,order_no,
         throw new RequestError("NEED_TO_COMPLATE_THE_TRANSACTION")
     }
 
-    const cheackReviewExist = await ProductRepository.DBCheackReviewExist(order_no)
-
     const reviewProduct = await ProductRepository.DBAddReviewTransaction({customer_id,product_id,rating,message})
 
     return reviewProduct

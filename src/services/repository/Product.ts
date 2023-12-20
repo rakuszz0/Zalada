@@ -60,9 +60,10 @@ export async function DBAddReviewTransaction({customer_id,product_id,rating,mess
 }
 
 export async function DBCheackReviewExist(order_no:string){
-  const query = await db.query<ProductDto.ReviewProductExistQueryResult[]>(`SELECT a.product_id, a.customer_id 
+  const query = await db.query<ProductDto.ReviewProductExistQueryResult[]>(
+  `SELECT a.product_id, a.customer_id, a.rating,a.message
   FROM reviews a
-  LEFT JOIN orders b ON b.product_id = a.product_id
+  INNER JOIN transactions b ON b.customer_id = a.customer_id
   WHERE b.order_no = ?;
   `,[order_no])
 
