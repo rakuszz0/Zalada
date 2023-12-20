@@ -37,7 +37,11 @@ export const getProductDetailsResponse = z.object({
     name: z.string(),
     stock: z.number(),
     description: z.string(),
-    store_id: z.number()
+    store_id: z.number(),
+    customer_id: z.number(),
+    rating: z.number(),
+    message: z.string(),
+    created_at: z.number()
 })
 
 export const { schemas: productSchemas, $ref: productSchema } = buildJsonSchemas(

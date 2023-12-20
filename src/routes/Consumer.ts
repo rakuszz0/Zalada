@@ -43,7 +43,6 @@ const routes: RouteOptions[] = [
         200: productSchema("getProductDetailsResponse")
       }
     },
-    preHandler: Auth.CheckAuth,
     handler: ConsumerController.getProductDetailsHandler
   }
 ];
