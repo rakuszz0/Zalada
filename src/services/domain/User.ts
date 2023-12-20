@@ -7,7 +7,6 @@ import database from "@infrastructure/database";
 import * as Bcrypt from "src/utils/password";
 import * as Jwt from "src/utils/jwt";
 
-
 export async function getUsersDomain() {
   return await UserRepository.DBGetUsers()
 }
@@ -168,4 +167,38 @@ export async function editUserDomain(params:UserTypes.EditUserDomain){
   })
 
   return editUser
+}
+
+export async function restoreTrashedUser(params: UserTypes.RestoreTrashedUser) {
+  const { id } = params
+
+  const trashedUser = await UserRepository.DBGetTrashedUser({ id })
+
+  const deleted_user_data = trashedUser[0]
+
+  const db = database.getDatasource()
+  const conn = db.createQueryRunner()
+  await conn.connect()
+  try {
+    await conn.startTransaction()
+
+    const restore_user = await UserRepository.DBRestoreTrashedUser(deleted_user_data, conn)
+    if (restore_user.affectedRows < 1) {
+      throw new ServerError("FAILED_RESTORE_USER")
+    }
+
+    const delete_trashed_user = await UserRepository.DBDeleteTrashedUser(deleted_user_data.username, conn)
+    if (delete_trashed_user.affectedRows < 1) {
+      throw new ServerError("FAILED_TO_DELETE_TRASHED_USER")
+    }
+
+    await conn.commitTransaction();
+    await conn.release();
+
+    return true
+  } catch (error) {
+    await conn.rollbackTransaction();
+    await conn.release();
+    throw error
+  }
 }

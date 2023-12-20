@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { changePassRequest, createGroupRules, editUserRequest, loginRequest, registerRequest } from './schema'
+import { changePassRequest, createGroupRules, editUserRequest, loginRequest, registerRequest, restoreTrashedUser } from './schema'
 
 export type User = {
     id: number
@@ -82,4 +82,23 @@ export type EditUserQueryParams = {
     user_level: number;
     phone_number:string;
     address:string;
+}
+
+export type RestoreTrashedUser = z.infer<typeof restoreTrashedUser>
+
+export type GetTrashedUserQueryParams = {
+    id:number
+}
+
+export type RestoreTrashedUserQueryParams = {
+    id:number
+    username:string;
+    email:string;
+    first_name:string,
+    last_name:string,
+    password:string;
+    phone_number:string;
+    registered_date:number;
+    address:string;
+    user_level:number;
 }

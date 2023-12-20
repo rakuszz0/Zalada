@@ -92,6 +92,15 @@ export const editUserRequest = z.object({
 
 export const editUserResponse = z.object({ message: z.boolean()})
 
+
+export const restoreTrashedUser = z.object({
+  id:z.number()
+})
+
+export const restoreTrashedUserResponse = z.object({
+  message: z.boolean()
+})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -109,6 +118,8 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     getRulesListResponse,
     editUserRequest,
     editUserResponse,
+    restoreTrashedUser,
+    restoreTrashedUserResponse
   },
   {
     $id: "userSchema",

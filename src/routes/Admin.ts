@@ -127,6 +127,24 @@ const routes: RouteOptions[] = [
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_RULES),
         handler: AdminController.addGroupRulesHandler
     },
+    {
+        method: ["POST"],
+        url: "/admin/restore-trashed-user",
+        schema: {
+            tags: ["Admin Services"],
+            security: [
+                {
+                    authorization: []
+                }
+            ],
+            body: userSchema("restoreTrashedUser"),
+            response: {
+                200: userSchema("restoreTrashedUserResponse")
+            }
+        },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_USER),
+        handler: AdminController.restoreTrashedUserController
+    },
 ]
 
 export default async function AdminRoutes(server: FastifyInstance) {

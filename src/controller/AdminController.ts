@@ -2,7 +2,7 @@ import { FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
 import { AddProductByAdmin } from "src/services/models/Product";
-import { CreateRulesRequest, CreateUserByAdmin } from "src/services/models/User";
+import { CreateRulesRequest, CreateUserByAdmin, RestoreTrashedUser } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
 
 export async function Hello(request: FastifyRequest) {
@@ -79,6 +79,20 @@ export async function addGroupRulesHandler(request: FastifyRequest) {
         const response = await UserDomainService.addGroupRulesDomain({ role_id, rules })
 
         return { message: response }   
+    } catch (error) {
+        throw error
+    }
+}
+
+
+export async function restoreTrashedUserController(request: FastifyRequest) {
+    try {
+        const { id } = request.body as RestoreTrashedUser
+        const restoreUser = await UserDomainService.restoreTrashedUser({
+            id
+        })
+
+        return { message: restoreUser }
     } catch (error) {
         throw error
     }
