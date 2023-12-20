@@ -150,3 +150,18 @@ export async function getTransactionDetailsDomain({customer_id, order_no}: Trans
 export async function getOrdersDomain(order_no: string) {
     return await TransactionRepository.DBGetOrders(order_no)
 }
+
+export async function finishOrderDomain({ customer_id, order_no }: TransactionDto.finishOrderDomain) {
+    // Check transaction exist
+    const transaction = await TransactionRepository.DBCheckTransactionExist({ customer_id, order_no })
+
+    // Check transaction status, if not arrived yet throw error
+    if(transaction.status != 5) {
+        throw new RequestError("INVALID_TRANSACTION_STATUS")
+    }
+
+    // Update transaction status to finish
+    await TransactionRepository.DBUpdateTransactionStatus({ status: 6, order_no })
+
+    return true
+}

@@ -139,3 +139,16 @@ export async function getOrderDetailsHandler(request: FastifyRequest) {
         throw error
     }
 }
+
+export async function finishOrderHandler(request: FastifyRequest) {
+    try {
+        const { id: customer_id } = request.user
+        const { order_no } = request.body as TransactionDto.FinishOrderRequest
+
+        const response = await TransactionDomainService.finishOrderDomain({ customer_id, order_no })
+
+        return { message: response }
+    } catch (error) {
+        throw error
+    }
+}

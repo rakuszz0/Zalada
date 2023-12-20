@@ -88,6 +88,14 @@ export const getOrderDetailsResponse = z.object({
     })
 })
 
+export const finishOrderRequest = z.object({
+    order_no: z.string()
+})
+
+export const finishOrderResponse = z.object({
+    message: z.boolean()
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
@@ -98,7 +106,9 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     paymentOrderRequest,
     paymentOrderResponse,
     getOrderDetailsRequest,
-    getOrderDetailsResponse
+    getOrderDetailsResponse,
+    finishOrderRequest,
+    finishOrderResponse
 }, {
     $id: "transactionSchemas"
 })
