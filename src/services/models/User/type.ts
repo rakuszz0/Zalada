@@ -54,8 +54,7 @@ export type ChangePassQueryParams ={
 export type RestoreTrashedUser = z.infer<typeof restoreTrashedUser>
 
 export type GetTrashedUserQueryParams = {
-    username:string;
-    email:string;
+    id:number
 }
 
 export type RestoreTrashedUserQueryParams = {

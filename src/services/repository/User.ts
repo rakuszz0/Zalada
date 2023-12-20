@@ -62,9 +62,9 @@ export async function changePassword(params:UserTypes.ChangePassQueryParams,quer
 }
 
 export async function DBGetTrashedUser(params:UserTypes.GetTrashedUserQueryParams) {
-  const {username,email} = params
+  const {id} = params
   const query = await db.query<UserTypes.RestoreTrashedUserQueryParams[]>(
-    "SELECT * FROM trash_users WHERE username = ? OR email = ?",[username,email]
+    "SELECT * FROM trash_users WHERE id=? ",[id]
   )
   
   if (query.length < 1){

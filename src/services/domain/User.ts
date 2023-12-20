@@ -100,9 +100,9 @@ export async function changePasswordDomain(params: UserTypes.ChangePassRequest) 
 }
 
 export async function restoreTrashedUser(params:UserTypes.RestoreTrashedUser){
-  const {username,email} = params
+  const {id} = params
 
-  const trashedUser = await UserRepository.DBGetTrashedUser({username,email})
+  const trashedUser = await UserRepository.DBGetTrashedUser({id})
 
   const deleted_user_data = trashedUser[0]
 

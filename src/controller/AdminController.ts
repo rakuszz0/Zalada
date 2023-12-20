@@ -56,10 +56,9 @@ export async function createUserByAdmin(request: FastifyRequest) {
 
 export async function restoreTrashedUserController(request: FastifyRequest){
     try{
-        const {username,email} = request.body as RestoreTrashedUser
+        const {id} = request.body as RestoreTrashedUser
         const restoreUser = await UserDomainService.restoreTrashedUser({
-            username,
-            email
+            id
         })
 
         return {message:restoreUser}

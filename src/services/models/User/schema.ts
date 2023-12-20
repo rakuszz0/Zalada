@@ -57,8 +57,7 @@ export const changePassResponse = z.object({
 })
 
 export const restoreTrashedUser = z.object({
-  username:z.string(),
-  email:z.string()
+  id:z.number()
 })
 
 export const restoreTrashedUserResponse = z.object({
