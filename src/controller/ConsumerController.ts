@@ -102,9 +102,9 @@ export async function TransactionHistoryHandler(request: FastifyRequest, reply: 
 
 export async function paymentOrderHandler(request: FastifyRequest) {
     try {
-        const { id: customer_id } = request.user
+        const { id: customer_id, email, username } = request.user
         const { amount, order_no } = request.body as TransactionDto.PaymentOrderRequest
-        const payment = await TransactionDomainService.paymentOrderDomain({amount, order_no, customer_id})
+        const payment = await TransactionDomainService.paymentOrderDomain({amount, order_no, customer_id, email, username})
 
         return {message: payment}
     } catch (error) {
