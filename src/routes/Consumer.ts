@@ -173,6 +173,25 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.getOrderDetailsHandler
+  },
+  {
+    method:["POST"],
+    url: "/product-review",
+    schema:{
+      tags: ["Consumer Services"],
+      summary: "Review Product",
+      security: [
+        {
+          authorization:[]
+        }
+      ],
+      body: productSchema("addProductReviewRequest"),
+      response:{
+        200: productSchema("addProductReviewResponse")
+      }
+    },
+    preHandler:Auth.CheckAuth,
+    handler: ConsumerController.addProductReview
   }
 ];
 

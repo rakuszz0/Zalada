@@ -50,3 +50,24 @@ export async function DBUpdateStockProduct({product_id, stock}: ProductDto.Updat
 
   return query
 }
+
+export async function DBAddReviewTransaction({customer_id,product_id,rating,message}:ProductDto.AddReviewProductQueryParams){
+  const query = await db.query<ResultSetHeader>("INSERT INTO reviews (customer_id, product_id, rating, message) VALUES (?,?,?,?)",[customer_id,product_id,rating,message])
+  if(query.affectedRows < 1) {
+    throw new ServerError("FAILED_TO_ADD_REVIEW")
+  }
+  return query
+}
+
+export async function DBCheackReviewExist(order_no:string){
+  const query = await db.query<ProductDto.ReviewProductExistQueryResult[]>(`SELECT a.product_id, a.customer_id 
+  FROM reviews a
+  LEFT JOIN orders b ON b.product_id = a.product_id
+  WHERE b.order_no = ?;
+  `,[order_no])
+
+  if(query.length > 0) {
+    throw new ServerError("YOU`VE_REVIEWED")
+  }
+  return query
+}
