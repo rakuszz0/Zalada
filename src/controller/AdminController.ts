@@ -2,16 +2,29 @@ import { FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
 import { AddProductByAdmin } from "src/services/models/Product";
-import { CreateRulesRequest, CreateUserByAdmin, RestoreTrashedUser } from "src/services/models/User";
+import { CreateRulesRequest, CreateUserByAdmin, GetUserListRequest, RestoreTrashedUser } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
+import { QueryFailedError } from "typeorm";
 
 export async function Hello(request: FastifyRequest) {
     return { message: "Hello" }
 }
 
-export async function getUsersHandler() {
-    const users = await UserDomainService.getUsersDomain()
-    return users
+export async function getUserListHandler(request: FastifyRequest) {
+    try {
+        const { lastId, limit, search, sort } = request.body as GetUserListRequest
+        const users = await UserDomainService.getUserListDomain({ lastId, limit, search, sort })
+
+        return {
+            message: users
+        }        
+    } catch (error) {
+        if(error instanceof QueryFailedError) {
+            throw new RequestError("INVALID_SEARCH_PROPERTIES")
+        }
+        throw error
+    }
+
 }
 
 export async function addProductsHandler(request: FastifyRequest) {

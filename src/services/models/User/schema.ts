@@ -101,6 +101,13 @@ export const restoreTrashedUserResponse = z.object({
   message: z.boolean()
 })
 
+export const getUserListRequest = z.object({
+  limit: z.number().min(1).optional(),
+  sort: z.enum(["DESC", "ASC"]).optional(),
+  lastId: z.number().optional(),
+  search: z.string().optional().describe(JSON.stringify({ user_id: "number", username: "string", email: "string", firstname: "string", lastname: "string", registered_date: "date", user_level: "number" })),
+})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -119,7 +126,8 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     editUserRequest,
     editUserResponse,
     restoreTrashedUser,
-    restoreTrashedUserResponse
+    restoreTrashedUserResponse,
+    getUserListRequest
   },
   {
     $id: "userSchema",

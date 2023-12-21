@@ -7,8 +7,8 @@ import { NotFoundError, RequestError, ServerError } from "src/config/error";
 
 const db = DatabaseService.getDatasource()
 
-export async function DBGetUsers() {
-  const query = await db.query<UserTypes.GetUserResponse[]>("SELECT id, username, email, phone_number, address, registered_date FROM users")
+export async function DBGetUsers({ search = "1=1", limit = 500, sort = "DESC" }: UserTypes.GetUsersQueryParams) {
+  const query = await db.query<UserTypes.GetUserResponse[]>(`SELECT u.id, u.username, u.email, u.first_name, u.last_name, u.phone_number, u.address, u.registered_date, ur.name roles_name FROM users u LEFT JOIN user_roles ur ON ur.id = u.user_level WHERE ${search} ORDER BY u.id ${sort} LIMIT ${limit + 1}`)
   return query
 }
 

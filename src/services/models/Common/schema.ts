@@ -4,7 +4,7 @@ import { BaseResponse } from './type'
 
 export const paginationResponse = z.object({
     message: z.object({
-        data: z.union([z.string(), z.number()]).array().array(),
+        data: z.union([z.string(), z.number(), z.null(), z.date()]).array().array(),
         column: z.string().array(),
         hasNext: z.number()
     })
