@@ -1,4 +1,3 @@
-import db from "@database"
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as ProductDomainService from "src/services/domain/Product";
@@ -8,17 +7,22 @@ import * as CartDomainService from "src/services/domain/Cart";
 import * as UserDto from "src/services/models/User";
 import * as TransactionDto from "src/services/models/Transaction";
 import * as CartDto from "src/services/models/Cart";
-import * as Jwt from "src/utils/jwt";
-import * as Bcrypt from "src/utils/password";
-import * as ProductDto from "src/services/models/Product"
-import { number } from "zod";
+import { QueryFailedError } from "typeorm";
+import * as ProductDto from "src/services/models/Product";
 
 
-export async function getProductHandler() {
+export async function getProductHandler(request: FastifyRequest) {
     try {
-        const product = await ProductDomainService.getProductsDomain();
-        return product
+        const {lastId, limit, sort, search, filter } = request.body as ProductDto.GetProductListRequest
+        const product = await ProductDomainService.getProductsDomain({limit,search, sort, lastId, filter});
+        return {
+            message: product
+        }
     } catch (error) {
+        // Error Handling when query error on search
+        if(error instanceof QueryFailedError) {
+            throw new RequestError("INVALID_SEARCH_PROPERTIES")
+        }
         throw error
     }
 

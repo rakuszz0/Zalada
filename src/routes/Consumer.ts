@@ -5,6 +5,7 @@ import { cartSchema } from "src/services/models/Cart";
 import { productSchema } from "src/services/models/Product";
 import { transactionSchema } from "src/services/models/Transaction";
 import * as Auth from "src/config/auth";
+import { commonSchema, baseResponse } from "src/services/models/Common";
 
 const routes: RouteOptions[] = [
   {
@@ -16,13 +17,13 @@ const routes: RouteOptions[] = [
     handler: (request, reply) => reply.send("Hello In Consumer"),
   },
   {
-    method: ["GET"],
-    url: "/products",
+    method: ["POST"],
+    url: "/products/list",
     schema: {
         tags: ["Consumer Services"],
-        response: {
-          200: productSchema("getProductsResponse")
-        },
+        summary: "Get Products List",
+        body: productSchema("getProductListRequest"),
+        response: baseResponse({ schema: commonSchema("paginationResponse") }),
     },
     handler: ConsumerController.getProductHandler,
   },
