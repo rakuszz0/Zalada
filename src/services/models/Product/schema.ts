@@ -41,6 +41,27 @@ export const updateProductResponse = z.object({
     message: z.boolean()
 })
 
+export const getProductDetails = z.object({
+    id: z.number(),
+})
+  
+export const getProductDetailsResponse = z.object({
+    id: z.number(),
+    name: z.string(),
+    stock: z.number(),
+    price:z.number(),
+    description: z.string(),
+    average_rating: z.number(),
+    total_sell: z.number(),
+    created_at: z.date(),
+    reviews:z.object({
+        rating: z.number(),
+        message: z.string(),
+        username: z.string()
+    }).array()
+
+})
+
 export const { schemas: productSchemas, $ref: productSchema } = buildJsonSchemas(
     {
         getProductRequest,
@@ -49,7 +70,9 @@ export const { schemas: productSchemas, $ref: productSchema } = buildJsonSchemas
         addProductsRequest,
         addProductsResponse,
         updateProductRequest,
-        updateProductResponse
+        updateProductResponse,
+        getProductDetails,
+        getProductDetailsResponse,
     },
     {
         $id: "productSchema",

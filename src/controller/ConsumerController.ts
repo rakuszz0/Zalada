@@ -10,6 +10,8 @@ import * as TransactionDto from "src/services/models/Transaction";
 import * as CartDto from "src/services/models/Cart";
 import * as Jwt from "src/utils/jwt";
 import * as Bcrypt from "src/utils/password";
+import * as ProductDto from "src/services/models/Product"
+import { number } from "zod";
 
 
 export async function getProductHandler() {
@@ -136,6 +138,18 @@ export async function getOrderDetailsHandler(request: FastifyRequest) {
 
         return {message: transaction}
     } catch (error) {
+        throw error
+    }
+}
+
+export async function getProductDetailsHandler(request: FastifyRequest){
+    try {
+        const {id} = request.body as ProductDto.GetProductDetails
+
+        const getProductDetails = await ProductDomainService.getProductDetailsDomain(id)
+
+        return getProductDetails
+    } catch (error){
         throw error
     }
 }

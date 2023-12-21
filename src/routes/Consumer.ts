@@ -173,6 +173,18 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.getOrderDetailsHandler
+  },
+  {
+    method: ["POST"],
+    url: "/product-details",
+    schema:{
+      tags: ["Consumer Services"],
+      body: productSchema("getProductDetails"),
+      response:{
+        200: productSchema("getProductDetailsResponse")
+      }
+    },
+    handler: ConsumerController.getProductDetailsHandler
   }
 ];
 
