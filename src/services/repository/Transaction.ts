@@ -58,18 +58,20 @@ export async function DBCheckOrderExist({order_no, status, customer_id}: Transac
     return query
 }
 
-export async function DBUpdateTransactionStatus({order_no, status}: TransactionDto.UpdateOrderStatusQueryParams, queryRunner?: QueryRunner) {
-    let query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ? WHERE order_no = ?`, [status, order_no], queryRunner)
+export async function DBUpdateTransactionStatus(params: TransactionDto.UpdateOrderStatusQueryParams, queryRunner?: QueryRunner) {
+    let query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ? WHERE order_no = ?`, [params.status, params.order_no], queryRunner)
 
-    if (status == 2) {
+    if (params.status == 2) {
         // Update status after payment
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, payment_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
-    } else if (status == 4) {
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, payment_at = ? WHERE order_no = ?`, [params.status, new Date(), params.order_no], queryRunner)
+    } else if (params.status == 3 && "verified_by" in params) {
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, verified_by = ? WHERE order_no = ?`, [params.status, params.verified_by, params.order_no], queryRunner)
+    } else if (params.status == 4) {
         // Update status on shipping
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, shipping_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
-    } else if (status == 5) {
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, shipping_at = ? WHERE order_no = ?`, [params.status, new Date(), params.order_no], queryRunner)
+    } else if (params.status == 5) {
         // Update status on arrived
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, arrived_at = ? WHERE order_no = ?`, [status, new Date(), order_no], queryRunner)
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, arrived_at = ? WHERE order_no = ?`, [params.status, new Date(), params.order_no], queryRunner)
     }
 
 
@@ -80,7 +82,7 @@ export async function DBUpdateTransactionStatus({order_no, status}: TransactionD
     return query
 }
 
-export async function DBCheckTransactionExist({ customer_id, order_no }: TransactionDto.GetTransactionDetailsQueryParams) {
+export async function DBCheckTransactionExist({ customer_id, order_no }: TransactionDto.CheckTransactionExistQueryParams) {
     const query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
 
     if (query.length < 1) {
@@ -98,6 +100,16 @@ export async function DBCheckPaymentTypeExist(payment_type: number) {
 
     if (query.length < 1) {
         throw new NotFoundError("PAYMENT_TYPE_NOT_FOUND")
+    }
+
+    return query[0]
+}
+
+export async function DBCheckPendingTransaction(order_no: string) {
+    const query = await db.query<TransactionDto.Transaction[]>(`SELECT * FROM transactions WHERE order_no = ? AND status IN (1, 2)`, [order_no])
+
+    if(query.length < 1) {
+        throw new NotFoundError("PENDING_TRANSACTION_NOT_FOUND")
     }
 
     return query[0]

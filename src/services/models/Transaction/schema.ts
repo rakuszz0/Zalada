@@ -41,6 +41,10 @@ export const productList = z.object({
   quantity: z.number()
 })
 
+export const confirmOrderRequest = z.object({
+  order_no: z.string(),
+})
+
 export const transactionHistoryResponse = z.record(z.string(), z.object({
   order_no: z.string(),
   product: z.array(productList),
@@ -88,6 +92,10 @@ export const getOrderDetailsResponse = z.object({
     })
 })
 
+export const confirmOrderResponse = z.object({
+    message: z.boolean()
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
@@ -98,7 +106,9 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     paymentOrderRequest,
     paymentOrderResponse,
     getOrderDetailsRequest,
-    getOrderDetailsResponse
+    getOrderDetailsResponse,
+    confirmOrderRequest,
+    confirmOrderResponse
 }, {
     $id: "transactionSchemas"
 })

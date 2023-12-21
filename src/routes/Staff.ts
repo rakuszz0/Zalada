@@ -4,6 +4,7 @@ import { ListRules } from "src/config/rules";
 import * as StaffController from "src/controller/StaffController";
 import { productSchema } from "src/services/models/Product";
 import { userSchema } from "src/services/models/User";
+import { transactionSchema } from "src/services/models/Transaction";
 
 
 const routes: RouteOptions[] = [
@@ -50,6 +51,25 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_PRODUCT),
     handler: StaffController.updateProductHandler
+  },
+  {
+    method: ["POST"],
+    url: "/orders/confirm",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Confirm Orders",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      body: transactionSchema("confirmOrderRequest"),
+      response: {
+        200: transactionSchema("confirmOrderResponse")
+      }
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_TRANSACTION),
+    handler: StaffController.confirmOrderHandler
   },
   {
     method: ["POST"],
