@@ -5,7 +5,7 @@ import { QueryRunner } from "typeorm";
 import { NotFoundError, ServerError } from "src/config/error";
 
 export async function DBGetProducts({limit = 500, search = "1=1", sort = "DESC", filter = "1=1"}: ProductDto.GetProductsQueryParams) {
-  return await db.query<ProductDto.GetProductsQueryResult[]>(`SELECT p.id, p.name, IFNULL(CAST(SUM(o.quantity) as float), 0) total_sale, p.description, p.stock, p.price, IFNULL(AVG(CAST(re.rating as float)), 0) ratings FROM products p LEFT JOIN orders o ON o.product_id = p.id LEFT JOIN reviews re ON re.product_id = p.id WHERE ${search} GROUP BY p.id HAVING ${filter} ORDER BY p.id ${sort} LIMIT ${limit + 1}`);
+  return await db.query<ProductDto.GetProductsQueryResult[]>(`SELECT p.id, p.name, IFNULL(CAST(SUM(o.quantity) as float), 0) total_sale, p.description, p.stock, p.price, IFNULL(CAST(AVG(re.rating) AS DECIMAL(10,1)), 0) ratings FROM products p LEFT JOIN orders o ON o.product_id = p.id LEFT JOIN reviews re ON re.product_id = p.id WHERE ${search} GROUP BY p.id HAVING ${filter} ORDER BY p.id ${sort} LIMIT ${limit + 1}`);
 }
 
 export async function DBAddProductByAdmin(params: ProductDto.AddProductByAdmin  ) {
