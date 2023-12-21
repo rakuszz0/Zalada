@@ -5,5 +5,8 @@ export async function getProductsDomain() {
 }
 
 export async function getProductDetailsDomain(id:number) {
-    return await ProductRepository.DBGetProductsDetails(id)
+    const product_detail= await ProductRepository.DBGetProductsDetails(id)
+    const reviews = await ProductRepository.DBProductReviews(id)
+
+    return {...product_detail,reviews}
 }

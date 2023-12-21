@@ -16,3 +16,9 @@ export type AddProductByAdmin = {
     description:string;
     price:number
 }
+
+export type ProductReviews = {
+    rating:number
+    message:string
+    username:string
+}
