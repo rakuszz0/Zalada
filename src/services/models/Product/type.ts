@@ -1,10 +1,19 @@
 import * as z from "zod"
-import { addProductsRequest, getProductRequest, getProductResponse, getProductsResponse, updateProductRequest } from "./schema"
-import { PaginationRequest } from "../Common"
+import { addProductsRequest, getProductListRequest, getProductRequest, getProductResponse, updateProductRequest } from "./schema"
 
 export type GetProductRequest = z.infer<typeof getProductRequest>
 export type GetProductQueryResult = z.infer<typeof getProductResponse>
-export type GetProductsQueryResult = z.infer<typeof getProductsResponse>
+
+
+export type GetProductsQueryResult = {
+    id: number
+    name: string
+    total_sale: string
+    description: string
+    stock: number
+    price: number
+    ratings: string
+}
 
 export type AddProductsRequest = z.infer<typeof addProductsRequest>
 
@@ -36,6 +45,9 @@ export type GetProductsQueryParams = {
     search?: string
     limit?: number
     sort?: string
+    filter?: string
 }
 
-export type GetProductsDomainParams = PaginationRequest
+export type GetProductListRequest = z.infer<typeof getProductListRequest>
+
+export type GetProductsDomainParams = GetProductListRequest

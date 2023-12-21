@@ -11,13 +11,16 @@ import * as Bcrypt from "src/utils/password";
 import * as z from "zod";
 import * as CommonDto from "src/services/models/Common";
 import { QueryFailedError } from "typeorm";
+import * as ProductDto from "src/services/models/Product";
 
 
 export async function getProductHandler(request: FastifyRequest) {
     try {
-        const {lastId, limit, sort, search} = request.body as CommonDto.PaginationRequest
-        const product = await ProductDomainService.getProductsDomain({limit,search, sort, lastId});
-        return product
+        const {lastId, limit, sort, search, filter } = request.body as ProductDto.GetProductListRequest
+        const product = await ProductDomainService.getProductsDomain({limit,search, sort, lastId, filter});
+        return {
+            message: product
+        }
     } catch (error) {
         // Error Handling when query error on search
         if(error instanceof QueryFailedError) {

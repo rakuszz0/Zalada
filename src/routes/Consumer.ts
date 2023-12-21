@@ -4,7 +4,7 @@ import { userSchema } from "src/services/models/User";
 import { productSchema } from "src/services/models/Product";
 import { transactionSchema } from "src/services/models/Transaction";
 import * as Auth from "src/config/auth";
-import { commonSchema } from "src/services/models/Common";
+import { commonSchema, baseResponse } from "src/services/models/Common";
 
 const routes: RouteOptions[] = [
   {
@@ -21,11 +21,8 @@ const routes: RouteOptions[] = [
     schema: {
         tags: ["Consumer Services"],
         summary: "Get Products List",
-        body: commonSchema("paginationRequest"),
-        description: `<b>Search Schema</b>: ${JSON.stringify({ name: "string", stock: "number", price: "number" }, null, 2)}`,
-        response: {
-          // 200: productSchema("getProductsResponse")
-        },
+        body: productSchema("getProductListRequest"),
+        response: baseResponse({ schema: commonSchema("paginationResponse") }),
     },
     handler: ConsumerController.getProductHandler,
   },

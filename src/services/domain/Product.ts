@@ -1,16 +1,23 @@
 import * as ProductRepository from "../repository/Product";
 import * as ProductDto from "../models/Product";
 import format from "format-unicorn/safe"
-import { parse } from "path";
 
-export async function getProductsDomain({limit = 500, search = "", sort = "DESC", lastId = 0}: ProductDto.GetProductsDomainParams) {
+export async function getProductsDomain({limit = 500, search = "", sort = "DESC", lastId = 0, filter = "1=1"}: ProductDto.GetProductsDomainParams) {
     const searchProps = {
-        price: "price",
-        stock: "stock",
-        name: "name"
+        price: "p.price",
+        stock: "p.stock",
+        name: "p.name",
+        description: "p.description",
+    }
+
+    const filterProps = {
+        ratings: "ratings",
+        total_price: "total_price"
     }
 
     let parsedSearch = format(search, searchProps)
+
+    let parsedFilter = format(filter, filterProps)
 
     let searchClause = "1=1"
 
@@ -24,10 +31,18 @@ export async function getProductsDomain({limit = 500, search = "", sort = "DESC"
         searchClause = `${searchClause} AND id ${sort == "ASC" ? ">" : "<"} ${lastId}`
     }
 
-    const product = await ProductRepository.DBGetProducts({ limit, search: searchClause, sort })
+    const product = await ProductRepository.DBGetProducts({ limit, search: searchClause, sort, filter: parsedFilter })
+
+    if(product.length < 1) {
+        return {
+            data: [],
+            column: [],
+            hasNext: -1
+        }
+    }
 
     const result = {
-        data: product,
+        data: product.map(p => Object.values(p)),
         column: Object.keys(product[0]),
         hasNext: -1
     }
