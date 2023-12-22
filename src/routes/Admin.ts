@@ -58,19 +58,37 @@ const routes: RouteOptions[] = [
         method: ["POST"],
         url: "/add-users",
         schema: {
-            tags: ["Admin Services"],
-            security:[
-                {
-                    authorization: []
-                }
-            ],
-            body: userSchema("createUsers"),
+                tags: ["Admin Services"],
+                security:[
+                    {
+                        authorization: []
+                    }
+                ],
+                body: userSchema("createUsers"),
             response: {
                 200: userSchema("createUsersResponse")
               }
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_USER),
         handler: AdminController.createUserByAdmin
+    },
+    {
+        method:["POST"],
+        url:"/delete-product",
+        schema: {
+            tags: ["Admin Services"],
+            security:[
+                {
+                    authorization: []
+                }
+            ],
+            body: productSchema("deleteProductRequest"),
+            response:{
+                200: productSchema("deleteProductResponse")
+            }
+        },
+        preHandler:Auth.CheckRules(ListRules.ACCESS_DELETE_PRODUCT),
+        handler:AdminController.deleteProductController
     },
     {
         method: ["GET"],

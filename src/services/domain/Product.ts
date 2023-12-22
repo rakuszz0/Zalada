@@ -1,6 +1,7 @@
 import * as ProductRepository from "../repository/Product";
 import * as ProductDto from "../models/Product";
 import format from "format-unicorn/safe"
+import database from "@infrastructure/database";
 
 export async function getProductsDomain({limit = 500, search = "", sort = "DESC", lastId = 0, filter = "1=1"}: ProductDto.GetProductsDomainParams) {
     const searchProps = {
@@ -74,4 +75,36 @@ export async function getProductDetailsDomain(id:number) {
     const reviews = await ProductRepository.DBProductReviews(id)
 
     return {...product_detail,reviews}
+}
+
+export async function deleteProductByAdmin(params: ProductDto.DeleteProductRequest) {
+    const {product_id} = params
+    
+    const checkProduct = await ProductRepository.DBCheckProductExist(product_id)
+  
+    const db = database.getDatasource();
+    const conn = db.createQueryRunner();
+    await conn.connect()
+    try {
+      await conn.startTransaction()
+  
+      const insertToProductTrash =  await ProductRepository.DBInsertToTrashedProduct({
+        product_id: checkProduct.id,
+        name: checkProduct.name,
+        description: checkProduct.description,
+        price: checkProduct.price,
+        store_id: checkProduct.store_id,
+      },conn)
+
+      const deleteProduct = await ProductRepository.DBDeleteProduct({product_id:checkProduct.id},conn)
+
+        await conn.commitTransaction();
+        await conn.release();
+
+        return deleteProduct;
+    } catch (error) {
+        await conn.rollbackTransaction();
+        await conn.release();
+        throw error
+    }
 }

@@ -70,6 +70,14 @@ export const getProductDetailsResponse = z.object({
 
 })
 
+export const deleteProductRequest = z.object({
+    product_id: z.number()
+})
+
+export const deleteProductResponse = z.object({
+    message: z.boolean()
+})
+
 export const { schemas: productSchemas, $ref: productSchema } = buildJsonSchemas(
     {
         getProductRequest,
@@ -81,7 +89,9 @@ export const { schemas: productSchemas, $ref: productSchema } = buildJsonSchemas
         updateProductResponse,
         getProductDetails,
         getProductDetailsResponse,
-        getProductListRequest
+        getProductListRequest,
+        deleteProductRequest,
+        deleteProductResponse,
     },
     {
         $id: "productSchema",
