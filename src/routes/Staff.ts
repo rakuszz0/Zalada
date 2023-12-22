@@ -65,6 +65,9 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
+      response: {
+        200: transactionSchema("changeDeliveryStatusResponse")
+      }
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
     handler: StaffController.changeDeliveryStatusHandler
@@ -80,7 +83,10 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
-      body: transactionSchema("setDeliveryRequest")
+      body: transactionSchema("setDeliveryRequest"),
+      response: {
+        200: transactionSchema("setDeliveryResponse")
+      }
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_PRODUCT),
     handler: StaffController.setDeliveryHandler
@@ -108,7 +114,10 @@ const routes: RouteOptions[] = [
         {
           authorization: []
         }
-      ]
+      ],
+      response: {
+        200: transactionSchema("setArrivedResponse")
+      }
     },
     preValidation: upload.single("attachment"),
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),

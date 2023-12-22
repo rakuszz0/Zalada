@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { changeDeliveryStatusRequest, createOrderRequest, getOrderDetailsRequest, paymentOrderRequest, productList, setArrivedSchema, setDeliveryRequest, setShippingRequest, transactionHistoryRequest, transactionHistoryResponse } from "./schema"
+import { changeDeliveryStatusRequest, createOrderRequest, getOrderDetailsRequest, paymentOrderRequest, productList, setArrivedSchema, setDeliveryRequest, transactionHistoryRequest, transactionHistoryResponse } from "./schema"
 
 export enum TransactionStatus {
     PENDING_PAYMENT = 1,
@@ -109,10 +109,6 @@ export type ChangeDeliveryStatusDomain = ChangeDeliveryStatusRequest & {user_id:
 export type SetDeliveryRequest = z.infer<typeof setDeliveryRequest>
 
 export type SetDeliveryOrderDomainParams = SetDeliveryRequest
-
-export type SetShippingRequest = z.infer<typeof setShippingRequest>
-
-export type SetShippingDomain = SetShippingRequest & { delivered_by: number }
 
 export type SetArrivedRequest = Pick<z.infer<typeof setArrivedSchema>, 'order_no'>
 
