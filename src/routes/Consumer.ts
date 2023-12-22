@@ -177,6 +177,25 @@ const routes: RouteOptions[] = [
   },
   {
     method: ["POST"],
+    url: "/orders/finish",
+    schema: {
+      tags: ["Consumer Services"],
+      summary: "Customer Finish Order",
+      body: transactionSchema("finishOrderRequest"),
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: {
+        200: transactionSchema("finishOrderResponse")
+      }
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.finishOrderHandler
+  },
+  {
+    method: ["POST"],
     url: "/product-details",
     schema:{
       tags: ["Consumer Services"],

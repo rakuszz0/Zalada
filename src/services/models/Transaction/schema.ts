@@ -124,6 +124,14 @@ export const changeDeliveryStatusResponse = z.object({
     message: z.boolean()
 })
 
+export const finishOrderRequest = z.object({
+    order_no: z.string()
+})
+
+export const finishOrderResponse = z.object({
+    message: z.boolean()
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
@@ -135,6 +143,8 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     paymentOrderResponse,
     getOrderDetailsRequest,
     getOrderDetailsResponse,
+    finishOrderRequest,
+    finishOrderResponse,
     confirmOrderRequest,
     confirmOrderResponse,
     changeDeliveryStatusRequest,

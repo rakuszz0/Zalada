@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { confirmOrderRequest, changeDeliveryStatusRequest, createOrderRequest, getOrderDetailsRequest, paymentOrderRequest, productList, setArrivedSchema, setDeliveryRequest, transactionHistoryRequest, transactionHistoryResponse } from "./schema"
+import { confirmOrderRequest, changeDeliveryStatusRequest, createOrderRequest, finishOrderRequest, getOrderDetailsRequest, paymentOrderRequest, productList, setArrivedSchema, setDeliveryRequest, transactionHistoryRequest, transactionHistoryResponse } from "./schema"
 
 export enum TransactionStatus {
     PENDING_PAYMENT = 1,
@@ -133,3 +133,7 @@ export type CheckTransactionDeliveryQueryParams = {
     order_no: string
     delivered_by: number
 }
+
+export type FinishOrderRequest = z.infer<typeof finishOrderRequest>
+
+export type finishOrderDomain = FinishOrderRequest & { customer_id: number }
