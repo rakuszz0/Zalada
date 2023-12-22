@@ -2,6 +2,10 @@ import * as ProductRepository from "../repository/Product";
 import * as ProductDto from "../models/Product";
 import format from "format-unicorn/safe"
 import database from "@infrastructure/database";
+import * as TransactionRepository from "../repository/Transaction";
+import { RequestError } from "src/config/error";
+
+
 
 export async function getProductsDomain({limit = 500, search = "", sort = "DESC", lastId = 0, filter = "1=1"}: ProductDto.GetProductsDomainParams) {
     const searchProps = {
@@ -107,4 +111,19 @@ export async function deleteProductByAdmin(params: ProductDto.DeleteProductReque
         await conn.release();
         throw error
     }
+}
+
+export async function addReviewProduct({customer_id,product_id,message,order_no,rating}: ProductDto.ReviewProductParams) {
+
+    const transaction = await TransactionRepository.DBCheckTransactionExist({customer_id, order_no})
+
+    if(transaction.status < 6 || transaction.status != 6 ) {
+        throw new RequestError("NEED_TO_COMPLATE_THE_TRANSACTION")
+    }
+
+    // await ProductRepository.DBCheckReviewExist({ order_no, product_id })
+
+    const reviewProduct = await ProductRepository.DBAddReviewTransaction({customer_id,product_id,rating,message})
+
+    return reviewProduct
 }

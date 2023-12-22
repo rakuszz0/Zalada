@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { addProductsRequest, getProductDetails, getProductListRequest, deleteProductRequest, getProductRequest, getProductResponse, updateProductRequest, getProductDetailsResponse } from "./schema"
+import { addProductReviewRequest, addProductsRequest, getProductDetails, getProductListRequest, deleteProductRequest, getProductRequest, getProductResponse, updateProductRequest, getProductDetailsResponse } from "./schema"
 
 export type GetProductRequest = z.infer<typeof getProductRequest>
 export type GetProductQueryResult = z.infer<typeof getProductResponse>
@@ -75,3 +75,32 @@ export type DeleteProductQuery = {
 }
 
 export type DeleteProductRequest = z.infer<typeof deleteProductRequest>
+
+export type ReviewProductRequest = z.infer<typeof addProductReviewRequest>
+
+export type ReviewProductParams = {
+    product_id: number;
+    message?:string;
+    rating:number;
+    order_no:string;
+    customer_id:number;
+}
+
+export type AddReviewProductQueryParams = {
+    product_id: number;
+    message?:string;
+    rating:number;
+    customer_id:number; 
+}
+
+export type ReviewProductExistQueryResult = {
+    product_id: number;
+    message?:string;
+    rating:number;
+    customer_id:number; 
+}
+
+export type CheckReviewExistQueryParams = {
+    order_no: string
+    product_id: number
+}

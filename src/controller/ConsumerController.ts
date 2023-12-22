@@ -6,9 +6,9 @@ import * as UserDomainService from "src/services/domain/User";
 import * as CartDomainService from "src/services/domain/Cart";
 import * as UserDto from "src/services/models/User";
 import * as TransactionDto from "src/services/models/Transaction";
+import * as ProductDto from "src/services/models/Product"
 import * as CartDto from "src/services/models/Cart";
 import { QueryFailedError } from "typeorm";
-import * as ProductDto from "src/services/models/Product";
 
 
 export async function getProductHandler(request: FastifyRequest) {
@@ -181,6 +181,22 @@ export async function finishOrderHandler(request: FastifyRequest) {
         const response = await TransactionDomainService.finishOrderDomain({ customer_id, order_no })
 
         return { message: response }
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function addProductReview(request:FastifyRequest){
+
+    try {
+        const {id: customer_id} = request.user
+        const {product_id,order_no,message,rating} = request.body as ProductDto.ReviewProductRequest
+
+        const review_product = await ProductDomainService.addReviewProduct({
+            customer_id,product_id,order_no,message,rating
+        })
+
+        return {message:review_product}
     } catch (error) {
         throw error
     }

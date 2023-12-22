@@ -2,7 +2,7 @@ import db from "@database";
 import * as ProductDto from "../models/Product";
 import { ResultSetHeader } from "mysql2";
 import { QueryRunner } from "typeorm";
-import { NotFoundError, ServerError } from "src/config/error";
+import { NotFoundError, RequestError, ServerError } from "src/config/error";
 
 export async function DBGetProducts({limit = 500, search = "1=1", sort = "DESC", filter = "1=1"}: ProductDto.GetProductsQueryParams) {
   return await db.query<ProductDto.GetProductsQueryResult[]>(`SELECT p.id, p.name, IFNULL(CAST(SUM(o.quantity) as float), 0) total_sale, p.description, p.stock, p.price, IFNULL(CAST(AVG(re.rating) AS DECIMAL(10,1)), 0) ratings FROM products p LEFT JOIN orders o ON o.product_id = p.id LEFT JOIN reviews re ON re.product_id = p.id WHERE ${search} GROUP BY p.id HAVING ${filter} ORDER BY p.id ${sort} LIMIT ${limit + 1}`);
@@ -106,5 +106,28 @@ export async function DBDeleteProduct(params:ProductDto.DeleteProductQuery,query
   if(query.affectedRows < 1) {
     throw new ServerError("FAILED_TO_DELETE_PRODUCT")
   } 
+  return query
+}
+
+export async function DBAddReviewTransaction({customer_id,product_id,rating,message}:ProductDto.AddReviewProductQueryParams){
+  const query = await db.query<ResultSetHeader>("INSERT INTO reviews (customer_id, product_id, rating, message) VALUES (?,?,?,?)",[customer_id,product_id,rating,message])
+  if(query.affectedRows < 1) {
+    throw new ServerError("FAILED_TO_ADD_REVIEW")
+  }
+  return query
+}
+
+export async function DBCheckReviewExist({ order_no, product_id }: ProductDto.CheckReviewExistQueryParams){
+  const query = await db.query<ProductDto.ReviewProductExistQueryResult[]>(
+  `SELECT a.product_id, a.customer_id, a.rating,a.message
+  FROM reviews a
+  LEFT JOIN transactions b ON b.customer_id = a.customer_id
+  INNER JOIN orders c ON c.order_no = b.order_no 
+  WHERE b.order_no = ? c.product_id = ?;
+  `,[order_no, product_id])
+
+  if(query.length > 0) {
+    throw new RequestError("YOU`VE_REVIEWED")
+  }
   return query
 }

@@ -66,9 +66,9 @@ export async function DBUpdateTransactionStatus(params: TransactionDto.UpdateOrd
         query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, payment_at = ? WHERE order_no = ?`, [params.status, new Date(), params.order_no], queryRunner)
     } else if (params.status == 3 && "verified_by" in params) {
         query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, verified_by = ? WHERE order_no = ?`, [params.status, params.verified_by, params.order_no], queryRunner)
-    } else if (params.status == 4) {
+    } else if (params.status == 4 && "delivered_by" in params) {
         // Update status on shipping
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, shipping_at = ? WHERE order_no = ?`, [params.status, new Date(), params.order_no], queryRunner)
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, delivered_by = ?, shipping_at = ? WHERE order_no = ?`, [params.status, params.delivered_by, new Date(), params.order_no], queryRunner)
     } else if (params.status == 5) {
         // Update status on arrived
         query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, arrived_at = ? WHERE order_no = ?`, [params.status, new Date(), params.order_no], queryRunner)
