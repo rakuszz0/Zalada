@@ -5,7 +5,9 @@ import * as StaffController from "src/controller/StaffController";
 import { productSchema } from "src/services/models/Product";
 import { userSchema } from "src/services/models/User";
 import { transactionSchema } from "src/services/models/Transaction";
+import fastifyMulter from "fastify-multer"
 
+const upload = fastifyMulter({ dest: "uploads" })
 
 const routes: RouteOptions[] = [
   {
@@ -51,6 +53,76 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_PRODUCT),
     handler: StaffController.updateProductHandler
+  },
+  {
+    method: ["POST"],
+    url: "/orders/shipping",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Change Delivery Status",
+      body: transactionSchema("changeDeliveryStatusRequest"),
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: {
+        200: transactionSchema("changeDeliveryStatusResponse")
+      }
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
+    handler: StaffController.changeDeliveryStatusHandler
+  },
+  {
+    method: ["POST"],
+    url: "/orders/delivery",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Set Order Delivery",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      body: transactionSchema("setDeliveryRequest"),
+      response: {
+        200: transactionSchema("setDeliveryResponse")
+      }
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_PRODUCT),
+    handler: StaffController.setDeliveryHandler
+  },
+  {
+    method: ["POST"],
+    url: "/orders/arrived",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Set Order Arrived",
+      consumes: ["multipart/form-data"],
+      produces: ['application/json'],
+      body: {
+        type: "object",
+        properties: {
+          attachment: {
+            isFile: true,
+          },
+          order_no: {
+            type: "string"
+          }
+        },
+      },
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: {
+        200: transactionSchema("setArrivedResponse")
+      }
+    },
+    preValidation: upload.single("attachment"),
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
+    handler: StaffController.setArrivedHandler
   },
   {
     method: ["POST"],

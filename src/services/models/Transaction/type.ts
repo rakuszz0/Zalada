@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { confirmOrderRequest, createOrderRequest, getOrderDetailsRequest, paymentOrderRequest, productList, transactionHistoryRequest, transactionHistoryResponse } from "./schema"
+import { confirmOrderRequest, changeDeliveryStatusRequest, createOrderRequest, getOrderDetailsRequest, paymentOrderRequest, productList, setArrivedSchema, setDeliveryRequest, transactionHistoryRequest, transactionHistoryResponse } from "./schema"
 
 export enum TransactionStatus {
     PENDING_PAYMENT = 1,
@@ -72,13 +72,19 @@ export type ConfirmOrderUpdate = {
     verified_by: number
 }
 
+type DeliveryOrderParams = {
+    status: TransactionStatus.PACKING,
+    order_no: string
+    delivered_by: number
+}
+
 export type UpdateOrderStatusQueryParams = {
     order_no: string
     status: TransactionStatus | number
-} | ConfirmOrderUpdate
+} | ConfirmOrderUpdate | DeliveryOrderParams
 
 export type CheckTransactionExistQueryParams = {
-    customer_id: number
+    customer_id?: number
     order_no: string
 }
 
@@ -104,3 +110,26 @@ export type GetTransactionDetailsQueryResult = {
 export type ConfirmOrderRequest = z.infer<typeof confirmOrderRequest>
 
 export type ConfirmOrderDomain = ConfirmOrderRequest & { user_id: number }
+
+
+export type ChangeDeliveryStatusRequest = z.infer<typeof changeDeliveryStatusRequest>
+
+export type ChangeDeliveryStatusDomain = ChangeDeliveryStatusRequest & {user_id: number}
+
+export type SetDeliveryRequest = z.infer<typeof setDeliveryRequest>
+
+export type SetDeliveryOrderDomainParams = SetDeliveryRequest
+
+export type SetArrivedRequest = Pick<z.infer<typeof setArrivedSchema>, 'order_no'>
+
+export type SetArrivedDomain = z.infer<typeof setArrivedSchema> & { delivered_by: number}
+
+export type CheckTransactionArrivedQueryParams = {
+    order_no: string,
+    delivered_by: number
+}
+
+export type CheckTransactionDeliveryQueryParams = {
+    order_no: string
+    delivered_by: number
+}

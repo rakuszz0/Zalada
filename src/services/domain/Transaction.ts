@@ -1,6 +1,7 @@
 import * as TransactionRepository from "../repository/Transaction";
 import * as TransactionDto from "../models/Transaction";
-import * as ProductRepository  from "../repository/Product"
+import * as ProductRepository from "../repository/Product"
+import * as CommonRepository from "../repository/Common"
 import { RequestError } from "src/config/error";
 import db from "@database"
 
@@ -162,6 +163,41 @@ export async function confirmOrderDomain({order_no, user_id}: TransactionDto.Con
 
     // Update order to packing
     await TransactionRepository.DBUpdateTransactionStatus({order_no, status: 3, verified_by: user_id})
+
+    return true
+}
+
+export async function changeDeliveryStatusHandler({order_no, user_id: delivered_by}: TransactionDto.ChangeDeliveryStatusDomain) {
+    await TransactionRepository.DBCheckTransactionDelivery(order_no)
+
+    await TransactionRepository.DBUpdateTransactionStatus({ status: 4, delivered_by, order_no  })
+
+    return true
+}
+
+export async function setDeliveryDomain({ order_no }: TransactionDto.SetDeliveryOrderDomainParams) {
+    const transaction = await TransactionRepository.DBCheckTransactionExist({ order_no })
+
+    if(transaction.status != 3) {
+        throw new RequestError("INVALID_SESSION_TRANSACTION")
+    }
+
+    await TransactionRepository.DBSetDeliveryOrder(order_no)
+
+    return true
+}
+
+export async function setArrivedDomain({ attachment, order_no, delivered_by }: TransactionDto.SetArrivedDomain) {
+    await TransactionDto.setArrivedSchema.parseAsync({ attachment, order_no })
+
+    // Check Transaction exists
+    await TransactionRepository.DBCheckTransactionArrived({ delivered_by, order_no })
+
+    // Save file attachments
+    await CommonRepository.uploadImage({ file: attachment, dir: "/orders", filename: `${order_no.split("/").join("-")}.png` })
+
+    // Update status to arrived
+    await TransactionRepository.DBUpdateTransactionStatus({ status: 5, order_no })
 
     return true
 }
