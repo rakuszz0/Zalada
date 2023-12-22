@@ -7,6 +7,7 @@ import database from "@infrastructure/database";
 import * as Bcrypt from "src/utils/password";
 import * as Jwt from "src/utils/jwt";
 
+
 export async function getUsersDomain() {
   return await UserRepository.DBGetUsers()
 }
@@ -87,6 +88,39 @@ export async function changePasswordDomain(params: UserTypes.ChangePassRequest) 
     await conn.release();
 
     return result;
+
+  } catch (error) {
+    await conn.rollbackTransaction();
+    await conn.release();
+    throw error
+  }
+}
+
+export async function deleteUserByAdmin({email}:UserTypes.DeleteUserRequest){
+
+  const data_user = await UserRepository.DBCheckUserExistByEmail(email) 
+  
+  const db = database.getDatasource()
+  const conn = db.createQueryRunner()
+  await conn.connect()
+  try {
+    await conn.startTransaction()
+
+
+    const insertToTrashedUser = await UserRepository.DBInsertToTrashedUser( data_user, conn)
+    if(insertToTrashedUser.affectedRows < 1){
+      throw new ServerError("FAILED_INSERT_TO_TRASH")
+    }
+
+    const deleteUser = await UserRepository.DBDeleteUser(data_user.id, conn)
+    if (deleteUser.affectedRows < 1) {
+      throw new ServerError("FAILED_DELETE_USER");
+    }
+
+    await conn.commitTransaction();
+    await conn.release();
+
+    return deleteUser;
 
   } catch (error) {
     await conn.rollbackTransaction();

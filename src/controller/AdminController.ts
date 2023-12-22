@@ -3,7 +3,7 @@ import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
 import * as ProductDomainService from "src/services/domain/Product";
 import { AddProductByAdmin, DeleteProductRequest } from "src/services/models/Product";
-import { CreateRulesRequest, CreateUserByAdmin, RestoreTrashedUser } from "src/services/models/User";
+import { CreateRulesRequest, CreateUserByAdmin, RestoreTrashedUser, DeleteUserRequest } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
 
 export async function Hello(request: FastifyRequest) {
@@ -108,6 +108,19 @@ export async function deleteProductController(request:FastifyRequest){
         })
 
         return {message:delete_product}
+    } catch (error){
+        throw error
+    }
+}
+
+export async function deleteUserByAdminController(request: FastifyRequest){
+    try{
+        const {email} = request.body as DeleteUserRequest
+        const deleteUser = await UserDomainService.deleteUserByAdmin({
+            email
+        })
+
+        return {message:deleteUser}
     } catch (error){
         throw error
     }
