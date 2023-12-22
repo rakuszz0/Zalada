@@ -4,7 +4,9 @@ import { ListRules } from "src/config/rules";
 import * as StaffController from "src/controller/StaffController";
 import { productSchema } from "src/services/models/Product";
 import { transactionSchema } from "src/services/models/Transaction";
+import fastifyMulter from "fastify-multer"
 
+const upload = fastifyMulter({ dest: "uploads" })
 
 const routes: RouteOptions[] = [
   {
@@ -53,10 +55,10 @@ const routes: RouteOptions[] = [
   },
   {
     method: ["POST"],
-    url: "/orders/delivery",
+    url: "/orders/shipping",
     schema: {
-      tags: ["Staff & Admin Services"],
-      summary: "Change Delivery Status",
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Change Delivery Status",
       body: transactionSchema("changeDeliveryStatusRequest"),
       security: [
         {
@@ -66,6 +68,51 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
     handler: StaffController.changeDeliveryStatusHandler
+  },
+  {
+    method: ["POST"],
+    url: "/orders/delivery",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Set Order Delivery",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      body: transactionSchema("setDeliveryRequest")
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_PRODUCT),
+    handler: StaffController.setDeliveryHandler
+  },
+  {
+    method: ["POST"],
+    url: "/orders/arrived",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Set Order Arrived",
+      consumes: ["multipart/form-data"],
+      produces: ['application/json'],
+      body: {
+        type: "object",
+        properties: {
+          attachment: {
+            isFile: true,
+          },
+          order_no: {
+            type: "string"
+          }
+        },
+      },
+      security: [
+        {
+          authorization: []
+        }
+      ]
+    },
+    preValidation: upload.single("attachment"),
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
+    handler: StaffController.setArrivedHandler
   }
 ];
 

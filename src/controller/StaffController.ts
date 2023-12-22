@@ -4,7 +4,7 @@ import * as ProductDomainService from "src/services/domain/Product";
 import * as TransactionDomainService from "src/services/domain/Transaction";
 import * as ProductDto from "src/services/models/Product";
 import * as TransactionDto from "src/services/models/Transaction";
-
+import * as z from "zod"
 
 export async function getStaffsHandler( request: FastifyRequest, reply: FastifyReply) {
   const staff = await UserDomainService.getStaffsDomain();
@@ -31,6 +31,34 @@ export async function changeDeliveryStatusHandler(request: FastifyRequest) {
 
     return {message: response}
   } catch (error) {
+    throw error
+  }
+}
+
+export async function setDeliveryHandler(request: FastifyRequest) {
+  try {
+    const { order_no } = request.body as TransactionDto.SetDeliveryRequest
+    const delivery = await TransactionDomainService.setDeliveryDomain({ order_no })
+
+    return { message: delivery }
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function setArrivedHandler(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const attachment = request.file
+    const { id: delivered_by } = request.user
+    const { order_no } = request.body as TransactionDto.SetArrivedRequest
+
+    const response = await TransactionDomainService.setArrivedDomain({ attachment, order_no, delivered_by })
+
+    return { message: response }
+  } catch (error) {
+    if(error instanceof z.ZodError) {
+      throw reply.code(400).send(error.issues)
+    }
     throw error
   }
 }
