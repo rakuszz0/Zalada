@@ -4,13 +4,14 @@ import * as ProductRepository from "../repository/Product"
 import * as CommonRepository from "../repository/Common"
 import { RequestError } from "src/config/error";
 import db from "@database"
+import moment from "moment"
 
 export async function getPaymentTypesDomain() {
     return await TransactionRepository.DBGetPaymentTypes()
 }
 
 export async function createTransactionDomain({customer_id, order, payment_type}: TransactionDto.CreateTransactionDomainParams) {
-    const order_no = `ORD/${customer_id}/${Date.now()}`
+    const order_no = `ORD/${customer_id}/${moment().unix()}`
     let stock: Record<string, number> | number = {}
     let total_price = 0
 
@@ -24,7 +25,7 @@ export async function createTransactionDomain({customer_id, order, payment_type}
         if(Array.isArray(order)) {
             for (const item of order) {
                 // Check product exists
-                const product = await ProductRepository.DBCheckProductExist(item.product_id)
+                const product = await ProductRepository.DBCheckProductExist(item.product_id, { lock: true })
 
                 // Check quantity is more than product stock
                 if (product.stock < item.quantity) {
@@ -42,7 +43,7 @@ export async function createTransactionDomain({customer_id, order, payment_type}
             }
         } else {
             // Check product exists
-            const product = await ProductRepository.DBCheckProductExist(order.product_id)
+            const product = await ProductRepository.DBCheckProductExist(order.product_id, { lock: true })
 
             // Check quantity is more than product stock
             if (product.stock < order.quantity) {
@@ -135,6 +136,8 @@ export async function getTransactionDetailsDomain({customer_id, order_no}: Trans
     const transaction = await TransactionRepository.DBCheckTransactionExist({customer_id, order_no})
     const payment = await TransactionRepository.DBCheckPaymentTypeExist(transaction.payment_type)
     const orders = await TransactionRepository.DBGetOrders(order_no)
+
+    console.log({tr: new Date(transaction.created_at).getTime()})
 
     return {
         order_no,
