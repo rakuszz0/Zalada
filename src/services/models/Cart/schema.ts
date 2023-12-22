@@ -9,10 +9,20 @@ export const addProductToCartRequest = z.object({
 export const addProductToCartResponse = z.object({
     message: z.boolean()
   })
+
+export const deleteProductFromCartRequest = z.object({
+    product_id: z.number()
+})
+
+export const deleteProductFromCartResponse = z.object({
+    message: z.boolean()
+})
 export const { schemas: cartSchemas, $ref: cartSchema } = buildJsonSchemas(
     {
         addProductToCartRequest,
-        addProductToCartResponse
+        addProductToCartResponse,
+        deleteProductFromCartRequest,
+        deleteProductFromCartResponse
     },
     {
         $id: "cartSchema",

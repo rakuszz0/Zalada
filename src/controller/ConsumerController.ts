@@ -118,7 +118,7 @@ export async function paymentOrderHandler(request: FastifyRequest) {
     }
 }
 
-export async function addProductToCart(request: FastifyRequest) {
+export async function addProductToCartHandler(request: FastifyRequest) {
     try {
         const {product_id, quantity} = request.body as CartDto.AddProductToCartRequest
         const user = request.user
@@ -157,3 +157,18 @@ export async function getProductDetailsHandler(request: FastifyRequest){
         throw error
     }
 }
+
+export async function deleteProductFromCartHandler(request: FastifyRequest) {
+    try {
+        const {product_id} = request.body as CartDto.DeleteProductFromCartRequest
+        const user = request.user
+
+        await CartDomainService.DeleteProductFromCartDomain({
+            product_id,
+            userid: user.id
+        })
+
+        return { message: true }
+    } catch (error){
+        throw (error)
+    }}
