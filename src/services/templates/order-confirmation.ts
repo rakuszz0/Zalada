@@ -1,0 +1,120 @@
+import { OrderConfirmationMailTemplate } from "../models/Mail"
+
+export default function OrderTemplate(items: OrderConfirmationMailTemplate[]) {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transaction Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2,
+        p {
+            color: #333333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Transaction Confirmation</h2>
+        <p>Dear {username},</p>
+
+        <p>
+            Your transaction has been successfully processed. Below are the details
+            of your transaction:
+        </p>
+        <p>Order ID: {order_no}</p>
+        <p>Transaction Date: {order_time}</p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${(() => {
+                    const column = []
+
+                    for (const item of items) {
+                        const td = [
+                            `<td>${item.product_name}</td>`,
+                            `<td>${item.quantity}</td>`,
+                            `<td>${item.price}</td>`,
+                        ]
+
+                        const tr = `<tr> ${td.join('\n')} </tr>`
+
+                        column.push(tr)
+                    }
+
+                    return column.join('\n')
+                })()
+            }
+            <tr>
+                <td colspan="2">Total Price</td>
+                <td>{total_price}</td>
+            </tr>
+            <!-- Add more rows for additional products as needed -->
+            </tbody>
+        </table>
+
+        <p>
+            Thank you for using our service. If you have any questions, please
+            contact our support team.
+        </p>
+
+        <button>Contact Support</button>
+
+        <p>Best regards,<br />Zalada</p>
+    </div>
+</body>
+</html>
+`
+}

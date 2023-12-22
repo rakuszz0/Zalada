@@ -5,6 +5,7 @@ import * as CommonRepository from "../repository/Common"
 import { RequestError } from "src/config/error";
 import db from "@database"
 import moment from "moment"
+import MailService from "@infrastructure/mailer"
 
 export async function getPaymentTypesDomain() {
     return await TransactionRepository.DBGetPaymentTypes()
@@ -59,10 +60,9 @@ export async function createTransactionDomain({customer_id, order, payment_type}
             // Update product stock after transaction has been created
             await ProductRepository.DBUpdateStockProduct({ product_id: product.id, stock: product.stock - order.quantity }, queryRunner)   
         }
+        await TransactionRepository.DBCreateTransaction({order_no, customer_id, payment_type, status: 1}, queryRunner)
 
         await queryRunner.commitTransaction()
-
-        await TransactionRepository.DBCreateTransaction({order_no, customer_id, payment_type, status: 1}, queryRunner)
 
         return { order_no, total_price, stock }
     } catch (error) {
@@ -105,7 +105,7 @@ export async function TransactionHistoryDomain(params: TransactionDto.Transactio
     return result;
 }
 
-export async function paymentOrderDomain({amount, order_no, customer_id}: TransactionDto.PaymentOrderDomainParams) {
+export async function paymentOrderDomain({amount, order_no, customer_id, email, username}: TransactionDto.PaymentOrderDomainParams) {
     const transaction = await TransactionRepository.DBCheckTransactionExist({customer_id, order_no})
 
     // Check if transaction has been paid
@@ -128,6 +128,24 @@ export async function paymentOrderDomain({amount, order_no, customer_id}: Transa
 
     // Set transaction to pending approval 
     await TransactionRepository.DBUpdateTransactionStatus({order_no, status: 2})
+
+    const html = await MailService.getTemplate({
+        template: "ORDER_CONFIRMATION",
+        content: {
+            order_no, 
+            order_time: moment.utc(transaction.created_at).utcOffset("+07:00").format("YYYY-MM-DD HH:mm:ss"),
+            total_price,
+            items: orders,
+            username
+        }
+    })
+
+    // Send Mail to use
+    await MailService.sendMail({
+        to: email,
+        subject: "Order Confirmation",
+        html 
+    })
 
     return true
 }

@@ -88,7 +88,7 @@ export type CheckTransactionExistQueryParams = {
     order_no: string
 }
 
-export type PaymentOrderDomainParams = PaymentOrderRequest & { customer_id: number }
+export type PaymentOrderDomainParams = PaymentOrderRequest & { customer_id: number, email: string, username: string }
 
 
 export type GetOrderDetailsRequest = z.infer<typeof getOrderDetailsRequest>
