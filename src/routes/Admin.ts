@@ -4,6 +4,7 @@ import { userSchema } from "../services/models/User";
 import * as Auth from "src/config/auth";
 import { productSchema } from "src/services/models/Product";
 import { ListRules } from "src/config/rules";
+import { baseResponse, commonSchema } from "src/services/models/Common";
 
 const routes: RouteOptions[] = [
     {
@@ -23,18 +24,21 @@ const routes: RouteOptions[] = [
         handler: AdminController.Hello
     },
     {
-        method: ["GET"],
-        url: "/users",
+        method: ["POST"],
+        url: "/users/list",
         schema: {
             tags: ["Admin Services"],
+            summary: "Get User List",
             security: [
                 {
                     authorization: []
                 }
-            ]
+            ],
+            body: userSchema("getUserListRequest"),
+            response: baseResponse({ schema: commonSchema("paginationResponse") })
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_USER),
-        handler: AdminController.getUsersHandler
+        handler: AdminController.getUserListHandler
     },
     {
         method: ["POST"],

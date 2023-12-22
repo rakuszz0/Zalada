@@ -6,10 +6,56 @@ import * as ProductRepository from "../repository/Product";
 import database from "@infrastructure/database";
 import * as Bcrypt from "src/utils/password";
 import * as Jwt from "src/utils/jwt";
+import format from "format-unicorn/safe"
 
 
-export async function getUsersDomain() {
-  return await UserRepository.DBGetUsers()
+export async function getUserListDomain({ lastId = 0, limit = 500, search = "", sort = "DESC" }: UserTypes.GetUserListDomain) {
+
+  const parsedSearch = format(search, {
+    user_id: "u.id",
+    username: "u.username",
+    email: "u.email",
+    firstname: "u.first_name",
+    lastname: "u.last_name",
+    registered_date: "u.registered_date",
+    user_level: "u.user_level"
+  })
+
+  let searchClause = "1=1"
+
+  if (parsedSearch != "" && lastId < 1) {
+    // Search when search props not empty and not paginate
+    searchClause = `${searchClause} AND (${parsedSearch})`
+  } else if (parsedSearch != "" && lastId > 0) {
+    // Search when search props not empty and wanting to paginate
+    searchClause = `${searchClause} AND (${parsedSearch}) AND id ${sort == "ASC" ? ">" : "<"} ${lastId}`
+  } else if (parsedSearch == "" && lastId > 0) {
+    searchClause = `${searchClause} AND id ${sort == "ASC" ? ">" : "<"} ${lastId}`
+  }
+
+  const users = await UserRepository.DBGetUsers({ limit, search: searchClause, sort })
+
+  if(users.length < 1) {
+    return {
+      data: [],
+      column: [],
+      hasNext: -1
+    }
+  }
+
+  const result = {
+    data: users.map(user => Object.values(user)),
+    column: Object.keys(users[0]),
+    hasNext: -1
+  }
+
+  if (users.length > limit) {
+    users.length = limit
+    result.data.length = limit
+    result.hasNext = users[users.length - 1].id
+  }
+
+  return result
 }
 
 export async function checkUserExistDomain(user_id: number) {
