@@ -21,11 +21,7 @@ export async function CheckAuth(request: FastifyRequest) {
 
     const user = await UserRepository.DBCheckUserExist(jwtPayload.user_id);
 
-    if (user == undefined) {
-        throw new UnathorizedError("USER_NOT_EXIST")
-    }
-
-    request.user = user[0];
+    request.user = user
 }
 
 export function CheckRoles(role: number[]){

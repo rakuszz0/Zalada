@@ -1,17 +1,31 @@
 import { FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
-import { AddProductByAdmin } from "src/services/models/Product";
-import { CreateUserByAdmin } from "src/services/models/User";
+import * as ProductDomainService from "src/services/domain/Product";
+import { AddProductByAdmin, DeleteProductRequest } from "src/services/models/Product";
+import { CreateRulesRequest, CreateUserByAdmin, GetUserListRequest, RestoreTrashedUser, DeleteUserRequest } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
+import { QueryFailedError } from "typeorm";
 
 export async function Hello(request: FastifyRequest) {
     return { message: "Hello" }
 }
 
-export async function getUsersHandler() {
-    const users = await UserDomainService.getUsersDomain()
-    return users
+export async function getUserListHandler(request: FastifyRequest) {
+    try {
+        const { lastId, limit, search, sort } = request.body as GetUserListRequest
+        const users = await UserDomainService.getUserListDomain({ lastId, limit, search, sort })
+
+        return {
+            message: users
+        }        
+    } catch (error) {
+        if(error instanceof QueryFailedError) {
+            throw new RequestError("INVALID_SEARCH_PROPERTIES")
+        }
+        throw error
+    }
+
 }
 
 export async function addProductsHandler(request: FastifyRequest) {
@@ -49,6 +63,77 @@ export async function createUserByAdmin(request: FastifyRequest) {
 
         return {message:true}
 
+    } catch (error){
+        throw error
+    }
+}
+
+export async function getRolesList() {
+    try {
+        const response = await UserDomainService.getRolesListDomain()
+        return { message: response }
+    } catch (error) {
+        throw error
+    }
+} 
+
+export async function getRulesList() {
+    try {
+        const response = await UserDomainService.getRulesListDomain()
+        return { message: response }
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function addGroupRulesHandler(request: FastifyRequest) {
+    try {
+        const { role_id, rules } = request.body as CreateRulesRequest
+
+        const response = await UserDomainService.addGroupRulesDomain({ role_id, rules })
+
+        return { message: response }   
+    } catch (error) {
+        throw error
+    }
+}
+
+
+export async function restoreTrashedUserController(request: FastifyRequest) {
+    try {
+        const { id } = request.body as RestoreTrashedUser
+        const restoreUser = await UserDomainService.restoreTrashedUser({
+            id
+        })
+
+        return { message: restoreUser }
+    } catch (error) {
+        throw error
+    }
+}
+
+
+export async function deleteProductController(request:FastifyRequest){
+    try{
+        const {product_id} = request.body as DeleteProductRequest
+        const delete_product = await ProductDomainService.deleteProductByAdmin({
+            product_id
+        })
+
+        return {message:delete_product}
+    } catch (error){
+        throw error
+    }
+}
+
+export async function deleteUserByAdminController(request: FastifyRequest){
+    try{
+        const {email} = request.body as DeleteUserRequest
+        const deleteUser = await UserDomainService.deleteUserByAdmin({
+            email
+        })
+
+        return {message:deleteUser}
     } catch (error){
         throw error
     }

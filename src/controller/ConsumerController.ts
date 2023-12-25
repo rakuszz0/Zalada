@@ -1,20 +1,28 @@
-import db from "@database"
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RequestError } from "src/config/error";
 import * as ProductDomainService from "src/services/domain/Product";
 import * as TransactionDomainService from "src/services/domain/Transaction";
 import * as UserDomainService from "src/services/domain/User";
+import * as CartDomainService from "src/services/domain/Cart";
 import * as UserDto from "src/services/models/User";
 import * as TransactionDto from "src/services/models/Transaction";
-import * as Jwt from "src/utils/jwt";
-import * as Bcrypt from "src/utils/password";
-import * as z from "zod";
+import * as ProductDto from "src/services/models/Product"
+import * as CartDto from "src/services/models/Cart";
+import { QueryFailedError } from "typeorm";
 
-export async function getProductHandler() {
+
+export async function getProductHandler(request: FastifyRequest) {
     try {
-        const product = await ProductDomainService.getProductsDomain();
-        return product
+        const {lastId, limit, sort, search, filter } = request.body as ProductDto.GetProductListRequest
+        const product = await ProductDomainService.getProductsDomain({limit,search, sort, lastId, filter});
+        return {
+            message: product
+        }
     } catch (error) {
+        // Error Handling when query error on search
+        if(error instanceof QueryFailedError) {
+            throw new RequestError("INVALID_SEARCH_PROPERTIES")
+        }
         throw error
     }
 
@@ -23,18 +31,9 @@ export async function getProductHandler() {
 export async function loginHandler(request: FastifyRequest) {
     try {
         const { email, password } = request.body as UserDto.LoginRequest
+        const login = await UserDomainService.loginDomain({email, password})
 
-        const user = await UserDomainService.checkUserExistByEmailDomain(email)
-
-        const isPassword = await Bcrypt.checkPassword({ hash: user.password, password })
-
-        if(!isPassword) {
-            throw new RequestError("INVALID_CREDENTIALS")
-        }
-
-        const token = await Jwt.signToken({user_id: user.id, user_level: user.user_level})
-
-        return {message: token}
+        return { message: login }
     } catch (error) {
         throw error
     }
@@ -58,30 +57,9 @@ export async function registerHandler(request: FastifyRequest) {
     try {
         const { username, email, password, password_confirmation, phone_number, address, first_name, last_name } = request.body as UserDto.RegisterRequest;
 
-        if (password != password_confirmation) {
-            throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH");
-        }
+        const register = await UserDomainService.registerDomain({address, username, email, password, password_confirmation, phone_number, first_name, last_name})
 
-        const checkEmail = await UserDomainService.checkEmailExistDomain(email)
-
-        if (checkEmail) {
-            throw new RequestError("EMAIL_ALREADY_EXIST")
-        }
-
-        const hashPassword = await Bcrypt.hashPassword(password);
-
-        await UserDomainService.registerDomain({
-            username,
-            email,
-            first_name,
-            last_name,
-            password: hashPassword,
-            phone_number,
-            address,
-        })
-
-
-        return { message: true }
+        return { message: register }
     } catch (error) {
         throw error
     }
@@ -127,3 +105,99 @@ export async function getPaymentTypesHandler() {
 //     }
 
 // }
+
+export async function paymentOrderHandler(request: FastifyRequest) {
+    try {
+        const { id: customer_id, email, username } = request.user
+        const { amount, order_no } = request.body as TransactionDto.PaymentOrderRequest
+        const payment = await TransactionDomainService.paymentOrderDomain({amount, order_no, customer_id, email, username})
+
+        return {message: payment}
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function addProductToCartHandler(request: FastifyRequest) {
+    try {
+        const {product_id, quantity} = request.body as CartDto.AddProductToCartRequest
+        const user = request.user
+
+        await CartDomainService.AddProductToCartDomain({
+            product_id,
+            quantity,
+            userid: user.id
+        })
+
+        return { message: true }
+    } catch (error){
+        throw (error)
+    }}
+
+export async function getOrderDetailsHandler(request: FastifyRequest) {
+    try {
+        const {id: customer_id} = request.user
+        const {order_no} = request.params as TransactionDto.GetOrderDetailsRequest
+        const transaction = await TransactionDomainService.getTransactionDetailsDomain({customer_id, order_no})
+
+        return {message: transaction}
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function getProductDetailsHandler(request: FastifyRequest){
+    try {
+        const {id} = request.body as ProductDto.GetProductDetails
+
+        const getProductDetails = await ProductDomainService.getProductDetailsDomain(id)
+
+        return getProductDetails
+    } catch (error){
+        throw error
+    }
+}
+
+export async function deleteProductFromCartHandler(request: FastifyRequest) {
+    try {
+        const {product_id} = request.body as CartDto.DeleteProductFromCartRequest
+        const user = request.user
+
+        await CartDomainService.DeleteProductFromCartDomain({
+            product_id,
+            userid: user.id
+        })
+
+        return { message: true }
+    } catch (error){
+        throw (error)
+    }}
+
+export async function finishOrderHandler(request: FastifyRequest) {
+    try {
+        const { id: customer_id } = request.user
+        const { order_no } = request.body as TransactionDto.FinishOrderRequest
+
+        const response = await TransactionDomainService.finishOrderDomain({ customer_id, order_no })
+
+        return { message: response }
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function addProductReview(request:FastifyRequest){
+
+    try {
+        const {id: customer_id} = request.user
+        const {product_id,order_no,message,rating} = request.body as ProductDto.ReviewProductRequest
+
+        const review_product = await ProductDomainService.addReviewProduct({
+            customer_id,product_id,order_no,message,rating
+        })
+
+        return {message:review_product}
+    } catch (error) {
+        throw error
+    }
+}

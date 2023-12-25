@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { changePassRequest, loginRequest, registerRequest } from './schema'
+import { changePassRequest, createGroupRules, editUserRequest, deleteUserRequest, getUserListRequest, loginRequest, registerRequest, restoreTrashedUser } from './schema'
 
 export type User = {
     id: number
@@ -10,6 +10,8 @@ export type User = {
     address: string
     registered_date: Date
     user_level: number
+    first_name: string
+    last_name: string
 }
 
 export type RegisterQueryParams = {
@@ -26,7 +28,7 @@ export type LoginRequest = z.infer<typeof loginRequest>
 
 export type RegisterRequest = z.infer<typeof registerRequest>
 
-export type GetUserResponse = Omit<User, 'password' | "user_level">
+export type GetUserResponse = Omit<User, 'password' | "user_level"> & { roles_name: string }
 
 export type CheckUserByUsernameOrEmailParams = {
     username: string
@@ -50,3 +52,80 @@ export type ChangePassQueryParams ={
     new_password:string;
     user_id:number;
 }
+
+export type CreateRulesRequest = z.infer<typeof createGroupRules>
+
+export type CreateRulesDomainParams = CreateRulesRequest
+
+export type AddGroupRulesQueryParams = {
+    rules_id: number
+    role_id: number
+}
+
+export type CheckRoles = {
+    id: number
+    name: string
+}
+
+export type LoginDomain = LoginRequest
+
+export type RegisterDomain = RegisterRequest
+
+export type EditUserRequest = z.infer<typeof editUserRequest> 
+
+export type EditUserDomain = EditUserRequest
+
+export type EditUserQueryParams = {
+    id:number;
+    email: string;
+    first_name:string;
+    last_name: string;
+    username: string;
+    user_level: number;
+    phone_number:string;
+    address:string;
+}
+
+export type RestoreTrashedUser = z.infer<typeof restoreTrashedUser>
+
+export type GetTrashedUserQueryParams = {
+    id:number
+}
+
+export type RestoreTrashedUserQueryParams = {
+    id:number
+    username:string;
+    email:string;
+    first_name:string,
+    last_name:string,
+    password:string;
+    phone_number:string;
+    registered_date:number;
+    address:string;
+    user_level:number;
+}
+
+
+export type DeleteUserQueryParams = {
+    id: number
+    username: string
+    email: string
+    password: string
+    first_name: string
+    last_name: string
+    phone_number: string
+    address: string
+    registered_date: Date
+    user_level: number
+}
+
+export type DeleteUserRequest = z.infer<typeof deleteUserRequest>
+export type GetUsersQueryParams = {
+    limit?: number
+    sort?: string
+    search?: string
+}
+
+export type GetUserListRequest = z.infer<typeof getUserListRequest>
+
+export type GetUserListDomain = GetUserListRequest

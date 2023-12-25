@@ -1,0 +1,1 @@
+export type BaseResponse = { schema: any, statusCode?: number }

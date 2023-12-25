@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { createOrderRequest, productList, transactionListResponse } from "./schema"
+import { confirmOrderRequest, changeDeliveryStatusRequest, createOrderRequest, finishOrderRequest, getOrderDetailsRequest, paymentOrderRequest, productList, setArrivedSchema, setDeliveryRequest, transactionListResponse } from "./schema"
 
 export enum TransactionStatus {
     PENDING_PAYMENT = 1,
@@ -10,6 +10,8 @@ export enum TransactionStatus {
     FINISHED = 6,
     CANCEL = 7
 }
+
+export type Transaction = { order_no: string, created_at: Date, status: number, payment_type: number, verified_by: Date, payment_at: Date, shipping_at: Date, arrived_at: Date }
 
 export type CreateOrderRequest = z.infer<typeof createOrderRequest>
 
@@ -67,6 +69,86 @@ export type TransactionListResult = {
     price: number;
     quantity: number;
 }
+
+export type PaymentOrderRequest = z.infer<typeof paymentOrderRequest>
+
+export type CheckOrderExistQueryParams = {
+    order_no: string
+    status: TransactionStatus
+    customer_id: number
+}
+
+export type ConfirmOrderUpdate = {
+    status: TransactionStatus.PACKING | 3
+    order_no: string
+    verified_by: number
+}
+
+type DeliveryOrderParams = {
+    status: TransactionStatus.PACKING,
+    order_no: string
+    delivered_by: number
+}
+
+export type UpdateOrderStatusQueryParams = {
+    order_no: string
+    status: TransactionStatus | number
+} | ConfirmOrderUpdate | DeliveryOrderParams
+
+export type CheckTransactionExistQueryParams = {
+    customer_id?: number
+    order_no: string
+}
+
+export type PaymentOrderDomainParams = PaymentOrderRequest & { customer_id: number, email: string, username: string }
+
+
+export type GetOrderDetailsRequest = z.infer<typeof getOrderDetailsRequest>
+
+export type GetTransactionDetailsQueryParams = {
+    customer_id: number
+    order_no: string
+}
+
+export type GetTransactionDetailsQueryResult = {
+    product_name: string
+    quantity: number
+    price: number
+    order_time: Date
+    bank_name: string
+    account: string
+}
+
+export type ConfirmOrderRequest = z.infer<typeof confirmOrderRequest>
+
+export type ConfirmOrderDomain = ConfirmOrderRequest & { user_id: number }
+
+
+export type ChangeDeliveryStatusRequest = z.infer<typeof changeDeliveryStatusRequest>
+
+export type ChangeDeliveryStatusDomain = ChangeDeliveryStatusRequest & {user_id: number}
+
+export type SetDeliveryRequest = z.infer<typeof setDeliveryRequest>
+
+export type SetDeliveryOrderDomainParams = SetDeliveryRequest
+
+export type SetArrivedRequest = Pick<z.infer<typeof setArrivedSchema>, 'order_no'>
+
+export type SetArrivedDomain = z.infer<typeof setArrivedSchema> & { delivered_by: number}
+
+export type CheckTransactionArrivedQueryParams = {
+    order_no: string,
+    delivered_by: number
+}
+
+export type CheckTransactionDeliveryQueryParams = {
+    order_no: string
+    delivered_by: number
+}
+
+export type FinishOrderRequest = z.infer<typeof finishOrderRequest>
+
+export type finishOrderDomain = FinishOrderRequest & { customer_id: number }
 
 export type TransactionListResponse = z.infer<typeof transactionListResponse>;
 export type ProductList = z.infer<typeof productList>;
