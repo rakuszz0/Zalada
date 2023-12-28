@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { changePassRequest, createGroupRules, editUserRequest, deleteUserRequest, getUserListRequest, loginRequest, registerRequest, restoreTrashedUser, createRulesRequest } from './schema'
+import { changePassRequest, createGroupRules, editUserRequest, deleteUserRequest, getUserListRequest, loginRequest, registerRequest, restoreTrashedUser, createRulesRequest, revokeGroupRulesRequest } from './schema'
 
 export type User = {
     id: number
@@ -137,4 +137,18 @@ export type CreateRulesDomain = CreateRulesRequest
 export type CreateRulesQueryParams = {
     id: number
     name: string
+}
+
+export type RevokeGroupRulesRequest = z.infer<typeof revokeGroupRulesRequest>
+
+export type RevokeGroupRulesDomain = RevokeGroupRulesRequest
+
+export type CheckGroupRulesQueryParams = {
+    role_id: number
+    rules_id: number
+}
+
+export type DeleteGroupRulesQueryParams = {
+    role_id: number
+    rules_id: number
 }

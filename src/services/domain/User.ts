@@ -298,3 +298,13 @@ export async function createRulesDomain({ rules_id, rules_name }: UserTypes.Crea
 
   return true
 }
+
+export async function revokeGroupRulesDomain({ role_id, rules_id }: UserTypes.RevokeGroupRulesDomain) {
+  // Check Group Rules
+  await UserRepository.DBCheckGroupRules({ role_id, rules_id })
+
+  // Rovoke/delete group rules
+  await UserRepository.DBDeleteGroupRules({ role_id, rules_id })
+
+  return true
+}

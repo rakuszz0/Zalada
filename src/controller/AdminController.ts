@@ -3,7 +3,7 @@ import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
 import * as ProductDomainService from "src/services/domain/Product";
 import { AddProductByAdmin, DeleteProductRequest } from "src/services/models/Product";
-import { CreateRulesRequest, CreateUserByAdmin, GetUserListRequest, RestoreTrashedUser, DeleteUserRequest, AddGroupRulesRequest } from "src/services/models/User";
+import { CreateRulesRequest, CreateUserByAdmin, GetUserListRequest, RestoreTrashedUser, DeleteUserRequest, AddGroupRulesRequest, RevokeGroupRulesRequest } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
 import { QueryFailedError } from "typeorm";
 
@@ -150,6 +150,22 @@ export async function createRulesHandler(request: FastifyRequest) {
          return {
             message: rules
          }
+    } catch (error) {
+        throw error
+    }
+}
+
+
+
+export async function revokeGroupRulesHandler(request: FastifyRequest) {
+    try {
+        const { role_id, rules_id } = request.body as RevokeGroupRulesRequest
+        const response = await UserDomainService.revokeGroupRulesDomain({
+            role_id,
+            rules_id
+        })
+
+        return { message: response }
     } catch (error) {
         throw error
     }

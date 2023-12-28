@@ -118,6 +118,15 @@ export const createRulesResponse = z.object({
   message: z.boolean()
 })
 
+export const revokeGroupRulesRequest = z.object({
+  role_id: z.number(),
+  rules_id: z.number()
+})
+
+export const revokeGroupRulesResponse = z.object({
+  message: z.boolean()
+})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -140,7 +149,9 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     deleteUserResponse,
     getUserListRequest,
     createRulesRequest,
-    createRulesResponse
+    createRulesResponse,
+    revokeGroupRulesRequest,
+    revokeGroupRulesResponse
   },
   {
     $id: "userSchema",

@@ -207,3 +207,23 @@ export async function DBCreateRules({ id, name }: UserTypes.CreateRulesQueryPara
 
  return query
 }
+
+export async function DBDeleteGroupRules({ role_id, rules_id }: UserTypes.DeleteGroupRulesQueryParams) {
+  const query = await db.query<ResultSetHeader>(`DELETE FROM user_group_rules WHERE role_id = ? AND rules_id = ?`, [role_id, rules_id])
+
+  if(query.affectedRows < 1) {
+    throw new ServerError("FAILED_DELETE_GROUP_RULES")
+  }
+
+  return query
+}
+
+export async function DBCheckGroupRules({ role_id, rules_id }: UserTypes.CheckGroupRulesQueryParams) {
+  const query = await db.query<Array<{role_id: number, rules_id: number}>>(`SELECT role_id, rules_id FROM user_group_rules WHERE role_id = ? AND rules_id = ?`, [role_id, rules_id])
+
+  if(query.length < 1) {
+    throw new NotFoundError("GROUP_RULES_NOT_FOUND")
+  }
+
+  return query
+}

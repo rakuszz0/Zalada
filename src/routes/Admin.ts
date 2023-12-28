@@ -203,6 +203,25 @@ const routes: RouteOptions[] = [
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_RULES),
         handler: AdminController.createRulesHandler
+    },
+    {
+        method: ["DELETE"],
+        url: '/groups/rules',
+        schema: {
+            tags: ["Admin Services"],
+            summary: "Admin Revoke Group Rules",
+            body: userSchema("revokeGroupRulesRequest"),
+            security: [
+                {
+                    authorization: []
+                }
+            ],
+            response: baseResponse({
+                schema: userSchema("revokeGroupRulesResponse")
+            })
+        },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_RULES),
+        handler: AdminController.revokeGroupRulesHandler
     }
 ]
 
