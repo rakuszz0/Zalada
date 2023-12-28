@@ -6,6 +6,7 @@ export const envSchema = z.object({
     DB_PASSWORD: z.string(),
     DB_USERNAME: z.string(),
     DB_NAME: z.string(),
+    DB_PORT: z.preprocess(v => parseInt(v as string), z.number()),
     JWT_SECRET_KEY: z.string(),
     MAILER_PASSWORD: z.string(),
     MAILER_HOST: z.string(),
@@ -15,7 +16,6 @@ export const envSchema = z.object({
 
 
 type EnvSchema = z.infer<typeof envSchema>
-
 
 declare global {
     namespace NodeJS {

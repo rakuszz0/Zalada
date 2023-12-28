@@ -151,12 +151,21 @@ export const finishOrderResponse = z.object({
     message: z.boolean()
 })
 
+
+export const getTransactionListRequest = z.object({
+    limit: z.number().optional(),
+    sort: z.string().optional(),
+    search: z.string().optional(),
+    lastId: z.number().optional()
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
     getPaymentTypesResponse,
     productList,
     transactionListResponse,
+    getTransactionListRequest,
     paymentOrderRequest,
     paymentOrderResponse,
     getOrderDetailsRequest,

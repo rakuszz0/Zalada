@@ -6,27 +6,37 @@ import SwaggerService from '@infrastructure/swagger'
 import RoutesService from "@infrastructure/routes"
 import { envSchema } from "./src/config/app"
 import { ajvFilePlugin } from "src/utils/ajv"
+import { ZodError } from "zod"
 
 const server = fastify({ logger: process.env.NODE_ENV == "development" ? true : false, ajv: { plugins: [ajvFilePlugin] } })
 
 async function main() {
-    // Env Validation
-    await envSchema.parseAsync(process.env)
+    try {
+        // Env Validation
+        await envSchema.parseAsync(process.env)
 
-    // Register Mail Service
-    await MailerService.init()
+        // Register Mail Service
+        await MailerService.init()
 
-    await server.register(SwaggerService)
-    
-    // Register all routes
-    await server.register(RoutesService)
+        await server.register(SwaggerService)
 
-    // Initialize database service
-    await DatabaseService.init()
+        // Register all routes
+        await server.register(RoutesService)
 
-    await server.ready()
+        // Initialize database service
+        await DatabaseService.init()
 
-    await server.listen({ port: 3001 })
+        await server.ready()
+
+        await server.listen({ port: 3001 })        
+    } catch (error) {
+        if(error instanceof ZodError) {
+            console.error(error.issues)
+        }
+        console.log(error)
+        process.exit(1)
+    }
+
 }
 
 main()

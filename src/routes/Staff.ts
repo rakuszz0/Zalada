@@ -6,6 +6,7 @@ import { productSchema } from "src/services/models/Product";
 import { transactionSchema } from "src/services/models/Transaction";
 import fastifyMulter from "fastify-multer"
 import { userSchema } from "src/services/models/User";
+import { commonSchema } from "src/services/models/Common";
 
 const upload = fastifyMulter({ dest: "uploads" })
 
@@ -55,18 +56,19 @@ const routes: RouteOptions[] = [
     handler: StaffController.updateProductHandler
   },
   {
-    method: ["GET"],
-    url: "/transaction/transaction-list",
+    method: ["POST"],
+    url: "/transaction/list",
     schema: {
       tags: ["Staff Services"],
-      summary: "Get Transaction List",
+      summary: "Staff & Admin Get Transaction List",
       security: [
         {
           authorization: []
         }
       ],
+      body: transactionSchema("getTransactionListRequest"),
       response: {
-        200: transactionSchema('transactionListResponse')
+        200: commonSchema("paginationResponse")
       }
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_TRANSACTION),

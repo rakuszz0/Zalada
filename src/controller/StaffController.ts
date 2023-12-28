@@ -7,6 +7,7 @@ import * as UserDto from "src/services/models/User";
 import { RequestError } from "src/config/error";
 import * as TransactionDto from "src/services/models/Transaction";
 import * as z from "zod"
+import { QueryFailedError } from "typeorm";
 
 
 export async function getStaffsHandler( request: FastifyRequest, reply: FastifyReply) {
@@ -28,11 +29,15 @@ export async function updateProductHandler(request: FastifyRequest) {
 
 export async function transactionListHandler(request: FastifyRequest) {
   try {
-    const transactionList = await TransactionDomainService.transactionListDomain()
+    const { limit, search, sort, lastId } = request.body as TransactionDto.TransactionListRequest
+    const transactionList = await TransactionDomainService.transactionListDomain({ lastId, limit, search, sort })
     
-    return transactionList
+    return { message: transactionList }
   } catch (error) {
-    console.log(error)
+    if(error instanceof QueryFailedError) {
+      console.log(error)
+      throw new RequestError("INVALID_SEARCH_PROPERTIES")
+    }
     throw error
   }
 }

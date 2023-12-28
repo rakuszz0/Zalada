@@ -47,14 +47,33 @@ export async function DBCreateOrder({order_no, price, product_id, quantity}: Tra
     return query
 }
 
-// export async function DBTransactionHistory(params: TransactionDto.TransactionHistoryParams) {
-//   const transactionHistory = await db.query<TransactionDto.TransactionHistoryResult[]>(`SELECT t.status, t.customer_id, t.payment_type, t.verified_by, t.order_time, o.order_no, o.product_id, o.price, o.quantity FROM transactions t INNER JOIN orders o ON t.order_no = o.order_no WHERE t.customer_id = ? ${params.status ? `AND t.status = ${params.status}`: ''}`, [params.userid]);
-
-//   return transactionHistory;
-// }
-
-export async function DBTransactionList() {
-    return await db.query<TransactionDto.TransactionListResult[]>(`SELECT t.status, t.order_no, t.customer_id, t.order_time, t.verified_by, b.bank_name as payment_type, o.product_id, o.price, o.quantity FROM transactions t INNER JOIN orders o ON t.order_no = o.order_no LEFT JOIN banks b ON b.id = t.payment_type GROUP BY t.order_no ORDER BY t.order_time ASC`)
+export async function DBTransactionList({ limit = 500, search = "1=1", sort = "DESC" }: TransactionDto.TransactionListQueryParams) {
+    return await db.query<TransactionDto.TransactionListResult[]>(`SELECT
+    t.no,
+    CASE
+        WHEN (t.status = 1) THEN 'Pending Payment'
+        WHEN (t.status = 2) THEN 'Pending Approval'
+        WHEN (t.status = 3) THEN 'On Packing'
+        WHEN (t.status = 4 AND t.delivered_by IS NULL AND t.shipping_at IS NULL) THEN 'Ready To Shipping'
+        WHEN (t.status = 4 AND t.delivered_by IS NOT NULL AND t.shipping_at IS NOT NULL) THEN 'On Shipping'
+        WHEN (t.status = 5) THEN 'Order Already Arrived'
+        WHEN (t.status = 6) THEN 'Orders Confirmed By Customer'
+        WHEN (t.status = 7) THEN 'Cancelled'
+        ELSE 'Transaction Status Not Tracked On System'
+    END status, 
+    t.order_no, 
+        u.username, vb.username verified_by, b.bank_name payment_type, db.username delivered_by,
+        UNIX_TIMESTAMP(t.created_at) created_at, UNIX_TIMESTAMP(t.shipping_at) shipping_at, UNIX_TIMESTAMP(t.arrived_at) arrived_at 
+    FROM (
+        SELECT ROW_NUMBER() OVER (
+            ORDER BY tr.order_no
+        ) no, tr.* FROM transactions tr
+    ) t
+    LEFT JOIN banks b ON b.id = t.payment_type
+    LEFT JOIN users u ON u.id = t.customer_id
+    LEFT JOIN users vb ON vb.id = t.verified_by
+    LEFT JOIN users db ON db.id = t.delivered_by
+    WHERE ${search} ORDER BY t.created_at ${sort} LIMIT ${limit + 1}`)
 }
 
 export async function DBGetOrders(order_no: string) {
@@ -102,9 +121,6 @@ export async function DBCheckTransactionExist({ customer_id = 0, order_no }: Tra
     }
 
     return query[0]
-}
-export async function DBGetOrders(order_no: string) {
-  return await db.query<Array<{ product_name: string, price: number, quantity: number }>>(`SELECT p.name product_name, o.price, o.quantity FROM orders o LEFT JOIN products p ON p.id = o.product_id WHERE o.order_no = ?`, [order_no])
 }
 
 export async function DBCheckPaymentTypeExist(payment_type: number) {

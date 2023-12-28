@@ -5,6 +5,7 @@ import * as ProductRepository from "../repository/Product"
 import * as CommonRepository from "../repository/Common"
 import { NotFoundError, RequestError } from "src/config/error";
 import db from "@database"
+import format from "format-unicorn/safe"
 import moment from "moment"
 import MailService from "@infrastructure/mailer"
 
@@ -74,71 +75,58 @@ export async function createTransactionDomain({customer_id, order, payment_type}
     }
 }
 
-// export async function TransactionHistoryDomain(params: TransactionDto.TransactionHistoryParams) {
-//     const transactionHistory = await TransactionRepository.DBTransactionHistory(params);
+export async function transactionListDomain({ lastId = 0, limit = 500, search = "", sort = "DESC" }: TransactionDto.TransactionListDomain) {
 
-//     if (transactionHistory.length < 1) {
-//         throw new Error("NO_TRANSACTIONS_FOUND")
-//     }
-
-//     const result: TransactionDto.TransactionHistoryResponse = {}
-
-//     for (const item of transactionHistory) {
-//         if (!result[item.order_no]) {
-//             result[item.order_no] = {
-//                 order_no: item.order_no,
-//                 product: [],
-//                 status: item.status,
-//                 customer_id: item.customer_id,
-//                 payment_type: item.payment_type,
-//                 order_time: item.order_time,
-//                 verified_by: item.verified_by
-//             }
-//         }
-
-//         result[item.order_no].product.push({
-//             product_id: item.product_id,
-//             price: item.price,
-//             quantity: item.quantity
-//         })
-//     }
-
-//     return result;
-// }
-
-export async function transactionListDomain() {
-    const transactionList = await TransactionRepository.DBTransactionList()
-
-    if (transactionList.length < 1) {
-        throw new Error("NO_TRANSACTIONS_FOUND")
+    const searchProps = {
+        no: "t.no",
+        status: "t.status",
+        payment_type: "t.payment_type",
+        created_at: "t.created_at",
+        payment_at: "t.payment_at",
+        shipping_at: "t.shipping_at",
+        arrived_at: "t.arrived_at",
+        order_no: "t.order_no"
     }
 
-    const result: TransactionDto.TransactionListResponse = {message: []}
+    let parsedSearch = format(search, searchProps)
 
-    for(const item of transactionList){
-        const products = await TransactionRepository.DBGetOrders(item.order_no)
-        const customer = await UserRepository.DBCheckUserExist(item.customer_id)
-        const verifier = await UserRepository.DBCheckUserExist(item.verified_by)
+    let searchClause = "1=1"
+ 
+    if (parsedSearch != "" && lastId < 1) {
+        // Search when search props not empty and not paginate
+        searchClause = `${searchClause} AND (${parsedSearch})`
+    } else if (parsedSearch != "" && lastId > 0) {
+        // Search when search props not empty and wanting to paginate
+        searchClause = `${searchClause} AND (${parsedSearch}) AND t.no ${sort == "ASC" ? ">" : "<"} ${lastId}`
+    } else if (parsedSearch == "" && lastId > 0) {
+        searchClause = `${searchClause} AND t.no ${sort == "ASC" ? ">" : "<"} ${lastId}`
+    }
 
-        let totalPrice = 0
+    const transaction = await TransactionRepository.DBTransactionList({ limit, search: searchClause, sort })
 
-        for(const product of products){
-            totalPrice += product.price * product.quantity
+    if(transaction.length < 1) {
+        return {
+            data: [],
+            column: [],
+            hasNext: -1
         }
+    } 
 
-        result.message.push({
-            order_no: item.order_no,
-            status: item.status,
-            items: products,
-            customer_name: customer.username,
-            verified_by: verifier.username,
-            order_time: item.order_time,
-            payment_type: item.payment_type,
-            total_price: totalPrice
-        })
+
+    const result = {
+        data: transaction.map(p => Object.values(p)),
+        column: Object.keys(transaction[0]),
+        hasNext: -1
     }
 
-    return result;
+    if (transaction.length > limit) {
+        transaction.length = limit
+        result.data.length = limit
+        result.hasNext = transaction[transaction.length - 1].no
+    }
+
+
+    return result
 }
 
 export async function paymentOrderDomain({amount, order_no, customer_id, email, username}: TransactionDto.PaymentOrderDomainParams) {
