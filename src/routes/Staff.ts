@@ -6,7 +6,7 @@ import { productSchema } from "src/services/models/Product";
 import { transactionSchema } from "src/services/models/Transaction";
 import fastifyMulter from "fastify-multer"
 import { userSchema } from "src/services/models/User";
-import { commonSchema } from "src/services/models/Common";
+import { baseResponse, commonSchema } from "src/services/models/Common";
 
 const upload = fastifyMulter({ dest: "uploads" })
 
@@ -182,6 +182,42 @@ const routes: RouteOptions[] = [
     preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_USER),
     handler: StaffController.editUserHandler
   },
+  {
+    method: ["GET"],
+    url: "/orders/delivery",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Get Ready Delivery Orders",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: baseResponse({
+        schema: transactionSchema("readyDeliveryListResponse")
+      })
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
+    handler: StaffController.readyDeliveryListHandler
+  },
+  {
+    method: ["GET"],
+    url: '/orders/shipping',
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Get On Shipping Orders",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: baseResponse({
+        schema: transactionSchema("onDeliveryListResponse")
+      })
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
+    handler: StaffController.onDeliveryListHandler
+  }
 ];
 
 export default async function StaffRoutes(server: FastifyInstance) {

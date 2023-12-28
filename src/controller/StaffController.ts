@@ -112,3 +112,24 @@ export async function setArrivedHandler(request: FastifyRequest, reply: FastifyR
     throw error
   }
 }
+
+export async function readyDeliveryListHandler() {
+  try {
+    const response = await TransactionDomainService.readyDeliveryListDomain()
+
+    return { message: response }
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function onDeliveryListHandler(request: FastifyRequest) {
+  try {
+    const { id: delivered_by } = request.user
+    const response = await TransactionDomainService.onDeliveryListHandler({ delivered_by })
+
+    return { message: response }
+  } catch (error) {
+    throw error
+  } 
+}

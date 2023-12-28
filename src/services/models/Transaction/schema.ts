@@ -159,6 +159,26 @@ export const getTransactionListRequest = z.object({
     lastId: z.number().optional()
 })
 
+export const readyDeliveryListResponse = z.object({
+    message: z.object({
+        order_no: z.string(),
+        address: z.string(),
+        fullname: z.string(),
+        phone_number: z.string(),
+        orders: z.array(orders)
+    }).array()
+})
+
+export const onDeliveryListResponse = z.object({
+    message: z.object({
+        order_no: z.string(),
+        address: z.string(),
+        fullname: z.string(),
+        phone_number: z.string(),
+        orders: z.array(orders)
+    }).array()
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
@@ -178,7 +198,9 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     setDeliveryRequest,
     setDeliveryResponse,
     setArrivedResponse,
-    changeDeliveryStatusResponse
+    changeDeliveryStatusResponse,
+    readyDeliveryListResponse,
+    onDeliveryListResponse
 }, {
-    $id: "transactionSchemas"
+    $id: "transactionSchema"
 })

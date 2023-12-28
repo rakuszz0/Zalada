@@ -262,3 +262,34 @@ export async function finishOrderDomain({ customer_id, order_no }: TransactionDt
     return true
 }
 
+export async function readyDeliveryListDomain() {
+    const transaction = await TransactionRepository.DBGetDeliveryReadyList()
+
+    const list = transaction.map(async (data) => {
+        const orders = await TransactionRepository.DBGetOrders(data.order_no)
+        return {
+            ...data,
+            orders,
+        }
+    })
+
+    const result = await Promise.all(list)
+
+    return result
+}
+
+export async function onDeliveryListHandler({ delivered_by }: TransactionDto.OnDeliveryListDomain) {
+    const transaction = await TransactionRepository.DBStaffOnDeliveryList(delivered_by)
+
+    const list = transaction.map(async (data) => {
+        const orders = await TransactionRepository.DBGetOrders(data.order_no)
+        return {
+            ...data,
+            orders,
+        }
+    })
+
+    const result = await Promise.all(list)
+
+    return result
+}

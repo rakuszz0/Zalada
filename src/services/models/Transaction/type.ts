@@ -37,27 +37,6 @@ export type CreateOrderQueryParams = {
     quantity: number
 }
 
-// export type TransactionHistoryRequest = z.infer<typeof transactionHistoryRequest>
-// export type TransactionHistoryResponse = z.infer<typeof transactionHistoryResponse>;
-// export type ProductList = z.infer<typeof productList>;
-
-// export type TransactionHistoryParams = {
-//     userid: number;
-//     status?: TransactionStatus;
-// }
-
-// export type TransactionHistoryResult = {
-//     order_no: string;
-//     product_id: number;
-//     order_time: string;
-//     status: number;
-//     customer_id: number;
-//     payment_type: number;
-//     verified_by: number;
-//     price: number;
-//     quantity: number;
-// }
-
 export type TransactionListResult = {
     no: number
     order_no: string;
@@ -163,3 +142,7 @@ export type TransactionListQueryParams = {
 export type TransactionListRequest = z.infer<typeof getTransactionListRequest>
 
 export type TransactionListDomain = TransactionListRequest
+
+export type OnDeliveryListDomain = {
+    delivered_by: number
+}

@@ -171,3 +171,23 @@ export async function DBCheckTransactionDelivery(order_no: string) {
 
     return query[0]
 }
+
+export async function DBGetDeliveryReadyList() {
+    return await db.query<Array<{ order_no: string, address: string, phone_number: string, fullname: string }>>(`
+        SELECT t.order_no, u.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
+        FROM transactions t
+        LEFT JOIN users u ON u.id = t.customer_id 
+        WHERE status = 4 AND delivered_by IS NULL AND shipping_at IS NULL
+        ORDER BY t.created_at DESC
+    `)
+}
+
+export async function DBStaffOnDeliveryList(delivered_by: number) {
+    return await db.query<Array<{ order_no: string, address: string, phone_number: string, fullname: string }>>(`
+        SELECT t.order_no, u.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
+        FROM transactions t
+        LEFT JOIN users u ON u.id = t.customer_id 
+        WHERE status = 4 AND delivered_by = ? AND shipping_at IS NOT NULL
+        ORDER BY t.created_at DESC
+    `, [delivered_by])
+}
