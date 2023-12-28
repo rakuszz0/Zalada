@@ -109,6 +109,15 @@ export const getUserListRequest = z.object({
   search: z.string().optional().describe(JSON.stringify({ user_id: "number", username: "string", email: "string", firstname: "string", lastname: "string", registered_date: "date", user_level: "number" })),
 })
 
+export const createRulesRequest = z.object({
+  rules_id: z.number(),
+  rules_name: z.string()
+})
+
+export const createRulesResponse = z.object({
+  message: z.boolean()
+})
+
 export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
   {
     helloSchema,
@@ -129,7 +138,9 @@ export const { schemas: userSchemas, $ref: userSchema } = buildJsonSchemas(
     restoreTrashedUserResponse,
     deleteUserRequest,
     deleteUserResponse,
-    getUserListRequest
+    getUserListRequest,
+    createRulesRequest,
+    createRulesResponse
   },
   {
     $id: "userSchema",

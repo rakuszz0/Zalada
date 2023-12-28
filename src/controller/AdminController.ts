@@ -3,7 +3,7 @@ import { RequestError } from "src/config/error";
 import * as UserDomainService from "src/services/domain/User";
 import * as ProductDomainService from "src/services/domain/Product";
 import { AddProductByAdmin, DeleteProductRequest } from "src/services/models/Product";
-import { CreateRulesRequest, CreateUserByAdmin, GetUserListRequest, RestoreTrashedUser, DeleteUserRequest } from "src/services/models/User";
+import { CreateRulesRequest, CreateUserByAdmin, GetUserListRequest, RestoreTrashedUser, DeleteUserRequest, AddGroupRulesRequest } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
 import { QueryFailedError } from "typeorm";
 
@@ -88,7 +88,7 @@ export async function getRulesList() {
 
 export async function addGroupRulesHandler(request: FastifyRequest) {
     try {
-        const { role_id, rules } = request.body as CreateRulesRequest
+        const { role_id, rules } = request.body as AddGroupRulesRequest
 
         const response = await UserDomainService.addGroupRulesDomain({ role_id, rules })
 
@@ -135,6 +135,22 @@ export async function deleteUserByAdminController(request: FastifyRequest){
 
         return {message:deleteUser}
     } catch (error){
+        throw error
+    }
+}
+
+export async function createRulesHandler(request: FastifyRequest) {
+    try {
+        const { rules_id, rules_name } = request.body as CreateRulesRequest
+        const rules = await UserDomainService.createRulesDomain({ 
+            rules_id,
+            rules_name
+         })
+
+         return {
+            message: rules
+         }
+    } catch (error) {
         throw error
     }
 }

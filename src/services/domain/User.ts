@@ -185,7 +185,7 @@ export async function getRulesListDomain() {
   return rules
 }
 
-export async function addGroupRulesDomain({ role_id, rules }: UserTypes.CreateRulesDomainParams) {
+export async function addGroupRulesDomain({ role_id, rules }: UserTypes.AddGroupRulesDomain) {
   const groupRules = await UserRepository.DBGetGroupRules(role_id)
 
   // Check Roles
@@ -281,4 +281,20 @@ export async function restoreTrashedUser(params: UserTypes.RestoreTrashedUser) {
     await conn.release();
     throw error
   }
+}
+
+export async function createRulesDomain({ rules_id, rules_name }: UserTypes.CreateRulesDomain) {
+  // Check rules_id is used
+  const rules = await UserRepository.DBGetRules()
+
+  const isExist = rules.map(rule => rule.id).includes(rules_id)
+
+  if(isExist) {
+    throw new RequestError(`RULES_ID_USED`)
+  }
+
+  // Create new rules
+  await UserRepository.DBCreateRules({ id: rules_id, name: rules_name })
+
+  return true
 }

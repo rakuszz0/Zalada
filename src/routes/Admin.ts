@@ -2,7 +2,7 @@ import { FastifyInstance, RouteOptions } from "fastify";
 import * as AdminController from "../controller/AdminController";
 import { userSchema } from "../services/models/User";
 import * as Auth from "src/config/auth";
-import { productSchema } from "src/services/models/Product";
+import { baseSchema, productSchema } from "src/services/models/Product";
 import { ListRules } from "src/config/rules";
 import { baseResponse, commonSchema } from "src/services/models/Common";
 
@@ -185,6 +185,25 @@ const routes: RouteOptions[] = [
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_USER),
         handler: AdminController.restoreTrashedUserController
     },
+    {
+        method: ["POST"],
+        url: '/rules',
+        schema: {
+            tags: ["Admin Services"],
+            summary: "Create New Rules",
+            security: [
+                {
+                    authorization: []
+                }
+            ],
+            body: userSchema("createRulesRequest"),
+            response: baseResponse({
+                schema: userSchema("createRulesResponse")
+            })
+        },
+        preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_RULES),
+        handler: AdminController.createRulesHandler
+    }
 ]
 
 export default async function AdminRoutes(server: FastifyInstance) {

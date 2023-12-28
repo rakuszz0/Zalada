@@ -79,7 +79,7 @@ export async function DBGetRoles() {
 }
 
 export async function DBGetRules() {
-  return await db.query<{ id: number, name: string }>(`SELECT id, name FROM user_rules`)
+  return await db.query<Array<{ id: number, name: string }>>(`SELECT id, name FROM user_rules`)
 }
 
 export async function DBCheckRulesExist(rules_id: number) {
@@ -193,4 +193,17 @@ export async function DBDeleteUser(user_id:number,queryRunner:QueryRunner){
     "DELETE FROM users WHERE id = ?",[user_id],queryRunner
   )
   return deleteUser
+}
+
+export async function DBCreateRules({ id, name }: UserTypes.CreateRulesQueryParams) {
+  const values = [
+    [id, name]
+  ]
+ const query = await db.query<ResultSetHeader>(`INSERT INTO user_rules (id, name) VALUES ?`, [values]) 
+
+ if(query.affectedRows < 1) {
+  throw new ServerError("FAILED_CREATE_RULES")
+ }
+
+ return query
 }
