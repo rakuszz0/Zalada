@@ -87,25 +87,6 @@ export async function getPaymentTypesHandler() {
     }
 }
 
-
-// export async function TransactionHistoryHandler(request: FastifyRequest, reply: FastifyReply) {
-//     // const user = request.user;
-//     const {status} = request.body as TransactionDto.TransactionHistoryRequest;
-//     // const userid = user.id;
-
-//     if(status){
-//         return await TransactionDomainService.TransactionHistoryDomain({
-//             userid: 6,
-//             status
-//         })
-//     }else{
-//         return await TransactionDomainService.TransactionHistoryDomain({
-//             userid: 6
-//         })
-//     }
-
-// }
-
 export async function paymentOrderHandler(request: FastifyRequest) {
     try {
         const { id: customer_id, email, username } = request.user
@@ -146,14 +127,14 @@ export async function getOrderDetailsHandler(request: FastifyRequest) {
     }
 }
 
-export async function getProductDetailsHandler(request: FastifyRequest){
+export async function getProductDetailsHandler(request: FastifyRequest) {
     try {
-        const {id} = request.body as ProductDto.GetProductDetails
+        const { id } = request.params as ProductDto.GetProductDetails
 
         const getProductDetails = await ProductDomainService.getProductDetailsDomain(id)
 
         return getProductDetails
-    } catch (error){
+    } catch (error) {
         throw error
     }
 }

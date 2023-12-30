@@ -179,8 +179,6 @@ export async function getTransactionDetailsDomain({customer_id, order_no}: Trans
     const payment = await TransactionRepository.DBCheckPaymentTypeExist(transaction.payment_type)
     const orders = await TransactionRepository.DBGetOrders(order_no)
 
-    console.log({tr: new Date(transaction.created_at).getTime()})
-
     return {
         order_no,
         payment_type: payment.bank_name,

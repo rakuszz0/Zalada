@@ -93,24 +93,17 @@ const routes: RouteOptions[] = [
     schema: {
       tags: ["Consumer Services"],
       summary: "Customer Get Payment Type",
+      security: [
+        {
+          authorization: []
+        }
+      ],
       response: {
         200: transactionSchema("getPaymentTypesResponse")
       }
     },
     handler: ConsumerController.getPaymentTypesHandler
   },
-  // {
-  //   method: ["POST"],
-  //   url: "/transaction/transaction-history",
-  //   schema: {
-  //       tags: ["Consumer Services"],
-  //       body: transactionSchema('transactionHistoryRequest'),
-  //       response: {
-  //         200: transactionSchema('transactionHistoryResponse')
-  //       }
-  //   },
-  //   handler: ConsumerController.TransactionHistoryHandler,
-  // },
   {
     method: ["POST"],
     url: "/orders/payment",
@@ -132,9 +125,10 @@ const routes: RouteOptions[] = [
   },
   {
     method: ["POST"],
-    url: "/cart/add-product-to-cart",
+    url: "/cart",
     schema: {
       tags: ["Consumer Services"],
+      summary: "Customer Add Product To Carts",
       body: cartSchema("addProductToCartRequest"),
       security:[
         {
@@ -159,14 +153,7 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
-      params: {
-        type: "object",
-        properties: {
-          order_no: {
-            type: "string"
-          }
-        }
-      },
+      params: transactionSchema("getOrderDetailsRequest"),
       response: {
         200: transactionSchema("getOrderDetailsResponse")
       }
@@ -176,10 +163,10 @@ const routes: RouteOptions[] = [
   },
   {
     method:["POST"],
-    url: "/product-review",
+    url: "/products/reviews",
     schema:{
       tags: ["Consumer Services"],
-      summary: "Review Product",
+      summary: "Customer Review Product",
       security: [
         {
           authorization:[]
@@ -213,11 +200,12 @@ const routes: RouteOptions[] = [
     handler: ConsumerController.finishOrderHandler
   },
   {
-    method: ["POST"],
-    url: "/product-details",
+    method: ["GET"],
+    url: "/product/:id",
     schema:{
       tags: ["Consumer Services"],
-      body: productSchema("getProductDetails"),
+      summary: "Customer Get Product Details",
+      params: productSchema("getProductDetails"),
       response:{
         200: productSchema("getProductDetailsResponse")
       }
@@ -226,9 +214,10 @@ const routes: RouteOptions[] = [
   },
   {
     method: ["DELETE"],
-    url: "/cart/delete-product-from-cart",
+    url: "/cart",
     schema: {
       tags: ["Consumer Services"],
+      summary: "Customer Delete Product On Carts",
       body: cartSchema('deleteProductFromCartRequest'),
       security:[
         {
@@ -242,9 +231,6 @@ const routes: RouteOptions[] = [
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.deleteProductFromCartHandler
   },
-  //   },
-  //   handler: ConsumerController.TransactionHistoryHandler,
-  // }
 ];
 
 export default async function ConsumerRoutes(server: FastifyInstance) {

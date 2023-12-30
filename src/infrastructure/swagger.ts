@@ -14,18 +14,20 @@ export default fp(async (server) => {
     }
 
     await server.register(fastifySwagger, {
-        swagger: {
+        openapi: {
             info: {
                 title: "Zalada APIs",
                 description: "API for alls",
                 version: "1.0.0",
             },
-            securityDefinitions: {
-                authorization: {
-                    type: "apiKey",
-                    name: "authorization",
-                    in: "header",
-                    description: "Token for accessing endpoint"
+            components: {
+                securitySchemes: {
+                    authorization: {
+                        type: "apiKey",
+                        name: "authorization",
+                        in: "header",
+                        description: "Token for accessing endpoint"
+                    }
                 }
             }
         },

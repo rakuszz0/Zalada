@@ -9,7 +9,7 @@ import { baseResponse, commonSchema } from "src/services/models/Common";
 const routes: RouteOptions[] = [
     {
         method: ["GET"],
-        url: "/test",
+        url: "/admin/test",
         schema: {
             tags: ["Admin Services"],
             security: [
@@ -28,7 +28,7 @@ const routes: RouteOptions[] = [
         url: "/users/list",
         schema: {
             tags: ["Admin Services"],
-            summary: "Get User List",
+            summary: "Admin Get User List",
             security: [
                 {
                     authorization: []
@@ -42,72 +42,76 @@ const routes: RouteOptions[] = [
     },
     {
         method: ["POST"],
-        url: "/add-products",
+        url: "/products",
         schema: {
             tags: ["Admin Services"],
+            summary: "Admin Create New Products",
             security:[
                 {
                     authorization: []
                 }
             ],
             body: productSchema("addProductsSchema"),
-            response:{
-                200: productSchema("addProductsResponse")
-            }
+            response: baseResponse({
+                schema: productSchema("addProductsResponse")
+            })
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_PRODUCT),
         handler: AdminController.addProductsHandler
     },
     {
         method: ["POST"],
-        url: "/add-users",
+        url: "/users",
         schema: {
                 tags: ["Admin Services"],
+                summary: "Admin Create New User",
                 security:[
                     {
                         authorization: []
                     }
                 ],
                 body: userSchema("createUsers"),
-            response: {
-                200: userSchema("createUsersResponse")
-              }
+                response: baseResponse({
+                    schema: userSchema("createUsersResponse")
+                })
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_USER),
         handler: AdminController.createUserByAdmin
     },
     {
-        method: ["POST"],
-        url: "/delete-user",
+        method: ["DELETE"],
+        url: "/users",
         schema:{
             tags:["Admin Services"],
+            summary: "Admin Delete User",
             security:[
                 {
                     authorization:[]
                 }
             ],
             body: userSchema("deleteUserRequest"),
-            response: {
-                200:userSchema("deleteUserResponse")
-            }
+            response: baseResponse({
+                schema: userSchema("deleteUserResponse")
+            })
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_DELETE_USER),
         handler: AdminController.deleteUserByAdminController
     },
     {
-        method:["POST"],
-        url:"/delete-product",
+        method:["DELETE"],
+        url:"/products",
         schema: {
             tags: ["Admin Services"],
+            summary: "Admin Delete Products",
             security:[
                 {
                     authorization: []
                 }
             ],
             body: productSchema("deleteProductRequest"),
-            response:{
-                200: productSchema("deleteProductResponse")
-            }
+            response: baseResponse({
+                schema: productSchema("deleteProductResponse")
+            })
         },
         preHandler:Auth.CheckRules(ListRules.ACCESS_DELETE_PRODUCT),
         handler:AdminController.deleteProductController
@@ -123,9 +127,9 @@ const routes: RouteOptions[] = [
                     authorization: []
                 }
             ],
-            response: {
-                200: userSchema("getRolesListResponse")
-            }
+            response: baseResponse({
+                schema: userSchema("getRolesListResponse")
+            })
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_RULES),
         handler: AdminController.getRolesList
@@ -141,9 +145,9 @@ const routes: RouteOptions[] = [
                     authorization: []
                 }
             ],
-            response: {
-                200: userSchema("getRulesListResponse")
-            }
+            response: baseResponse({
+                schema: userSchema("getRulesListResponse")
+            })
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_RULES),
         handler: AdminController.getRulesList
@@ -160,27 +164,28 @@ const routes: RouteOptions[] = [
             ],
             summary: "Add Group Rules",
             body: userSchema("createGroupRules"),
-            response: {
-                200: userSchema("createGroupRulesResponse") 
-            }
+            response: baseResponse({
+                schema: userSchema("createGroupRulesResponse")
+            })
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_RULES),
         handler: AdminController.addGroupRulesHandler
     },
     {
         method: ["POST"],
-        url: "/admin/restore-trashed-user",
+        url: "/users/restore",
         schema: {
             tags: ["Admin Services"],
+            summary: "Admin Restore Trashed User",
             security: [
                 {
                     authorization: []
                 }
             ],
             body: userSchema("restoreTrashedUser"),
-            response: {
-                200: userSchema("restoreTrashedUserResponse")
-            }
+            response: baseResponse({
+                schema: userSchema("restoreTrashedUserResponse")
+            })
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_USER),
         handler: AdminController.restoreTrashedUserController

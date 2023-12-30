@@ -127,7 +127,9 @@ export const setDeliveryRequest = z.object({
 const imageTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export const setArrivedSchema = z.object({
-    attachment: z.custom<Required<File>>().refine(file => file != undefined, "Attachment is required!").refine(file => imageTypes.includes(file.mimetype), "Invalid file type!").refine(file => (file.size / 1000) < 2048, { message: "File size too big!" }),
+    attachment: z.custom<Required<File>>().refine(file => file != undefined, "ATTACHMENT_IS_REQUIRED")
+        .refine(file => imageTypes.includes(file.mimetype), "INVALID_FILE_TYPE")
+        .refine(file => (file.size / 1000) < 2048, { message: "FILE_SIZE_TOO_BIG" }),
     order_no: z.string({ required_error: "order_no is required!" })
 })
 
@@ -200,7 +202,7 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     setArrivedResponse,
     changeDeliveryStatusResponse,
     readyDeliveryListResponse,
-    onDeliveryListResponse
+    onDeliveryListResponse,
 }, {
     $id: "transactionSchema"
 })

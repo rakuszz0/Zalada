@@ -107,7 +107,7 @@ export async function setArrivedHandler(request: FastifyRequest, reply: FastifyR
     return { message: response }
   } catch (error) {
     if(error instanceof z.ZodError) {
-      throw reply.code(400).send(error.issues)
+      throw new RequestError(error.issues[0].message)
     }
     throw error
   }

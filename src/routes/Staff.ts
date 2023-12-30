@@ -42,15 +42,16 @@ const routes: RouteOptions[] = [
     url: "/products",
     schema: {
       tags: ["Staff Services"],
+      summary: "Staff & Admin Edit Products",
       security: [
         {
           authorization: []
         }
       ],
       body: productSchema("updateProductRequest"),
-      response: {
-        200: productSchema("updateProductResponse")
-      }
+      response: baseResponse({
+        schema: productSchema("updateProductResponse")
+      })
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_PRODUCT),
     handler: StaffController.updateProductHandler
@@ -67,9 +68,9 @@ const routes: RouteOptions[] = [
         }
       ],
       body: transactionSchema("getTransactionListRequest"),
-      response: {
-        200: commonSchema("paginationResponse")
-      }
+      response: baseResponse({
+        schema: commonSchema("paginationResponse")
+      })
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_TRANSACTION),
     handler: StaffController.transactionListHandler
@@ -86,9 +87,9 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
-      response: {
-        200: transactionSchema("changeDeliveryStatusResponse")
-      }
+      response: baseResponse({
+        schema: transactionSchema("changeDeliveryStatusResponse")
+      })
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
     handler: StaffController.changeDeliveryStatusHandler
@@ -105,9 +106,9 @@ const routes: RouteOptions[] = [
         }
       ],
       body: transactionSchema("setDeliveryRequest"),
-      response: {
-        200: transactionSchema("setDeliveryResponse")
-      }
+      response: baseResponse({
+        schema: transactionSchema("setDeliveryResponse")
+      })
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_PRODUCT),
     handler: StaffController.setDeliveryHandler
@@ -124,7 +125,7 @@ const routes: RouteOptions[] = [
         type: "object",
         properties: {
           attachment: {
-            isFile: true,
+            isFile: true
           },
           order_no: {
             type: "string"
@@ -136,9 +137,9 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
-      response: {
-        200: transactionSchema("setArrivedResponse")
-      }
+      response: baseResponse({
+        schema: transactionSchema("setArrivedResponse")
+      })
     },
     preValidation: upload.single("attachment"),
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
@@ -156,16 +157,16 @@ const routes: RouteOptions[] = [
         }
       ],
       body: transactionSchema("confirmOrderRequest"),
-      response: {
-        200: transactionSchema("confirmOrderResponse")
-      }
+      response: baseResponse({
+        schema: transactionSchema("confirmOrderResponse")
+      })
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_TRANSACTION),
     handler: StaffController.confirmOrderHandler
   },
   {
-    method: ["POST"],
-    url: "/edit-users",
+    method: ["PUT"],
+    url: "/users",
     schema: {
       tags: ["Staff Services"],
       security: [
@@ -175,9 +176,9 @@ const routes: RouteOptions[] = [
       ],
       summary: "Staff & Admin Edit Users",
       body: userSchema("editUserRequest"),
-      response: {
-        200: userSchema("editUserResponse")
-      }
+      response: baseResponse({
+        schema: userSchema("editUserResponse")
+      })
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_USER),
     handler: StaffController.editUserHandler

@@ -11,9 +11,9 @@ export default fastifyPlugin(async (server) => {
     await server.register(fastifyFormBody)
     await server.register(fastifyHelmet) 
     await server.register(fastifyMulter.contentParser)
-    await server.register(ConsumerRoutes)
-    await server.register(StaffRoutes)
-    await server.register(AdminRoutes, { prefix: "/admin" }) 
+    await server.register(ConsumerRoutes, { prefix: "/api/v1" })
+    await server.register(StaffRoutes, { prefix: "/api/v1" })
+    await server.register(AdminRoutes, { prefix: "/api/v1" }) 
 })
 
 declare module "fastify" {
