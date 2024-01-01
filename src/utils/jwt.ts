@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"
+import { UnathorizedError } from "src/config/error";
 
 type JwtPayload = { 
     user_id: number;
@@ -13,5 +14,13 @@ export async function signToken({expiresIn = '1d', ...payload}: SignTokenPayload
 }
 
 export async function verifyToken(token: string){
-    return jwt.verify(token, process.env.JWT_SECRET_KEY) as JwtPayload;
+    return new Promise<JwtPayload>((resolve, reject) => {
+        jwt.verify(token, process.env.JWT_SECRET_KEY, undefined, (error, decoded) => {
+            if(error) {
+                reject(new UnathorizedError(error.name))
+            } else {
+                resolve(decoded as JwtPayload)
+            }
+        })
+    })
 }

@@ -80,7 +80,7 @@ export async function createUserByAdmin(params:UserTypes.CreateUserByAdmin){
 }
 
 export async function checkEmailExistDomain(email: string){
-  return await UserRepository.DBCheckUserExistByEmail(email)
+  return await UserRepository.DBCheckEmailExist(email)
 }
 
 export async function registerDomain({address, email, first_name, last_name, password, phone_number, username, password_confirmation}: UserTypes.RegisterDomain) {
@@ -88,7 +88,7 @@ export async function registerDomain({address, email, first_name, last_name, pas
     throw new RequestError("CONFIRMATION_PASSWORD_DOES_NOT_MATCH")
   }
 
-  await UserRepository.DBCheckUserExistByEmail(email)
+  await UserRepository.DBCheckEmailExist(email)
 
   const hashPassword = await Bcrypt.hashPassword(password)
   

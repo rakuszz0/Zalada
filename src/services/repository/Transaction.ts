@@ -3,14 +3,15 @@ import * as TransactionDto from "../models/Transaction";
 import { ResultSetHeader } from "mysql2";
 import { QueryRunner } from "typeorm";
 import { NotFoundError, ServerError } from "src/config/error";
+import moment from "moment";
 
 
 export async function DBCreateTransaction({ customer_id, order_no, payment_type, status }: TransactionDto.CreateTransactionQueryParams, queryRunner?: QueryRunner) {
     const transaction = [
-        [order_no, status, customer_id, payment_type]
+        [order_no, status, customer_id, payment_type, moment().unix()]
     ]
 
-    const query = await db.query<ResultSetHeader>(`INSERT INTO transactions (order_no, status, customer_id, payment_type) VALUES ?`, [transaction], queryRunner)
+    const query = await db.query<ResultSetHeader>(`INSERT INTO transactions (order_no, status, customer_id, payment_type, created_at) VALUES ?`, [transaction], queryRunner)
     
     if(query.affectedRows < 1) {
         throw new ServerError("FAILED_CREATE_TRANSACTION")
@@ -63,7 +64,7 @@ export async function DBTransactionList({ limit = 500, search = "1=1", sort = "D
     END status, 
     t.order_no, 
         u.username, vb.username verified_by, b.bank_name payment_type, db.username delivered_by,
-        UNIX_TIMESTAMP(t.created_at) created_at, UNIX_TIMESTAMP(t.shipping_at) shipping_at, UNIX_TIMESTAMP(t.arrived_at) arrived_at 
+        t.created_at, t.shipping_at, t.arrived_at 
     FROM (
         SELECT ROW_NUMBER() OVER (
             ORDER BY tr.order_no
@@ -90,15 +91,15 @@ export async function DBUpdateTransactionStatus(params: TransactionDto.UpdateOrd
 
     if (params.status == 2) {
         // Update status after payment
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, payment_at = ? WHERE order_no = ?`, [params.status, new Date(), params.order_no], queryRunner)
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, payment_at = ? WHERE order_no = ?`, [params.status, moment().unix(), params.order_no], queryRunner)
     } else if (params.status == 3 && "verified_by" in params) {
         query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, verified_by = ? WHERE order_no = ?`, [params.status, params.verified_by, params.order_no], queryRunner)
     } else if (params.status == 4 && "delivered_by" in params) {
         // Update status on shipping
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, delivered_by = ?, shipping_at = ? WHERE order_no = ?`, [params.status, params.delivered_by, new Date(), params.order_no], queryRunner)
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, delivered_by = ?, shipping_at = ? WHERE order_no = ?`, [params.status, params.delivered_by, moment().unix(), params.order_no], queryRunner)
     } else if (params.status == 5) {
         // Update status on arrived
-        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, arrived_at = ? WHERE order_no = ?`, [params.status, new Date(), params.order_no], queryRunner)
+        query = await db.query<ResultSetHeader>(`UPDATE transactions SET status = ?, arrived_at = ? WHERE order_no = ?`, [params.status, moment().unix(), params.order_no], queryRunner)
     }
 
 

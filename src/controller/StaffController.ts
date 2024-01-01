@@ -35,7 +35,6 @@ export async function transactionListHandler(request: FastifyRequest) {
     return { message: transactionList }
   } catch (error) {
     if(error instanceof QueryFailedError) {
-      console.log(error)
       throw new RequestError("INVALID_SEARCH_PROPERTIES")
     }
     throw error

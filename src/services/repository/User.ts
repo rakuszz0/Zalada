@@ -1,8 +1,9 @@
 import DatabaseService from "@infrastructure/database"
 import * as UserTypes from "../models/User/type"
 import { ResultSetHeader } from "mysql2"
-import { InsertValuesMissingError, Not, QueryRunner } from "typeorm"
+import { QueryRunner } from "typeorm"
 import { NotFoundError, RequestError, ServerError } from "src/config/error";
+import moment from "moment";
 
 const db = DatabaseService.getDatasource()
 
@@ -34,7 +35,17 @@ export async function DBCheckUserExistByEmail(email: string) {
   const query = await db.query<UserTypes.User[]>("SELECT * FROM users WHERE email = ?", [email])
 
   if(query.length < 1) {
-    throw new NotFoundError("EMAIL_ALREADY_EXIST")
+    throw new RequestError("USER_NOT_FOUND")
+  }
+
+  return query[0]
+}
+
+export async function DBCheckEmailExist(email: string) {
+  const query = await db.query<UserTypes.User[]>(`SELECT * FROM users WHERE email = ?`, [email])
+
+  if(query.length) {
+    throw new RequestError("EMAIL_ALREADY_EXIST")
   }
 
   return query[0]
@@ -47,7 +58,7 @@ export async function DBGetUserRules(user_id: number) {
 export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
   const {username,email,first_name,last_name,password,user_level} = params
   const query = await db.query<ResultSetHeader>(
-    "INSERT INTO users( username,email,first_name,last_name,password,user_level ) VALUES (?,?,?,?,?,?)",[username,email,first_name,last_name,password,user_level]
+    "INSERT INTO users( username,email,first_name,last_name,password, registered_date, user_level) VALUES (?,?,?,?,?,?)",[username,email,first_name,last_name,password,moment().unix,user_level]
   )
   return query
 }
@@ -55,9 +66,9 @@ export async function DBCreateUserByAdmin(params:UserTypes.CreateUserByAdmin){
 export async function DBRegister({ address, email, password, phone_number, username, first_name, last_name }: UserTypes.RegisterQueryParams) {
   const [customerRole] = await db.query<Array<{ id: number, name: string }>>("SELECT * FROM user_roles WHERE name = ?", ['customer'])
   const params = [
-    [username, email, password, first_name, last_name, phone_number, address, customerRole.id]
+    [username, email, password, first_name, last_name, phone_number, address, moment().unix(), customerRole.id]
   ]
-  const query = await db.query<ResultSetHeader>("INSERT INTO users (username, email, password, first_name, last_name, phone_number, address, user_level) VALUES ?", [params])
+  const query = await db.query<ResultSetHeader>("INSERT INTO users (username, email, password, first_name, last_name, phone_number, address, registered_date, user_level) VALUES ?", [params])
 
   if(query.affectedRows < 1) {
     throw new ServerError("FAILED_REGISTER")
