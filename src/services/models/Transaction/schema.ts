@@ -104,10 +104,10 @@ export const getOrderDetailsResponse = z.object({
         order_no: z.string(),
         payment_type: z.string(),
         status: z.string(),
-        created_at: z.number(),
-        payment_at: z.number().nullable(),
-        shipping_at: z.number().nullable(),
-        arrived_at: z.number().nullable(),
+        created_at: z.string(),
+        payment_at: z.string().nullable(),
+        shipping_at: z.string().nullable(),
+        arrived_at: z.string().nullable(),
         items: z.array(orders)
     })
 })
@@ -156,7 +156,7 @@ export const finishOrderResponse = z.object({
 
 export const getTransactionListRequest = z.object({
     limit: z.number().optional(),
-    sort: z.string().optional(),
+    sort: z.enum(['DESC', 'ASC']).optional(),
     search: z.string().optional().describe(JSON.stringify({ no: "number", status: "number", payment_type: "number", created_at: "number", payment_at: "number", shipping_at: "number", arrived_at: "number", order_no: "string" })),
     lastId: z.number().optional()
 })
@@ -181,6 +181,13 @@ export const onDeliveryListResponse = z.object({
     }).array()
 })
 
+export const orderListRequest = z.object({
+    limit: z.number().optional(),
+    sort: z.enum(["DESC", "ASC"]).optional(),
+    search: z.string().optional().describe(JSON.stringify({ no: "number", status: "number", payment_type: "number", created_at: "number", payment_at: "number", shipping_at: "number", arrived_at: "number", order_no: "string" })),
+    lastId: z.number().optional()  
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
@@ -203,6 +210,7 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     changeDeliveryStatusResponse,
     readyDeliveryListResponse,
     onDeliveryListResponse,
+    orderListRequest
 }, {
     $id: "transactionSchema"
 })

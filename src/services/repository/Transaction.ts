@@ -64,7 +64,7 @@ export async function DBTransactionList({ limit = 500, search = "1=1", sort = "D
     END status, 
     t.order_no, 
         u.username, vb.username verified_by, b.bank_name payment_type, db.username delivered_by,
-        t.created_at, t.shipping_at, t.arrived_at 
+        t.created_at, t.payment_at, t.shipping_at, t.arrived_at 
     FROM (
         SELECT ROW_NUMBER() OVER (
             ORDER BY tr.order_no
@@ -111,10 +111,30 @@ export async function DBUpdateTransactionStatus(params: TransactionDto.UpdateOrd
 }
 
 export async function DBCheckTransactionExist({ customer_id = 0, order_no }: TransactionDto.CheckTransactionExistQueryParams) {
-    let query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.order_no = ?`, [order_no])
+    let query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, CASE
+        WHEN (t.status = 1) THEN 'Pending Payment'
+        WHEN (t.status = 2) THEN 'Pending Approval'
+        WHEN (t.status = 3) THEN 'On Packing'
+        WHEN (t.status = 4 AND t.delivered_by IS NULL AND t.shipping_at IS NULL) THEN 'Ready To Shipping'
+        WHEN (t.status = 4 AND t.delivered_by IS NOT NULL AND t.shipping_at IS NOT NULL) THEN 'On Shipping'
+        WHEN (t.status = 5) THEN 'Order Already Arrived'
+        WHEN (t.status = 6) THEN 'Orders Confirmed By Customer'
+        WHEN (t.status = 7) THEN 'Cancelled'
+        ELSE 'Transaction Status Not Tracked On System'
+    END status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.order_no = ?`, [order_no])
 
     if(customer_id > 0) {
-        query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
+        query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, CASE
+        WHEN (t.status = 1) THEN 'Pending Payment'
+        WHEN (t.status = 2) THEN 'Pending Approval'
+        WHEN (t.status = 3) THEN 'On Packing'
+        WHEN (t.status = 4 AND t.delivered_by IS NULL AND t.shipping_at IS NULL) THEN 'Ready To Shipping'
+        WHEN (t.status = 4 AND t.delivered_by IS NOT NULL AND t.shipping_at IS NOT NULL) THEN 'On Shipping'
+        WHEN (t.status = 5) THEN 'Order Already Arrived'
+        WHEN (t.status = 6) THEN 'Orders Confirmed By Customer'
+        WHEN (t.status = 7) THEN 'Cancelled'
+        ELSE 'Transaction Status Not Tracked On System'
+    END status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
     }
 
     if (query.length < 1) {
@@ -191,4 +211,32 @@ export async function DBStaffOnDeliveryList(delivered_by: number) {
         WHERE status = 4 AND delivered_by = ? AND shipping_at IS NOT NULL
         ORDER BY t.created_at DESC
     `, [delivered_by])
+}
+
+
+export async function DBCustomerTransactionList({ limit = 500, search = "1=1", sort = "DESC", customer_id }: TransactionDto.CustomerTransactionListQueryParams) {
+    return await db.query<TransactionDto.CustomerTransactionListQueryResult[]>(`
+    SELECT
+    t.no,
+    CASE
+        WHEN (t.status = 1) THEN 'Pending Payment'
+        WHEN (t.status = 2) THEN 'Pending Approval'
+        WHEN (t.status = 3) THEN 'On Packing'
+        WHEN (t.status = 4 AND t.delivered_by IS NULL AND t.shipping_at IS NULL) THEN 'Ready To Shipping'
+        WHEN (t.status = 4 AND t.delivered_by IS NOT NULL AND t.shipping_at IS NOT NULL) THEN 'On Shipping'
+        WHEN (t.status = 5) THEN 'Order Already Arrived'
+        WHEN (t.status = 6) THEN 'Orders Confirmed By Customer'
+        WHEN (t.status = 7) THEN 'Cancelled'
+        ELSE 'Transaction Status Not Tracked On System'
+    END status,
+    t.order_no, u.username, b.bank_name payment_type, t.created_at, t.payment_at ,t.shipping_at, t.arrived_at
+    FROM (
+        SELECT ROW_NUMBER() OVER (
+            ORDER BY tr.order_no
+        ) no, tr.* FROM transactions tr
+    ) t
+    LEFT JOIN banks b ON b.id = t.payment_type
+    LEFT JOIN users u ON u.id = t.customer_id
+    WHERE t.customer_id = ? AND ${search} ORDER BY t.created_at ${sort} LIMIT ${limit + 1}
+    `, [customer_id])
 }

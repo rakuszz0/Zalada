@@ -182,3 +182,19 @@ export async function addProductReview(request:FastifyRequest){
         throw error
     }
 }
+
+export async function orderListHandler(request: FastifyRequest) {
+    try {
+        const { id: customer_id } = request.user
+        const { lastId, limit, search, sort } = request.body as TransactionDto.OrderListRequest
+
+        const orders = await TransactionDomainService.customerTransactionListDomain({ customer_id, lastId, limit, search, sort })
+
+        return { message: orders }
+    } catch (error) {
+        if (error instanceof QueryFailedError) {
+            throw new RequestError("INVALID_SEARCH_PROPERTIES")
+        }
+        throw error
+    }
+}

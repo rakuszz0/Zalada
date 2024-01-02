@@ -155,9 +155,9 @@ const routes: RouteOptions[] = [
         }
       ],
       params: transactionSchema("getOrderDetailsRequest"),
-      response: {
-        200: transactionSchema("getOrderDetailsResponse")
-      }
+      response: baseResponse({
+        schema: transactionSchema("getOrderDetailsResponse")
+      })
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.getOrderDetailsHandler
@@ -232,6 +232,25 @@ const routes: RouteOptions[] = [
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.deleteProductFromCartHandler
   },
+  {
+    method: ["POST"],
+    url: "/orders/list",
+    schema: {
+      tags: ["Consumer Services"],
+      summary: "Get Order List",
+      body: transactionSchema("orderListRequest"),
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: baseResponse({
+        schema: commonSchema("paginationResponse")
+      })
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.orderListHandler
+  }
 ];
 
 export default async function ConsumerRoutes(server: FastifyInstance) {

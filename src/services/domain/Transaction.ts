@@ -182,11 +182,11 @@ export async function getTransactionDetailsDomain({customer_id, order_no}: Trans
     return {
         order_no,
         payment_type: payment.bank_name,
-        payment_at: transaction.payment_at,
         created_at: moment.unix(transaction.created_at).format(`YYYY-MM-DD HH:mm`),
-        shipping_at: moment.unix(transaction.shipping_at).format(`YYYY-MM-DD HH:mm`),
-        arrived_at: moment.unix(transaction.arrived_at).format(`YYYY-MM-DD HH:mm`),
-        status: TransactionDto.TransactionStatus[transaction.status],
+        payment_at: transaction.payment_at != null ? moment.unix(transaction.payment_at).format(`YYYY-MM-DD HH:mm`) : transaction.payment_at,
+        shipping_at: transaction.shipping_at != null ? moment.unix(transaction.shipping_at).format(`YYYY-MM-DD HH:mm`) : transaction.shipping_at,
+        arrived_at: transaction.arrived_at != null ? moment.unix(transaction.arrived_at).format(`YYYY-MM-DD HH:mm`) : transaction.arrived_at,
+        status: transaction.status,
         items: orders
     }
 }
@@ -288,6 +288,59 @@ export async function onDeliveryListHandler({ delivered_by }: TransactionDto.OnD
     })
 
     const result = await Promise.all(list)
+
+    return result
+}
+
+export async function customerTransactionListDomain({ lastId = 0, limit = 500, search = "1=1", sort = "DESC", customer_id }: TransactionDto.CustomerTransactionListDomain) {
+    const searchProps = {
+        no: "t.no",
+        status: "t.status",
+        payment_type: "t.payment_type",
+        created_at: "t.created_at",
+        payment_at: "t.payment_at",
+        shipping_at: "t.shipping_at",
+        arrived_at: "t.arrived_at",
+        order_no: "t.order_no"
+    }
+
+    let parsedSearch = format(search, searchProps)
+
+    let searchClause = "1=1"
+
+    if (parsedSearch != "" && lastId < 1) {
+        // Search when search props not empty and not paginate
+        searchClause = `${searchClause} AND (${parsedSearch})`
+    } else if (parsedSearch != "" && lastId > 0) {
+        // Search when search props not empty and wanting to paginate
+        searchClause = `${searchClause} AND (${parsedSearch}) AND t.no ${sort == "ASC" ? ">" : "<"} ${lastId}`
+    } else if (parsedSearch == "" && lastId > 0) {
+        searchClause = `${searchClause} AND t.no ${sort == "ASC" ? ">" : "<"} ${lastId}`
+    }
+
+    const transaction = await TransactionRepository.DBCustomerTransactionList({ search: searchClause, sort, customer_id, limit })
+
+    if (transaction.length < 1) {
+        return {
+            data: [],
+            column: [],
+            hasNext: -1
+        }
+    }
+
+
+    const result = {
+        data: transaction.map(p => Object.values(p)),
+        column: Object.keys(transaction[0]),
+        hasNext: -1
+    }
+
+    if (transaction.length > limit) {
+        transaction.length = limit
+        result.data.length = limit
+        result.hasNext = transaction[transaction.length - 1].no
+    }
+
 
     return result
 }
