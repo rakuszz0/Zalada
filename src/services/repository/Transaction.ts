@@ -2,7 +2,7 @@ import db from "@database";
 import * as TransactionDto from "../models/Transaction";
 import { ResultSetHeader } from "mysql2";
 import { QueryRunner } from "typeorm";
-import { NotFoundError, ServerError } from "src/config/error";
+import { NotFoundError, ServerError } from "../models/Common";
 import moment from "moment";
 
 

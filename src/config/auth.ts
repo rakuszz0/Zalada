@@ -1,7 +1,7 @@
 import { FastifyRequest } from "fastify";
 import * as UserRepository from "src/services/repository/User";
 import * as Jwt from "src/utils/jwt";
-import { ForbiddenAccessError, UnathorizedError } from "./error";
+import { ForbiddenAccessError, UnathorizedError } from "src/services/models/Common";
 import { User } from "src/services/models/User";
 
 declare module "fastify" {

@@ -4,7 +4,7 @@ import * as ProductDomainService from "src/services/domain/Product";
 import * as TransactionDomainService from "src/services/domain/Transaction";
 import * as ProductDto from "src/services/models/Product";
 import * as UserDto from "src/services/models/User";
-import { RequestError } from "src/config/error";
+import { RequestError } from "src/services/models/Common";
 import * as TransactionDto from "src/services/models/Transaction";
 import * as z from "zod"
 import { QueryFailedError } from "typeorm";

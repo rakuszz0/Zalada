@@ -1,11 +1,13 @@
 import { FastifyRequest } from "fastify";
-import { RequestError } from "src/config/error";
+import { RequestError } from "src/services/models/Common";
 import * as UserDomainService from "src/services/domain/User";
 import * as ProductDomainService from "src/services/domain/Product";
+import * as LogDomainService from "src/services/domain/Log";
 import { AddProductByAdmin, DeleteProductRequest } from "src/services/models/Product";
 import { CreateRulesRequest, CreateUserByAdmin, GetUserListRequest, RestoreTrashedUser, DeleteUserRequest, AddGroupRulesRequest, RevokeGroupRulesRequest } from "src/services/models/User";
 import * as Bcrypt from "src/utils/password"
 import { QueryFailedError } from "typeorm";
+import { ActivityLogListRequest } from "src/services/models/Log";
 
 export async function Hello(request: FastifyRequest) {
     return { message: "Hello" }
@@ -164,6 +166,17 @@ export async function revokeGroupRulesHandler(request: FastifyRequest) {
             role_id,
             rules_id
         })
+
+        return { message: response }
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function activityLogListHandler(request: FastifyRequest) {
+    try {
+        const { lastId, limit, search, sort } = request.body as ActivityLogListRequest
+        const response = await LogDomainService.activityLogListDomain({ search, sort, limit, lastId })
 
         return { message: response }
     } catch (error) {

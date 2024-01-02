@@ -1,4 +1,4 @@
-import { NotFoundError, RequestError, ServerError } from "src/config/error";
+import { NotFoundError, RequestError, ServerError } from "../models/Common";
 import * as UserRepository from "../repository/User";
 import * as UserTypes from "../models/User"
 import * as ProductDto from "../models/Product";

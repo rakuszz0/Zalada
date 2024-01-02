@@ -6,6 +6,7 @@ import { productSchema } from "src/services/models/Product";
 import { transactionSchema } from "src/services/models/Transaction";
 import * as Auth from "src/config/auth";
 import { commonSchema, baseResponse } from "src/services/models/Common";
+import * as Log from "src/config/log";
 
 const routes: RouteOptions[] = [
   {
@@ -84,7 +85,7 @@ const routes: RouteOptions[] = [
         201: transactionSchema("createOrderResponse")
       }
     },
-    preHandler: Auth.CheckAuth,
+    preHandler: [Auth.CheckAuth, Log.ActivityLogging],
     handler: ConsumerController.createOrderHandler
   },
   {

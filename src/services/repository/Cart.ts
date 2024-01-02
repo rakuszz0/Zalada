@@ -1,6 +1,6 @@
 import db from "@database";
 import * as CartDto from "../models/Cart";
-import { NotFoundError, ServerError } from "src/config/error";
+import { NotFoundError, ServerError } from "../models/Common";
 
 
 export async function DBAddProductToCart(params: CartDto.AddProductToCartParams) {

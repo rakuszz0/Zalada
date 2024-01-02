@@ -2,7 +2,7 @@ import DatabaseService from "@infrastructure/database"
 import * as UserTypes from "../models/User/type"
 import { ResultSetHeader } from "mysql2"
 import { QueryRunner } from "typeorm"
-import { NotFoundError, RequestError, ServerError } from "src/config/error";
+import { NotFoundError, RequestError, ServerError } from "../models/Common";
 import moment from "moment";
 
 const db = DatabaseService.getDatasource()

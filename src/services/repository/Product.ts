@@ -2,7 +2,7 @@ import db from "@database";
 import * as ProductDto from "../models/Product";
 import { ResultSetHeader } from "mysql2";
 import { QueryRunner } from "typeorm";
-import { NotFoundError, RequestError, ServerError } from "src/config/error";
+import { NotFoundError, RequestError, ServerError } from "../models/Common";
 
 export async function DBGetProducts({limit = 500, search = "1=1", sort = "DESC", filter = "1=1"}: ProductDto.GetProductsQueryParams) {
   return await db.query<ProductDto.GetProductsQueryResult[]>(`SELECT p.id, p.name, IFNULL(CAST(SUM(o.quantity) as float), 0) total_sale, p.description, p.stock, p.price, IFNULL(CAST(AVG(re.rating) AS DECIMAL(10,1)), 0) ratings FROM products p LEFT JOIN orders o ON o.product_id = p.id LEFT JOIN reviews re ON re.product_id = p.id WHERE ${search} GROUP BY p.id HAVING ${filter} ORDER BY p.id ${sort} LIMIT ${limit + 1}`);

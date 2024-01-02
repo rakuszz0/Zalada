@@ -6,10 +6,11 @@ import { productSchemas } from "src/services/models/Product"
 import { transactionSchemas } from "src/services/models/Transaction"
 import { commonSchemas } from "src/services/models/Common"
 import { cartSchemas } from "src/services/models/Cart"
+import { logSchemas } from "src/services/models/Log"
 
 
 export default fp(async (server) => {
-    for (const schema of [...userSchemas, ...productSchemas, ...transactionSchemas, ...commonSchemas, ...cartSchemas]) {
+    for (const schema of [...userSchemas, ...productSchemas, ...transactionSchemas, ...commonSchemas, ...cartSchemas, ...logSchemas]) {
         server.addSchema(schema)
     }
 

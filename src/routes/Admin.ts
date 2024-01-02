@@ -5,6 +5,9 @@ import * as Auth from "src/config/auth";
 import { baseSchema, productSchema } from "src/services/models/Product";
 import { ListRules } from "src/config/rules";
 import { baseResponse, commonSchema } from "src/services/models/Common";
+import { request } from "http";
+import * as Log from "src/config/log";
+import { logSchema } from "src/services/models/Log";
 
 const routes: RouteOptions[] = [
     {
@@ -227,11 +230,30 @@ const routes: RouteOptions[] = [
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_EDIT_RULES),
         handler: AdminController.revokeGroupRulesHandler
+    },
+    {
+        method: ["POST"],
+        url: "/log/list",
+        schema: {
+            tags: ["Admin Services"],
+            summary: "Get Activity Log List",
+            body: logSchema("activityLogListRequest"),
+            security: [
+                {
+                    authorization: []
+                }
+            ],
+            response: baseResponse({
+                schema: commonSchema("paginationResponse")
+            })
+        },
+        handler: AdminController.activityLogListHandler
     }
 ]
 
 export default async function AdminRoutes(server: FastifyInstance) {
     server.addHook("preHandler", Auth.CheckAuth)
+    server.addHook('preHandler', Log.ActivityLogging)
     for (const route of routes) {
         server.route({ ...route })
     }

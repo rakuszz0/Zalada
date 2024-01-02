@@ -104,10 +104,10 @@ export const getOrderDetailsResponse = z.object({
         order_no: z.string(),
         payment_type: z.string(),
         status: z.string(),
-        created_at: z.date(),
-        payment_at: z.date().nullable(),
-        shipping_at: z.date().nullable(),
-        arrived_at: z.date().nullable(),
+        created_at: z.number(),
+        payment_at: z.number().nullable(),
+        shipping_at: z.number().nullable(),
+        arrived_at: z.number().nullable(),
         items: z.array(orders)
     })
 })
@@ -157,7 +157,7 @@ export const finishOrderResponse = z.object({
 export const getTransactionListRequest = z.object({
     limit: z.number().optional(),
     sort: z.string().optional(),
-    search: z.string().optional(),
+    search: z.string().optional().describe(JSON.stringify({ no: "number", status: "number", payment_type: "number", created_at: "number", payment_at: "number", shipping_at: "number", arrived_at: "number", order_no: "string" })),
     lastId: z.number().optional()
 })
 

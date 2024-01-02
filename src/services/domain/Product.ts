@@ -3,7 +3,7 @@ import * as ProductDto from "../models/Product";
 import format from "format-unicorn/safe"
 import database from "@infrastructure/database";
 import * as TransactionRepository from "../repository/Transaction";
-import { RequestError } from "src/config/error";
+import { RequestError } from "../models/Common";
 
 
 

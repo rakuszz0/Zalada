@@ -7,6 +7,7 @@ import { transactionSchema } from "src/services/models/Transaction";
 import fastifyMulter from "fastify-multer"
 import { userSchema } from "src/services/models/User";
 import { baseResponse, commonSchema } from "src/services/models/Common";
+import * as Log from "src/config/log";
 
 const upload = fastifyMulter({ dest: "uploads" })
 
@@ -223,6 +224,7 @@ const routes: RouteOptions[] = [
 
 export default async function StaffRoutes(server: FastifyInstance) {
   server.addHook("preHandler", Auth.CheckAuth)
+  server.addHook("preHandler", Log.ActivityLogging)
   for (const route of routes) {
     server.route({ ...route })
   }

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-import { UnathorizedError } from "src/config/error";
+import { UnathorizedError } from "src/services/models/Common";
 
 type JwtPayload = { 
     user_id: number;

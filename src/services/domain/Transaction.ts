@@ -3,7 +3,7 @@ import * as UserRepository from "../repository/User";
 import * as TransactionDto from "../models/Transaction";
 import * as ProductRepository from "../repository/Product"
 import * as CommonRepository from "../repository/Common"
-import { NotFoundError, RequestError } from "src/config/error";
+import { NotFoundError, RequestError } from "../models/Common";
 import db from "@database"
 import format from "format-unicorn/safe"
 import moment from "moment"
@@ -157,7 +157,7 @@ export async function paymentOrderDomain({amount, order_no, customer_id, email, 
         template: "ORDER_CONFIRMATION",
         content: {
             order_no, 
-            order_time: moment.utc(transaction.created_at).utcOffset("+07:00").format("YYYY-MM-DD HH:mm:ss"),
+            order_time: moment.unix(transaction.created_at).format(`YYYY-MM-DD HH:mm`),
             total_price,
             items: orders,
             username
@@ -183,9 +183,9 @@ export async function getTransactionDetailsDomain({customer_id, order_no}: Trans
         order_no,
         payment_type: payment.bank_name,
         payment_at: transaction.payment_at,
-        created_at: transaction.created_at,
-        shipping_at: transaction.shipping_at,
-        arrived_at: transaction.arrived_at,
+        created_at: moment.unix(transaction.created_at).format(`YYYY-MM-DD HH:mm`),
+        shipping_at: moment.unix(transaction.shipping_at).format(`YYYY-MM-DD HH:mm`),
+        arrived_at: moment.unix(transaction.arrived_at).format(`YYYY-MM-DD HH:mm`),
         status: TransactionDto.TransactionStatus[transaction.status],
         items: orders
     }
