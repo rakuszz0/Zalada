@@ -78,7 +78,7 @@ export async function DBTransactionList({ limit = 500, search = "1=1", sort = "D
 }
 
 export async function DBGetOrders(order_no: string) {
-    return await db.query<TransactionDto.ProductList[]>(`SELECT p.name as product_name, o.price, o.quantity FROM orders o LEFT JOIN products p ON p.id = o.product_id WHERE o.order_no = ?`, [order_no])
+    return await db.query<TransactionDto.ProductList[]>(`SELECT p.id product_id, p.name as product_name, o.price, o.quantity FROM orders o LEFT JOIN products p ON p.id = o.product_id WHERE o.order_no = ?`, [order_no])
 }
 
 export async function DBCheckOrderExist({order_no, status, customer_id}: TransactionDto.CheckOrderExistQueryParams) {
@@ -111,30 +111,10 @@ export async function DBUpdateTransactionStatus(params: TransactionDto.UpdateOrd
 }
 
 export async function DBCheckTransactionExist({ customer_id = 0, order_no }: TransactionDto.CheckTransactionExistQueryParams) {
-    let query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, CASE
-        WHEN (t.status = 1) THEN 'Pending Payment'
-        WHEN (t.status = 2) THEN 'Pending Approval'
-        WHEN (t.status = 3) THEN 'On Packing'
-        WHEN (t.status = 4 AND t.delivered_by IS NULL AND t.shipping_at IS NULL) THEN 'Ready To Shipping'
-        WHEN (t.status = 4 AND t.delivered_by IS NOT NULL AND t.shipping_at IS NOT NULL) THEN 'On Shipping'
-        WHEN (t.status = 5) THEN 'Order Already Arrived'
-        WHEN (t.status = 6) THEN 'Orders Confirmed By Customer'
-        WHEN (t.status = 7) THEN 'Cancelled'
-        ELSE 'Transaction Status Not Tracked On System'
-    END status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.order_no = ?`, [order_no])
+    let query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.delivered_by, t.shipping_at, t.arrived_at FROM transactions t WHERE t.order_no = ?`, [order_no])
 
     if(customer_id > 0) {
-        query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, CASE
-        WHEN (t.status = 1) THEN 'Pending Payment'
-        WHEN (t.status = 2) THEN 'Pending Approval'
-        WHEN (t.status = 3) THEN 'On Packing'
-        WHEN (t.status = 4 AND t.delivered_by IS NULL AND t.shipping_at IS NULL) THEN 'Ready To Shipping'
-        WHEN (t.status = 4 AND t.delivered_by IS NOT NULL AND t.shipping_at IS NOT NULL) THEN 'On Shipping'
-        WHEN (t.status = 5) THEN 'Order Already Arrived'
-        WHEN (t.status = 6) THEN 'Orders Confirmed By Customer'
-        WHEN (t.status = 7) THEN 'Cancelled'
-        ELSE 'Transaction Status Not Tracked On System'
-    END status, t.payment_type, t.verified_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
+        query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.delivered_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
     }
 
     if (query.length < 1) {

@@ -344,3 +344,28 @@ export async function customerTransactionListDomain({ lastId = 0, limit = 500, s
 
     return result
 }
+
+
+export async function cancelOrderDomain({ customer_id, order_no }: TransactionDto.CancelOrderDomain) {
+    // Check order exist (status must be < 2)
+    const transaction = await TransactionRepository.DBCheckTransactionExist({order_no, customer_id, })
+
+
+    // Error Handling error
+    if((transaction.status == 4 && transaction.shipping_at == null && transaction.delivered_by == null) || transaction.status > 4) {
+        throw new RequestError("INVALID_ORDER_STATUS")
+    }
+
+    const orders = await TransactionRepository.DBGetOrders(order_no)
+
+    // Update Stock 
+    for (const order of orders) {
+        const product = await ProductRepository.DBCheckProductExist(order.product_id)
+        await ProductRepository.DBUpdateStockProduct({ product_id: order.product_id, stock: product.stock + order.quantity })
+    }
+
+    // Change transaction status to 7 (cancel)
+    await TransactionRepository.DBUpdateTransactionStatus({ order_no, status: 7 })
+
+    return true
+}

@@ -247,6 +247,7 @@ const routes: RouteOptions[] = [
                 schema: commonSchema("paginationResponse")
             })
         },
+        preHandler: Auth.CheckRoles([1]),
         handler: AdminController.activityLogListHandler
     }
 ]

@@ -250,6 +250,25 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.orderListHandler
+  },
+  {
+    method: ["DELETE"],
+    url: "/orders/cancel",
+    schema: {
+      tags: ["Consumer Services"],
+      summary: "Customer Cancel Order",
+      body: transactionSchema("cancelOrderRequest"),
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: baseResponse({
+        schema: transactionSchema("cancelOrderResponse")
+      })
+    },
+    preHandler: Auth.CheckAuth,
+    handler: ConsumerController.cancelOrderHandler
   }
 ];
 

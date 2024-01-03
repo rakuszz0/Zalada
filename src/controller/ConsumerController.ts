@@ -198,3 +198,16 @@ export async function orderListHandler(request: FastifyRequest) {
         throw error
     }
 }
+
+export async function cancelOrderHandler(request: FastifyRequest) {
+    try {
+        const { id: customer_id } = request.user
+        const { order_no } = request.body as TransactionDto.CancelOrderRequest
+
+        const orders = await TransactionDomainService.cancelOrderDomain({ customer_id, order_no })
+
+        return { message: orders }
+    } catch (error) {
+        throw error
+    }
+}

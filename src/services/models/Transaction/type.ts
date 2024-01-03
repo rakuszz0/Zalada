@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { confirmOrderRequest, changeDeliveryStatusRequest, createOrderRequest, finishOrderRequest, getOrderDetailsRequest, paymentOrderRequest, getTransactionListRequest, productList, setArrivedSchema, setDeliveryRequest, transactionListResponse, orderListRequest } from "./schema"
+import { confirmOrderRequest, changeDeliveryStatusRequest, createOrderRequest, finishOrderRequest, getOrderDetailsRequest, paymentOrderRequest, getTransactionListRequest, productList, setArrivedSchema, setDeliveryRequest, transactionListResponse, orderListRequest, cancelOrderRequest } from "./schema"
 
 export enum TransactionStatus {
     PENDING_PAYMENT = 1,
@@ -11,7 +11,7 @@ export enum TransactionStatus {
     CANCEL = 7
 }
 
-export type Transaction = { order_no: string, created_at: number, status: number, payment_type: number, verified_by: number, payment_at: number, shipping_at: number, arrived_at: number }
+export type Transaction = { order_no: string, created_at: number, status: number, payment_type: number, delivered_by: number, verified_by: number, payment_at: number, shipping_at: number, arrived_at: number }
 
 export type CreateOrderRequest = z.infer<typeof createOrderRequest>
 
@@ -169,3 +169,7 @@ export type CustomerTransactionListQueryResult = {
     shipping_at: number
     arrived_at: number
 }
+
+export type CancelOrderRequest = z.infer<typeof cancelOrderRequest>
+
+export type CancelOrderDomain = CancelOrderRequest & {customer_id: number}
