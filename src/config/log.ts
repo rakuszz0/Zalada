@@ -6,6 +6,7 @@ export async function ActivityLogging(request: FastifyRequest) {
     await LogRepository.DBCreateActivityLog({
         method: request.method,
         params: JSON.stringify(request.body || request.params),
+        action: request.routeOptions.schema.summary as string,
         time: moment().unix(),
         url: request.url,
         user_id: request.user.id,

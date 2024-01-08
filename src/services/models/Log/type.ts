@@ -6,6 +6,7 @@ export type CreateActivityLogQueryParams = {
     url: string
     time: number
     user_id: number
+    action: string
     params: string
     ip: string
 }
@@ -28,4 +29,5 @@ export type ActivityLogListQueryResult = {
     ip: string
     params: string
     time: number
+    action: string
 }
