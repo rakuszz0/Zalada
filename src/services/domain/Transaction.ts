@@ -369,3 +369,19 @@ export async function cancelOrderDomain({ customer_id, order_no }: TransactionDt
 
     return true
 }
+
+
+export async function confirmedOrderListDomain() {
+    // Get Confirmed order (status = 3)
+    const transactions = await TransactionRepository.DBConfirmedOrderList()
+
+    const list = transactions.map(async (trans) => {
+        const orders = await TransactionRepository.DBGetOrders(trans.order_no)
+        return {
+            ...trans,
+            orders
+        }
+    })
+
+    return Promise.all(list)
+}

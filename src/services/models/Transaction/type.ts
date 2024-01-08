@@ -173,3 +173,9 @@ export type CustomerTransactionListQueryResult = {
 export type CancelOrderRequest = z.infer<typeof cancelOrderRequest>
 
 export type CancelOrderDomain = CancelOrderRequest & {customer_id: number}
+
+export type ConfirmedOrderListQueryResult = Pick<Transaction, 'order_no'> & {
+    fullname: string
+    address: string
+    phone_number: string
+}

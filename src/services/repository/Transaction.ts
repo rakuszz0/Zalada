@@ -220,3 +220,15 @@ export async function DBCustomerTransactionList({ limit = 500, search = "1=1", s
     WHERE t.customer_id = ? AND ${search} ORDER BY t.created_at ${sort} LIMIT ${limit + 1}
     `, [customer_id])
 }
+
+export async function DBConfirmedOrderList() {
+    const query = await db.query<TransactionDto.ConfirmedOrderListQueryResult[]>(`
+        SELECT t.order_no, u.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
+        FROM transactions t
+        LEFT JOIN users u ON u.id = t.customer_id 
+        WHERE status = 3
+        ORDER BY t.payment_at DESC
+    `)
+
+    return query
+}

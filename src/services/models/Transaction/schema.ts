@@ -177,6 +177,16 @@ export const cancelOrderResponse = z.object({
     message: z.boolean()
 })
 
+export const confirmedOrderListResponse = z.object({
+    message: z.object({
+        order_no: z.string(),
+        address: z.string(),
+        phone_number: z.string(),
+        fullname: z.string(),
+        orders: z.array(orders)
+    }).array()
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
@@ -201,7 +211,8 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     onDeliveryListResponse,
     orderListRequest,
     cancelOrderRequest,
-    cancelOrderResponse
+    cancelOrderResponse,
+    confirmedOrderListResponse
 }, {
     $id: "transactionSchema"
 })

@@ -219,6 +219,24 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_SHIPPING),
     handler: StaffController.onDeliveryListHandler
+  },
+  {
+    method: ["GET"],
+    url: "/orders/confirm",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Get Confirmed Order List",
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: baseResponse({
+        schema: transactionSchema("confirmedOrderListResponse")
+      })
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_PRODUCT),
+    handler: StaffController.confirmedOrderListHandler
   }
 ];
 

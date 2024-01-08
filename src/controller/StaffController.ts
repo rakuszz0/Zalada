@@ -132,3 +132,12 @@ export async function onDeliveryListHandler(request: FastifyRequest) {
     throw error
   } 
 }
+
+export async function confirmedOrderListHandler() {
+  try {
+    const message = await TransactionDomainService.confirmedOrderListDomain()
+    return { message }
+  } catch (error) {
+    throw error 
+  }
+}
