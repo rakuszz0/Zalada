@@ -64,7 +64,8 @@ export async function DBGetProductsDetails(id:number) {
     LEFT JOIN reviews b ON a.id = b.product_id
     left JOIN orders c ON c.product_id = a.id
     LEFT JOIN transactions d ON c.order_no = d.order_no
-    WHERE a.id = ? AND d.status = 6 order BY a.id
+    WHERE a.id = ? AND d.status = 6
+    GROUP BY a.id
   `,[id]
   )
   if (result.length < 1) {

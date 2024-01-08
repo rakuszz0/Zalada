@@ -68,7 +68,7 @@ export const getProductDetailsResponse = z.object({
     description: z.string(),
     average_rating: z.number(),
     total_sell: z.number(),
-    created_at: z.date(),
+    created_at: z.number(),
     reviews:z.object({
         rating: z.number(),
         message: z.string(),
