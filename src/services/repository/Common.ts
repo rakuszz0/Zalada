@@ -1,8 +1,8 @@
-import { File } from "fastify-multer/lib/interfaces";
 import fs from "fs"
 import path from "path";
+import * as CommonDto from "../models/Common";
 
-export async function uploadImage({ file, dir, filename }: {file: Required<File>, filename: string, dir: string}) {
+export async function uploadImage({ file, dir, filename }: CommonDto.UploadImage) {
     const image = fs.readFileSync(file.path)
 
     const buffer = Buffer.from(image).toString("base64")

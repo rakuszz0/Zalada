@@ -205,9 +205,10 @@ const routes: RouteOptions[] = [
                 }
             ],
             body: userSchema("createRulesRequest"),
-            response: baseResponse({
+            response: baseResponse({    
                 schema: userSchema("createRulesResponse")
-            })
+            }),
+            hide: true,
         },
         preHandler: Auth.CheckRules(ListRules.ACCESS_CREATE_RULES),
         handler: AdminController.createRulesHandler
@@ -233,7 +234,7 @@ const routes: RouteOptions[] = [
     },
     {
         method: ["POST"],
-        url: "/log/list",
+        url: "/logs/list",
         schema: {
             tags: ["Admin Services"],
             summary: "Get Activity Log List",
@@ -247,7 +248,7 @@ const routes: RouteOptions[] = [
                 schema: commonSchema("paginationResponse")
             })
         },
-        preHandler: Auth.CheckRoles([1]),
+        preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_LOG),
         handler: AdminController.activityLogListHandler
     }
 ]

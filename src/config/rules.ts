@@ -29,7 +29,8 @@ export const SuperAdminRules = {
     "ACCESS_VIEW_RULES": 5020,
     "ACCESS_CREATE_RULES": 5021,
     "ACCESS_EDIT_RULES": 5022,
-    "ACCESS_DELETE_RULES": 5023
+    "ACCESS_DELETE_RULES": 5023,
+    "ACCESS_VIEW_LOG": 6021
 }
 
 export const ListRules = {

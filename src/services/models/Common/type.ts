@@ -1,3 +1,5 @@
+import { File } from "fastify-multer/lib/interfaces";
+
 class BaseError extends Error {
     code: string;
     statusCode: number;
@@ -46,3 +48,10 @@ export class ServerError extends BaseError {
 }
 
 export type BaseResponse = { schema: any, statusCode?: number }
+
+export type UploadImage = { file: Required<File>, filename: string, dir: string }
+
+export type GetImageURLParams = {
+    pathdir: string
+    filename: string
+}
