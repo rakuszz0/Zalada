@@ -88,7 +88,7 @@ export const deleteProductResponse = z.object({
 export const addProductReviewRequest = z.object({
     product_id: z.number(),
     message:z.string().optional(),
-    rating:z.number(),
+    rating:z.number().min(1).max(5),
     order_no:z.string()
 })
 
