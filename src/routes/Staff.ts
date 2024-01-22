@@ -237,6 +237,25 @@ const routes: RouteOptions[] = [
     },
     preHandler: Auth.CheckRules(ListRules.ACCESS_VIEW_PRODUCT),
     handler: StaffController.confirmedOrderListHandler
+  },
+  {
+    method: ["GET"],
+    url: "/transactions/:order_no",
+    schema: {
+      tags: ["Staff Services"],
+      summary: "Staff & Admin Get Transaction Details",
+      params: transactionSchema("transactionDetailsRequest"),
+      security: [
+        {
+          authorization: []
+        }
+      ],
+      response: baseResponse({
+        schema: transactionSchema("transactionDetailsResponse")
+      })
+    },
+    preHandler: Auth.CheckRules(ListRules.ACCESS_HANDLE_TRANSACTION),
+    handler: StaffController.transactionDetailsHandler
   }
 ];
 

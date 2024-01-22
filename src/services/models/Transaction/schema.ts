@@ -187,6 +187,24 @@ export const confirmedOrderListResponse = z.object({
     }).array()
 })
 
+export const transactionDetailsRequest = z.object({
+    order_no: z.string()
+})
+
+export const transactionDetailsResponse = z.object({
+    message: z.object({
+        order_no: z.string(),
+        payment_type: z.string(),
+        status: z.number(),
+        created_at: z.number(),
+        payment_at: z.number().nullable(),
+        shipping_at: z.number().nullable(),
+        arrived_at: z.number().nullable(),
+        attachment: z.number().nullable(),
+        items: z.array(orders)
+    })
+})
+
 export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJsonSchemas({
     createOrderRequest,
     createOrderResponse,
@@ -212,7 +230,9 @@ export const { schemas: transactionSchemas, $ref: transactionSchema } = buildJso
     orderListRequest,
     cancelOrderRequest,
     cancelOrderResponse,
-    confirmedOrderListResponse
+    confirmedOrderListResponse,
+    transactionDetailsRequest,
+    transactionDetailsResponse
 }, {
     $id: "transactionSchema"
 })

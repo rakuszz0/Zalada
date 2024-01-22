@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { confirmOrderRequest, changeDeliveryStatusRequest, createOrderRequest, finishOrderRequest, getOrderDetailsRequest, paymentOrderRequest, getTransactionListRequest, productList, setArrivedSchema, setDeliveryRequest, transactionListResponse, orderListRequest, cancelOrderRequest } from "./schema"
+import { confirmOrderRequest, changeDeliveryStatusRequest, createOrderRequest, finishOrderRequest, getOrderDetailsRequest, paymentOrderRequest, getTransactionListRequest, productList, setArrivedSchema, setDeliveryRequest, transactionListResponse, orderListRequest, cancelOrderRequest, transactionDetailsRequest } from "./schema"
 
 export enum TransactionStatus {
     PENDING_PAYMENT = 1,
@@ -11,7 +11,7 @@ export enum TransactionStatus {
     CANCEL = 7
 }
 
-export type Transaction = { order_no: string, created_at: number, status: number, payment_type: number, delivered_by: number, verified_by: number, payment_at: number, shipping_at: number, arrived_at: number }
+export type Transaction = { order_no: string, created_at: number, status: number, payment_type: number | string, delivered_by: number, verified_by: number, payment_at: number, shipping_at: number, arrived_at: number }
 
 export type CreateOrderRequest = z.infer<typeof createOrderRequest>
 
@@ -76,7 +76,6 @@ export type UpdateOrderStatusQueryParams = {
 } | ConfirmOrderUpdate | DeliveryOrderParams
 
 export type CheckTransactionExistQueryParams = {
-    customer_id?: number
     order_no: string
 }
 
@@ -179,3 +178,12 @@ export type ConfirmedOrderListQueryResult = Pick<Transaction, 'order_no'> & {
     address: string
     phone_number: string
 }
+
+export type CheckCustomerTransactionExistQueryParams = {
+    customer_id: number
+    order_no: string
+}
+
+export type TransactionDetailsRequest = z.infer<typeof transactionDetailsRequest>
+
+export type TransactionDetailsDomain = TransactionDetailsRequest

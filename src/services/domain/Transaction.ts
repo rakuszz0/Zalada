@@ -130,7 +130,7 @@ export async function transactionListDomain({ lastId = 0, limit = 500, search = 
 }
 
 export async function paymentOrderDomain({amount, order_no, customer_id, email, username}: TransactionDto.PaymentOrderDomainParams) {
-    const transaction = await TransactionRepository.DBCheckTransactionExist({customer_id, order_no})
+    const transaction = await TransactionRepository.DBCheckCustomerTransactionExist({customer_id, order_no})
 
     // Check if transaction has been paid
     if (transaction.status == 2) {
@@ -175,8 +175,8 @@ export async function paymentOrderDomain({amount, order_no, customer_id, email, 
 }
 
 export async function getTransactionDetailsDomain({customer_id, order_no}: TransactionDto.GetTransactionDetailsQueryParams) {
-    const transaction = await TransactionRepository.DBCheckTransactionExist({customer_id, order_no})
-    const payment = await TransactionRepository.DBCheckPaymentTypeExist(transaction.payment_type)
+    const transaction = await TransactionRepository.DBCheckCustomerTransactionExist({customer_id, order_no})
+    const payment = await TransactionRepository.DBCheckPaymentTypeExist(transaction.payment_type as number)
     const orders = await TransactionRepository.DBGetOrders(order_no)
 
     return {
@@ -247,7 +247,7 @@ export async function setArrivedDomain({ attachment, order_no, delivered_by }: T
 
 export async function finishOrderDomain({ customer_id, order_no }: TransactionDto.finishOrderDomain) {
     // Check transaction exist
-    const transaction = await TransactionRepository.DBCheckTransactionExist({ customer_id, order_no })
+    const transaction = await TransactionRepository.DBCheckCustomerTransactionExist({ customer_id, order_no })
 
     // Check transaction status, if not arrived yet throw error
     if(transaction.status != 5) {
@@ -348,7 +348,7 @@ export async function customerTransactionListDomain({ lastId = 0, limit = 500, s
 
 export async function cancelOrderDomain({ customer_id, order_no }: TransactionDto.CancelOrderDomain) {
     // Check order exist (status must be < 2)
-    const transaction = await TransactionRepository.DBCheckTransactionExist({order_no, customer_id, })
+    const transaction = await TransactionRepository.DBCheckCustomerTransactionExist({ order_no, customer_id })
 
 
     // Error Handling error
@@ -384,4 +384,27 @@ export async function confirmedOrderListDomain() {
     })
 
     return Promise.all(list)
+}
+
+
+export async function transactionDetailsDomain({ order_no }: TransactionDto.TransactionDetailsDomain) {
+    // Check Transaction Exist
+    const { arrived_at, created_at, delivered_by, payment_at, shipping_at, verified_by, payment_type, status } = await TransactionRepository.DBCheckTransactionExist({ order_no })
+
+    // Get Ordered Products
+    const orders = await TransactionRepository.DBGetOrders(order_no)
+
+    return {
+        order_no,
+        arrived_at,
+        created_at,
+        delivered_by,
+        payment_at,
+        shipping_at,
+        verified_by,
+        payment_type,
+        status,
+        items: orders,
+        attachment: CommonRepository.getImageURL({ filename: `${order_no.split('/').join('-')}.png`, pathdir: "orders" })
+    }
 }

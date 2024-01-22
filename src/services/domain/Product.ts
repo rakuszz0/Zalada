@@ -115,10 +115,10 @@ export async function deleteProductByAdmin(params: ProductDto.DeleteProductReque
 
 export async function addReviewProduct({customer_id,product_id,message,order_no,rating}: ProductDto.ReviewProductParams) {
 
-    const transaction = await TransactionRepository.DBCheckTransactionExist({customer_id, order_no})
+    const transaction = await TransactionRepository.DBCheckCustomerTransactionExist({customer_id, order_no})
 
     if(transaction.status < 6 || transaction.status != 6 ) {
-        throw new RequestError("NEED_TO_COMPLATE_THE_TRANSACTION")
+        throw new RequestError("NEED_TO_COMPLETE_THE_TRANSACTION")
     }
 
     // await ProductRepository.DBCheckReviewExist({ order_no, product_id })

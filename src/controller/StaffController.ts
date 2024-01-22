@@ -141,3 +141,14 @@ export async function confirmedOrderListHandler() {
     throw error 
   }
 }
+
+export async function transactionDetailsHandler(request: FastifyRequest) {
+  try {
+    const { order_no } = request.params as TransactionDto.TransactionDetailsRequest
+    const message = await TransactionDomainService.transactionDetailsDomain({ order_no })
+
+    return { message }
+  } catch (error) {
+    throw error
+  }
+}

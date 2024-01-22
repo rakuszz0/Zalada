@@ -110,12 +110,13 @@ export async function DBUpdateTransactionStatus(params: TransactionDto.UpdateOrd
     return query
 }
 
-export async function DBCheckTransactionExist({ customer_id = 0, order_no }: TransactionDto.CheckTransactionExistQueryParams) {
-    let query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.payment_at, t.delivered_by, t.shipping_at, t.arrived_at FROM transactions t WHERE t.order_no = ?`, [order_no])
-
-    if(customer_id > 0) {
-        query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.delivered_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
-    }
+export async function DBCheckTransactionExist({ order_no }: TransactionDto.CheckTransactionExistQueryParams) {
+    const query = await db.query<TransactionDto.Transaction[]>(`
+        SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, b.bank_name payment_type, t.delivered_by, t.shipping_at, t.arrived_at, t.payment_at
+        FROM transactions t
+        LEFT JOIN banks b ON b.id = t.payment_type
+        WHERE t.order_no = ?
+        `, [order_no])
 
     if (query.length < 1) {
         throw new NotFoundError("TRANSACTION_NOT_FOUND")
@@ -231,4 +232,14 @@ export async function DBConfirmedOrderList() {
     `)
 
     return query
+}
+
+export async function DBCheckCustomerTransactionExist({ customer_id, order_no }: TransactionDto.CheckCustomerTransactionExistQueryParams) {
+    const query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.delivered_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
+
+    if(query.length < 1) {
+        throw new NotFoundError("TRANSACTION_NOT_FOUND")
+    }
+
+    return query[0]
 }
