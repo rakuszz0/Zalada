@@ -28,12 +28,13 @@ async function main() {
 
         await server.ready()
 
-        await server.listen({ port: 3001 })        
+        await server.listen({ port: process.env.NODE_PORT, host: process.env.NODE_HOST })        
     } catch (error) {
         if(error instanceof ZodError) {
             console.error(error.issues)
-        }
-        console.log(error)
+        } else [
+            console.log(error)
+        ]
         process.exit(1)
     }
 
