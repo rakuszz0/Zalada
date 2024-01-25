@@ -130,9 +130,9 @@ export async function deleteProductController(request:FastifyRequest){
 
 export async function deleteUserByAdminController(request: FastifyRequest){
     try{
-        const {email} = request.body as DeleteUserRequest
+        const { user_id } = request.body as DeleteUserRequest
         const deleteUser = await UserDomainService.deleteUserByAdmin({
-            email
+            user_id
         })
 
         return {message:deleteUser}
@@ -180,6 +180,9 @@ export async function activityLogListHandler(request: FastifyRequest) {
 
         return { message: response }
     } catch (error) {
+        if(error instanceof QueryFailedError) {
+            throw new RequestError("INVALID_SEARCH_PROPERTIES")
+        }
         throw error
     }
 }

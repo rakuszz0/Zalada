@@ -6,12 +6,12 @@ import { NotFoundError, ServerError } from "../models/Common";
 import moment from "moment";
 
 
-export async function DBCreateTransaction({ customer_id, order_no, payment_type, status }: TransactionDto.CreateTransactionQueryParams, queryRunner?: QueryRunner) {
+export async function DBCreateTransaction({ customer_id, order_no, payment_type, status, address, notes }: TransactionDto.CreateTransactionQueryParams, queryRunner?: QueryRunner) {
     const transaction = [
-        [order_no, status, customer_id, payment_type, moment().unix()]
+        [order_no, status, customer_id, payment_type, moment().unix(), address, notes]
     ]
 
-    const query = await db.query<ResultSetHeader>(`INSERT INTO transactions (order_no, status, customer_id, payment_type, created_at) VALUES ?`, [transaction], queryRunner)
+    const query = await db.query<ResultSetHeader>(`INSERT INTO transactions (order_no, status, customer_id, payment_type, created_at, address, notes) VALUES ?`, [transaction], queryRunner)
     
     if(query.affectedRows < 1) {
         throw new ServerError("FAILED_CREATE_TRANSACTION")
@@ -112,9 +112,12 @@ export async function DBUpdateTransactionStatus(params: TransactionDto.UpdateOrd
 
 export async function DBCheckTransactionExist({ order_no }: TransactionDto.CheckTransactionExistQueryParams) {
     const query = await db.query<TransactionDto.Transaction[]>(`
-        SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, b.bank_name payment_type, t.delivered_by, t.shipping_at, t.arrived_at, t.payment_at
+        SELECT t.order_no, t.created_at, t.status, CONCAT_WS(' ', u.first_name, u.last_name) customer_name, CONCAT_WS(' ', vb.first_name, vb.last_name) verified_by,
+        b.bank_name payment_type, b.bank_name payment_type, t.delivered_by, t.shipping_at, t.arrived_at, t.payment_at, t.notes, t.address
         FROM transactions t
         LEFT JOIN banks b ON b.id = t.payment_type
+        LEFT JOIN users u ON u.id = t.customer_id
+        LEFT JOIN users vb ON vb.id = t.verified_by
         WHERE t.order_no = ?
         `, [order_no])
 
@@ -176,7 +179,7 @@ export async function DBCheckTransactionDelivery(order_no: string) {
 
 export async function DBGetDeliveryReadyList() {
     return await db.query<Array<{ order_no: string, address: string, phone_number: string, fullname: string }>>(`
-        SELECT t.order_no, u.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
+        SELECT t.order_no, t.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
         FROM transactions t
         LEFT JOIN users u ON u.id = t.customer_id 
         WHERE status = 4 AND delivered_by IS NULL AND shipping_at IS NULL
@@ -184,9 +187,9 @@ export async function DBGetDeliveryReadyList() {
     `)
 }
 
-export async function DBStaffOnDeliveryList(delivered_by: number) {
+export async function DBGetOnDeliveryList(delivered_by: number) {
     return await db.query<Array<{ order_no: string, address: string, phone_number: string, fullname: string }>>(`
-        SELECT t.order_no, u.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
+        SELECT t.order_no, t.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
         FROM transactions t
         LEFT JOIN users u ON u.id = t.customer_id 
         WHERE status = 4 AND delivered_by = ? AND shipping_at IS NOT NULL
@@ -224,7 +227,7 @@ export async function DBCustomerTransactionList({ limit = 500, search = "1=1", s
 
 export async function DBConfirmedOrderList() {
     const query = await db.query<TransactionDto.ConfirmedOrderListQueryResult[]>(`
-        SELECT t.order_no, u.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
+        SELECT t.order_no, t.address, u.phone_number, CONCAT_WS(' ', u.first_name, u.last_name) fullname
         FROM transactions t
         LEFT JOIN users u ON u.id = t.customer_id 
         WHERE status = 3
@@ -235,7 +238,12 @@ export async function DBConfirmedOrderList() {
 }
 
 export async function DBCheckCustomerTransactionExist({ customer_id, order_no }: TransactionDto.CheckCustomerTransactionExistQueryParams) {
-    const query = await db.query<TransactionDto.Transaction[]>(`SELECT t.order_no, t.created_at, t.status, t.payment_type, t.verified_by, t.delivered_by, t.payment_at, t.shipping_at, t.arrived_at FROM transactions t WHERE t.customer_id = ? AND t.order_no = ?`, [customer_id, order_no])
+    const query = await db.query<TransactionDto.Transaction[]>(`
+        SELECT t.order_no, t.created_at, t.status, b.bank_name payment_type, t.verified_by, t.delivered_by, t.payment_at, t.shipping_at, t.arrived_at, t.notes, t.address
+        FROM transactions t
+        LEFT JOIN banks b ON b.id = t.payment_type
+        WHERE t.customer_id = ? AND t.order_no = ?
+        `, [customer_id, order_no])
 
     if(query.length < 1) {
         throw new NotFoundError("TRANSACTION_NOT_FOUND")

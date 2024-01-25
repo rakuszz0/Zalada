@@ -142,9 +142,9 @@ export async function changePasswordDomain(params: UserTypes.ChangePassRequest) 
   }
 }
 
-export async function deleteUserByAdmin({email}:UserTypes.DeleteUserRequest){
+export async function deleteUserByAdmin({user_id}:UserTypes.DeleteUserRequest){
 
-  const data_user = await UserRepository.DBCheckUserExistByEmail(email) 
+  const data_user = await UserRepository.DBCheckUserExist(user_id) 
   
   const db = database.getDatasource()
   const conn = db.createQueryRunner()
@@ -153,20 +153,14 @@ export async function deleteUserByAdmin({email}:UserTypes.DeleteUserRequest){
     await conn.startTransaction()
 
 
-    const insertToTrashedUser = await UserRepository.DBInsertToTrashedUser( data_user, conn)
-    if(insertToTrashedUser.affectedRows < 1){
-      throw new ServerError("FAILED_INSERT_TO_TRASH")
-    }
+    await UserRepository.DBInsertToTrashedUser(data_user, conn)
 
-    const deleteUser = await UserRepository.DBDeleteUser(data_user.id, conn)
-    if (deleteUser.affectedRows < 1) {
-      throw new ServerError("FAILED_DELETE_USER");
-    }
+    await UserRepository.DBDeleteUser(user_id, conn)
 
     await conn.commitTransaction();
     await conn.release();
 
-    return deleteUser;
+    return true;
 
   } catch (error) {
     await conn.rollbackTransaction();

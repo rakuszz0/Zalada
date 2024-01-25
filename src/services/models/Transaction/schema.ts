@@ -12,6 +12,8 @@ const createOrders = z.array(createOrder)
 export const createOrderRequest = z.object({
     order: z.union([createOrder, createOrders]),
     payment_type: z.number(),
+    address: z.string(),
+    notes: z.string().optional()
 })
 
 export const createOrderResponse = z.object({
@@ -75,20 +77,23 @@ export const getOrderDetailsRequest = z.object({
 
 
 const orders = z.object({
+    product_id: z.number(),
     product_name: z.string(),
     price: z.number(),
-    quantity: z.number()
+    quantity: z.number(),
 })
 
 export const getOrderDetailsResponse = z.object({
     message: z.object({
         order_no: z.string(),
         payment_type: z.string(),
-        status: z.string(),
-        created_at: z.string(),
-        payment_at: z.string().nullable(),
-        shipping_at: z.string().nullable(),
-        arrived_at: z.string().nullable(),
+        status: z.number(),
+        created_at: z.number(),
+        address: z.string(),
+        payment_at: z.number().nullable(),
+        shipping_at: z.number().nullable(),
+        arrived_at: z.number().nullable(),
+        notes: z.string().nullable(),
         items: z.array(orders)
     })
 })
@@ -197,10 +202,13 @@ export const transactionDetailsResponse = z.object({
         payment_type: z.string(),
         status: z.number(),
         created_at: z.number(),
+        address: z.string(),
+        verified_by: z.string(),
         payment_at: z.number().nullable(),
         shipping_at: z.number().nullable(),
         arrived_at: z.number().nullable(),
         attachment: z.number().nullable(),
+        notes: z.string().nullable(),
         items: z.array(orders)
     })
 })

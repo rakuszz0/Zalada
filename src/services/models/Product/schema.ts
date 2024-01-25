@@ -59,6 +59,12 @@ export const getProductListRequest = z.object({
 export const getProductDetails = z.object({
     id: z.number(),
 })
+
+export const productReview = z.object({
+    rating: z.number(),
+    message: z.string(),
+    username: z.string()
+})
   
 export const getProductDetailsResponse = z.object({
     id: z.number(),
@@ -68,12 +74,7 @@ export const getProductDetailsResponse = z.object({
     description: z.string(),
     average_rating: z.number(),
     total_sell: z.number(),
-    created_at: z.number(),
-    reviews:z.object({
-        rating: z.number(),
-        message: z.string(),
-        username: z.string()
-    }).array()
+    reviews: productReview.array()
 
 })
 

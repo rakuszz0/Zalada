@@ -95,7 +95,7 @@ export const restoreTrashedUserResponse = z.object({
 
 
 export const deleteUserRequest = z.object({
-  email:z.string()
+  user_id:z.number()
 })
 
 export const deleteUserResponse = z.object({

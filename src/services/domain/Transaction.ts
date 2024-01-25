@@ -13,7 +13,7 @@ export async function getPaymentTypesDomain() {
     return await TransactionRepository.DBGetPaymentTypes()
 }
 
-export async function createTransactionDomain({customer_id, order, payment_type}: TransactionDto.CreateTransactionDomainParams) {
+export async function createTransactionDomain({customer_id, order, payment_type, address, notes}: TransactionDto.CreateTransactionDomainParams) {
     const order_no = `ORD/${customer_id}/${moment().unix()}`
     let stock: Record<string, number> | number = {}
     let total_price = 0
@@ -62,7 +62,7 @@ export async function createTransactionDomain({customer_id, order, payment_type}
             // Update product stock after transaction has been created
             await ProductRepository.DBUpdateStockProduct({ product_id: product.id, stock: product.stock - order.quantity }, queryRunner)   
         }
-        await TransactionRepository.DBCreateTransaction({order_no, customer_id, payment_type, status: 1}, queryRunner)
+        await TransactionRepository.DBCreateTransaction({order_no, customer_id, payment_type, status: 1, address, notes}, queryRunner)
 
         await queryRunner.commitTransaction()
 
@@ -176,16 +176,17 @@ export async function paymentOrderDomain({amount, order_no, customer_id, email, 
 
 export async function getTransactionDetailsDomain({customer_id, order_no}: TransactionDto.GetTransactionDetailsQueryParams) {
     const transaction = await TransactionRepository.DBCheckCustomerTransactionExist({customer_id, order_no})
-    const payment = await TransactionRepository.DBCheckPaymentTypeExist(transaction.payment_type as number)
     const orders = await TransactionRepository.DBGetOrders(order_no)
 
     return {
         order_no,
-        payment_type: payment.bank_name,
-        created_at: moment.unix(transaction.created_at).format(`YYYY-MM-DD HH:mm`),
-        payment_at: transaction.payment_at != null ? moment.unix(transaction.payment_at).format(`YYYY-MM-DD HH:mm`) : transaction.payment_at,
-        shipping_at: transaction.shipping_at != null ? moment.unix(transaction.shipping_at).format(`YYYY-MM-DD HH:mm`) : transaction.shipping_at,
-        arrived_at: transaction.arrived_at != null ? moment.unix(transaction.arrived_at).format(`YYYY-MM-DD HH:mm`) : transaction.arrived_at,
+        payment_type: transaction.payment_type,
+        address: transaction.address,
+        notes: transaction.notes,
+        created_at: transaction.created_at,
+        payment_at: transaction.payment_at,
+        shipping_at: transaction.shipping_at,
+        arrived_at: transaction.arrived_at,
         status: transaction.status,
         items: orders
     }
@@ -277,7 +278,7 @@ export async function readyDeliveryListDomain() {
 }
 
 export async function onDeliveryListHandler({ delivered_by }: TransactionDto.OnDeliveryListDomain) {
-    const transaction = await TransactionRepository.DBStaffOnDeliveryList(delivered_by)
+    const transaction = await TransactionRepository.DBGetOnDeliveryList(delivered_by)
 
     const list = transaction.map(async (data) => {
         const orders = await TransactionRepository.DBGetOrders(data.order_no)
@@ -389,21 +390,23 @@ export async function confirmedOrderListDomain() {
 
 export async function transactionDetailsDomain({ order_no }: TransactionDto.TransactionDetailsDomain) {
     // Check Transaction Exist
-    const { arrived_at, created_at, delivered_by, payment_at, shipping_at, verified_by, payment_type, status } = await TransactionRepository.DBCheckTransactionExist({ order_no })
+    const transaction = await TransactionRepository.DBCheckTransactionExist({ order_no })
 
     // Get Ordered Products
     const orders = await TransactionRepository.DBGetOrders(order_no)
 
     return {
-        order_no,
-        arrived_at,
-        created_at,
-        delivered_by,
-        payment_at,
-        shipping_at,
-        verified_by,
-        payment_type,
-        status,
+        order_no: transaction.order_no,
+        arrived_at: transaction.arrived_at,
+        created_at: transaction.created_at,
+        delivered_by: transaction.delivered_by,
+        payment_at: transaction.payment_at,
+        shipping_at: transaction.shipping_at,
+        verified_by: transaction.verified_by,
+        payment_type: transaction.payment_type,
+        status: transaction.status,
+        address: transaction.address, 
+        notes: transaction.notes,
         items: orders,
         attachment: CommonRepository.getImageURL({ filename: `${order_no.split('/').join('-')}.png`, pathdir: "orders" })
     }

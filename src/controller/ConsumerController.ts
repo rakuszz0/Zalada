@@ -68,9 +68,9 @@ export async function registerHandler(request: FastifyRequest) {
 
 export async function createOrderHandler(request: FastifyRequest, reply: FastifyReply) {
     const { id: customer_id } = request.user
-    const { order, payment_type } = request.body as TransactionDto.CreateOrderRequest
+    const { order, payment_type, address, notes } = request.body as TransactionDto.CreateOrderRequest
     try {
-        const transaction = await TransactionDomainService.createTransactionDomain({customer_id, order, payment_type})
+        const transaction = await TransactionDomainService.createTransactionDomain({customer_id, order, payment_type, address, notes})
 
         reply.code(201).send({ message: transaction })
     } catch (error) {

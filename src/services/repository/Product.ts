@@ -58,13 +58,13 @@ export async function DBUpdateStockProduct({product_id, stock}: ProductDto.Updat
 
 export async function DBGetProductsDetails(id:number) {
   const result = await db.query<ProductDto.GetProductDetailsQueryResult[]>(
-    `SELECT a.id, a.name, a.stock, a.description, a.price, b.created_at,
+    `SELECT a.id, a.name, a.stock, a.description, a.price,
     ifnull(AVG(b.rating),0) AS average_rating, ifnull(SUM(c.quantity),0) AS total_sell
     FROM products a
     LEFT JOIN reviews b ON a.id = b.product_id
     left JOIN orders c ON c.product_id = a.id
     LEFT JOIN transactions d ON c.order_no = d.order_no
-    WHERE a.id = ? AND d.status = 6
+    WHERE a.id = ?
     GROUP BY a.id
   `,[id]
   )
