@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  # MySQL service
+  mysqldb:
+    image: mysql
+    environment:
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: zaladastore
+      MYSQL_ROOT_PASSWORD: zaladastore
+      MYSQL_DATABASE: zalada
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+
+  migrations:
+    image: zalada
+    command: sh -c "sleep 30 && npm run migrate:run"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mysqldb
+
+  # Node.js with TypeScript service
+  node-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: zalada
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+      - .env
+    ports:
+      - "8080:3001"
+    depends_on:
+      - migrations
+      - mysqldb
+    expose:
+      - 3001
+    command: npm run dev

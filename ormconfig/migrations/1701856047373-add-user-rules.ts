@@ -1,4 +1,4 @@
-import { ListRules } from "src/config/rules"
+import { ListRules } from "../../src/config/rules"
 import { MigrationInterface, QueryRunner } from "typeorm"
 
 export class AddUserRules1701856047373 implements MigrationInterface {

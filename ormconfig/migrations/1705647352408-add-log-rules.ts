@@ -1,4 +1,4 @@
-import { ListRules } from "src/config/rules"
+import { ListRules } from "../../src/config/rules"
 import { MigrationInterface, QueryRunner } from "typeorm"
 
 export class AddLogRules1705647352408 implements MigrationInterface {
@@ -7,7 +7,7 @@ export class AddLogRules1705647352408 implements MigrationInterface {
         const rules = [
             [ListRules.ACCESS_VIEW_LOG, 'ACCESS_VIEW_LOG']
         ]
-        await queryRunner.query('INSERT INTO user_rules (id, name) VALUES ?', [rules])
+        await queryRunner.query('INSERT IGNORE INTO user_rules (id, name) VALUES ?', [rules])
 
         const user_rules = [
             [1, ListRules.ACCESS_VIEW_LOG] // Rules super_admin access view log

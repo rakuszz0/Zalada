@@ -31,18 +31,21 @@ export class ChangeTimestamp1703925803043 implements MigrationInterface {
 
 
         // Change users table
-        const users = await queryRunner.query(`SELECT UNIX_TIMESTAMP(registered_date) registered_date, id FROM users`)
-        await queryRunner.query(`ALTER TABLE users MODIFY COLUMN registered_date INT NOT NULL`)
+        const users = await queryRunner.query(`SELECT UNIX_TIMESTAMP(registered_date) registered_date, username, email, password, first_name, last_name, phone_number, address, user_level FROM users`)
+        await queryRunner.query(`DELETE from users`)
+        await queryRunner.query(`ALTER TABLE users MODIFY COLUMN registered_date INT`)
         for (const user of users) {
-            await queryRunner.query(`
-                UPDATE users SET registered_date = ? WHERE id = ?
-            `, [user.registered_date, user.id])
+            const values = [
+                [user.registered_date, user.username, user.email, user.password, user.first_name, user.last_name, user.phone_number, user.address, user.user_level]
+            ]
+
+            await queryRunner.query(`INSERT INTO users (registered_date, username, email, password, first_name, last_name, phone_number, address, user_level) VALUES ?`, [values])
         }
         
 
         // Change trash_user table
         const trashuser = await queryRunner.query(`SELECT UNIX_TIMESTAMP(registered_date) registered_date, id FROM trash_users`)
-        await queryRunner.query(`ALTER TABLE trash_users MODIFY COLUMN registered_date INT NOT NULL`)
+        await queryRunner.query(`ALTER TABLE trash_users MODIFY COLUMN registered_date INT`)
         for (const trash of trashuser) {
             await queryRunner.query(`
                 UPDATE trash_users SET registered_date = ? WHERE id = ?
