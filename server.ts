@@ -32,9 +32,10 @@ async function main() {
     } catch (error) {
         if(error instanceof ZodError) {
             console.error(error.issues)
-        } else [
+        } else {
             console.log(error)
-        ]
+        }
+        
         process.exit(1)
     }
 
