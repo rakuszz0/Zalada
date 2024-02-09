@@ -141,17 +141,18 @@ export async function getProductDetailsHandler(request: FastifyRequest) {
 
 export async function deleteProductFromCartHandler(request: FastifyRequest) {
     try {
-        const {product_id} = request.body as CartDto.DeleteProductFromCartRequest
+        const {product_id, quantity} = request.body as CartDto.DeleteProductFromCartRequest
         const user = request.user
 
         await CartDomainService.DeleteProductFromCartDomain({
+            quantity,
             product_id,
             userid: user.id
         })
 
         return { message: true }
     } catch (error){
-        throw (error)
+        throw error
     }}
 
 export async function finishOrderHandler(request: FastifyRequest) {

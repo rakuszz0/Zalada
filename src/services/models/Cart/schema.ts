@@ -11,6 +11,7 @@ export const addProductToCartResponse = z.object({
   })
 
 export const deleteProductFromCartRequest = z.object({
+    quantity: z.number(),
     product_id: z.number()
 })
 
