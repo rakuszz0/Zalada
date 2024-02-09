@@ -99,9 +99,9 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
-      response: {
-        200: transactionSchema("getPaymentTypesResponse")
-      }
+      response: baseResponse({
+        schema: transactionSchema("getPaymentTypesResponse")
+      })
     },
     handler: ConsumerController.getPaymentTypesHandler
   },
@@ -117,9 +117,9 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
-      response: {
-        200: transactionSchema("paymentOrderResponse")
-      }
+      response: baseResponse({
+        schema: transactionSchema("paymentOrderResponse")
+      })
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.paymentOrderHandler
@@ -136,9 +136,9 @@ const routes: RouteOptions[] = [
           authorization:[]
         }
       ],
-      response: {
-        200: cartSchema("addProductToCartResponse")
-      }
+      response: baseResponse({
+        schema: cartSchema("addProductToCartResponse")
+      })
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.addProductToCartHandler
@@ -193,9 +193,9 @@ const routes: RouteOptions[] = [
           authorization: []
         }
       ],
-      response: {
-        200: transactionSchema("finishOrderResponse")
-      }
+      response: baseResponse({
+        schema: transactionSchema("finishOrderResponse")
+      })
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.finishOrderHandler
@@ -207,9 +207,9 @@ const routes: RouteOptions[] = [
       tags: ["Consumer Services"],
       summary: "Customer Get Product Details",
       params: productSchema("getProductDetails"),
-      response:{
-        200: productSchema("getProductDetailsResponse")
-      }
+      response: baseResponse({
+        schema: productSchema("getProductDetailsResponse")
+      })
     },
     handler: ConsumerController.getProductDetailsHandler
   },
@@ -225,9 +225,9 @@ const routes: RouteOptions[] = [
           authorization:[]
         }
       ],
-      response: {
-        200: cartSchema('deleteProductFromCartResponse')
-      }
+      response: baseResponse({
+        schema: cartSchema('deleteProductFromCartResponse')
+      })
     },
     preHandler: Auth.CheckAuth,
     handler: ConsumerController.deleteProductFromCartHandler
