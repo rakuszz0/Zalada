@@ -1,5 +1,5 @@
 import { FastifyInstance, RouteOptions } from "fastify";
-import * as ConsumerController from "src/controller/ConsumerController";
+import * as ConsumerController from "src/controller/http/ConsumerController";
 import { userSchema } from "src/services/models/User";
 import { cartSchema } from "src/services/models/Cart";
 import { productSchema } from "src/services/models/Product";

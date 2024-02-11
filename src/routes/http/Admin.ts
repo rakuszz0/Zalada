@@ -1,6 +1,6 @@
 import { FastifyInstance, RouteOptions } from "fastify";
-import * as AdminController from "../controller/AdminController";
-import { userSchema } from "../services/models/User";
+import * as AdminController from "../../controller/http/AdminController";
+import { userSchema } from "../../services/models/User";
 import * as Auth from "src/config/auth";
 import { baseSchema, productSchema } from "src/services/models/Product";
 import { ListRules } from "src/config/rules";

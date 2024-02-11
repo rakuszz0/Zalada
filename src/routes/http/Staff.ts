@@ -1,7 +1,7 @@
 import { FastifyInstance, RouteOptions } from "fastify";
 import * as Auth from "src/config/auth";
 import { ListRules } from "src/config/rules";
-import * as StaffController from "src/controller/StaffController";
+import * as StaffController from "src/controller/http/StaffController";
 import { productSchema } from "src/services/models/Product";
 import { transactionSchema } from "src/services/models/Transaction";
 import fastifyMulter from "fastify-multer"
