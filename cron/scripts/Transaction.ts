@@ -8,7 +8,7 @@ export async function CronOrderAutoCancel() {
         cronTime: `*/1 * * * *`,
         onTick: async () => {
             // Check transactions that pending transaction for more than 2 hours
-            const transactions = await db.query<Array<{ order_no: string, created_at: number }>>(`SELECT order_no, created_at FROM transactions WHERE status = 1 AND ${moment().unix()} - created_at > 7200`)
+            const transactions = await db.query<Array<{ order_no: string, created_at: number }>>(`SELECT order_no, created_at FROM transactions WHERE status = 1 AND ${moment().unix()} - created_at > ${process.env.PENDING_ORDER_MAX_TIME}`)
 
             for (const trans of transactions) {
                 const orders = await db.query<Array<{ product_id: number, quantity: number }>>(`SELECT product_id, quantity FROM orders WHERE order_no = ?`, [trans.order_no])

@@ -13,7 +13,8 @@ export const envSchema = z.object({
     MAILER_HOST: z.string(),
     MAILER_USER: z.string(),
     MAILER_PORT: z.preprocess(data => parseInt(data as string), z.number()),
-    NODE_PORT: z.preprocess(port => parseInt(port as string), z.number())
+    NODE_PORT: z.preprocess(port => parseInt(port as string), z.number()),
+    PENDING_ORDER_MAX_TIME: z.preprocess(data => parseInt(data as string), z.number())
 })
 
 
