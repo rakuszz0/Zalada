@@ -7,6 +7,7 @@ import RoutesService from "@infrastructure/routes"
 import { envSchema } from "./src/config/app"
 import { ajvFilePlugin } from "src/utils/ajv"
 import { ZodError } from "zod"
+import cron from "src/cron"
 
 const server = fastify({ logger: process.env.NODE_ENV == "development" ? true : false, ajv: { plugins: [ajvFilePlugin] } })
 
@@ -27,6 +28,8 @@ async function main() {
         await DatabaseService.init()
 
         await server.ready()
+
+        await cron()
 
         await server.listen({ port: process.env.NODE_PORT, host: process.env.NODE_HOST })        
     } catch (error) {

@@ -1,6 +1,10 @@
-import db from "../../ormconfig"
+import db from "@database"
 import { CronJob } from "cron/dist"
 import moment from "moment"
+import Handlebars from "handlebars"
+import fs from "fs"
+import path from "path"
+import InfraMail from "@infrastructure/mailer"
 
 // Cron for cancel order when customer not pay order for 2 hours
 export async function CronOrderAutoCancel() {
@@ -28,10 +32,33 @@ export async function CronOrderAutoCancel() {
     })
 
     try {
-        console.log(`${job.context}_RUNNING`)
         job.start()
     } catch (error) {
-        console.log(`ERROR_${job.context}`)
+        job.stop()
+    }
+}
+
+export async function CronSendNotificationLowStock() {
+    const job = CronJob.from({
+        cronTime: "0 21 * * *",
+        onTick: async () => {
+            const products = await db.query('SELECT * FROM products WHERE stock < ?', [process.env.LOW_STOCK_TRESHOLD])
+            if(products.length) {
+                const users = await db.query<Array<{ email: string }>>('SELECT email FROM users')
+                for (const user of users) {
+                    const template = Handlebars.compile(fs.readFileSync(path.join(__dirname, '../../src/services/templates/low-stock.handlebars')))
+                    
+                    const html = template({ products })
+
+                    await InfraMail.sendMail({ to: user.email, subject: "Low Stock Notification", html })
+                }
+            }
+        }
+    })
+
+    try {
+        job.start()
+    } catch (error) {
         job.stop()
     }
 }

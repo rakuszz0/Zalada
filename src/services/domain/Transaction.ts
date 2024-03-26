@@ -8,6 +8,9 @@ import db from "@database"
 import format from "format-unicorn/safe"
 import moment from "moment"
 import MailService from "@infrastructure/mailer"
+import Handlebars from "handlebars";
+import fs from "fs"
+import path from "path";
 
 export async function getPaymentTypesDomain() {
     return await TransactionRepository.DBGetPaymentTypes()
@@ -153,15 +156,14 @@ export async function paymentOrderDomain({amount, order_no, customer_id, email, 
     // Set transaction to pending approval 
     await TransactionRepository.DBUpdateTransactionStatus({order_no, status: 2})
 
-    const html = await MailService.getTemplate({
-        template: "ORDER_CONFIRMATION",
-        content: {
-            order_no, 
-            order_time: moment.unix(transaction.created_at).format(`YYYY-MM-DD HH:mm`),
-            total_price,
-            items: orders,
-            username
-        }
+    const template = Handlebars.compile(fs.readFileSync(path.join(__dirname, '../templates/order-confirmation.handlebars'), 'utf-8'))
+
+    const html = template({ 
+        order_no,
+        order_time: moment.unix(transaction.created_at).format(`YYYY-MM-DD HH:mm`),
+        total_price,
+        items: orders,
+        username
     })
 
     // Send Mail to use
