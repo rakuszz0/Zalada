@@ -36,7 +36,8 @@ async function main() {
         if(error instanceof ZodError) {
             console.error(error.issues)
         } else {
-            console.log(error)
+            const err = error as any
+            server.log.error({ name: "SERVER_ERROR", message: `${err.message}` })
         }
         
         process.exit(1)
