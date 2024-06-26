@@ -8,6 +8,7 @@ import { envSchema } from "./src/config/app"
 import { ajvFilePlugin } from "src/utils/ajv"
 import { ZodError } from "zod"
 import cron from "src/cron"
+import AMQPService from "@infrastructure/amqp"
 
 const server = fastify({ logger: process.env.NODE_ENV == "development" ? true : false, ajv: { plugins: [ajvFilePlugin] } })
 
@@ -18,6 +19,18 @@ async function main() {
 
         // Register Mail Service
         await MailerService.init()
+
+        const producer = await AMQPService.createSingleQueueProducer({
+            vhost: process.env.AMQP_VHOST,
+            hostname: process.env.AMQP_HOST,
+            username: process.env.AMQP_USERNAME,
+            password: process.env.AMQP_PASSWORD,
+            queue: 'zalada-mail',
+            serviceName: 'zalada-mail',
+            protocol: 'amqp'
+        })
+
+        await AMQPService.publish('zalada-mail', { func: 'SendMail' })
 
         await server.register(SwaggerService)
 

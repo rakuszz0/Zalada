@@ -1,10 +1,14 @@
 import mail, { Transporter } from "nodemailer"
-import { GetTemplate, SendMail } from "src/services/models/Mail"
+import { MailOptions } from "nodemailer/lib/json-transport"
 
 class MailerService {
     private transporter: Transporter
 
     async init() {
+        if(this.transporter) {
+            return this.getTransporter()
+        }
+
         this.transporter = mail.createTransport({
             host: process.env.MAILER_HOST,
             port: process.env.MAILER_PORT,
@@ -16,18 +20,21 @@ class MailerService {
             tls: {
                 rejectUnauthorized: false
             }
-
         })
+
+        return this.transporter
     }
 
     getTransporter() {
         return this.transporter
     }
 
-    async sendMail(params: SendMail) {
-        return this.transporter.sendMail({
-            ...params
-        })   
+    async sendMail(params: MailOptions) {
+        if(!this.transporter) {
+            this.init()
+        }
+
+        return this.transporter.sendMail(params)   
     }
 }
 

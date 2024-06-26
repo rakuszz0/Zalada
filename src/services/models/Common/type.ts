@@ -1,4 +1,5 @@
 import { File } from "fastify-multer/lib/interfaces";
+import { Options } from 'amqplib'
 
 class BaseError extends Error {
     code: string;
@@ -54,4 +55,9 @@ export type UploadImage = { file: Required<File>, filename: string, dir: string 
 export type GetImageURLParams = {
     pathdir: string
     filename: string
+}
+
+export type AMQPConnection = Options.Connect & {
+    serviceName: string
+    queue: string
 }

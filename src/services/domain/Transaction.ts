@@ -11,6 +11,7 @@ import MailService from "@infrastructure/mailer"
 import Handlebars from "handlebars";
 import fs from "fs"
 import path from "path";
+import amqp from "@infrastructure/amqp";
 
 export async function getPaymentTypesDomain() {
     return await TransactionRepository.DBGetPaymentTypes()
@@ -167,11 +168,16 @@ export async function paymentOrderDomain({amount, order_no, customer_id, email, 
     })
 
     // Send Mail to use
-    await MailService.sendMail({
-        to: email,
-        subject: "Order Confirmation",
-        html 
-    })
+    // await MailService.sendMail({
+    //     to: email,
+    //     subject: "Order Confirmation",
+    //     html 
+    // })
+
+    const amq = amqp.getInstance('zalada-mail')
+    const payload = JSON.stringify({ func: "sendMail" })
+
+    amq.sendToQueue('zalada-mail', Buffer.from(payload))
 
     return true
 }
