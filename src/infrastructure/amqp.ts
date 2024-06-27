@@ -1,7 +1,6 @@
 import { AMQPConnection } from "src/services/models/Common";
 import amqplib, {  } from "amqplib"
-import fastify, { FastifyInstance } from "fastify";
-
+import logger from "src/utils/logger";
 
 class AMQPService {
     private connection: Record<string, amqplib.Channel> = {}
@@ -34,7 +33,7 @@ class AMQPService {
 
         this.connection[params.serviceName] = channel
 
-        console.log(JSON.stringify({ message: `Queue producer ${params.queue} added...`}))
+        logger.info({ message: `Queue producer ${params.queue} added...` })
 
         return channel
     }
@@ -56,7 +55,7 @@ class AMQPService {
 
         this.connection[serviceName] = channel
 
-        console.log(JSON.stringify({ message: `Queue consumer ${queue} added...` }))
+        logger.info({ message: `Queue consumer ${queue} added...` })
 
         return this.connection[serviceName]
     }

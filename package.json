@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "rimraf ./dist && tsc && tsc-alias",
-    "dev": "nodemon -e ts --exec \"ts-node -r tsconfig-paths/register -r server.ts\"",
+    "dev": "nodemon -e ts --exec \"ts-node -r tsconfig-paths/register -r ./src/entry/main.ts\"",
     "mail:dev": "nodemon -e ts --exec \"ts-node -r tsconfig-paths/register -r ./src/entry/mail.ts\"",
     "cron:dev": "ts-node --experimental-specifier-resolution=node ./cron",
     "migrate:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert --d ormconfig/index.ts",
@@ -55,6 +55,7 @@
     "moment": "^2.29.4",
     "mysql2": "^3.6.5",
     "nodemailer": "^6.9.7",
+    "pino": "^9.2.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.17",
     "zod": "^3.22.4"

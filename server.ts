@@ -20,7 +20,7 @@ async function main() {
         // Register Mail Service
         await MailerService.init()
 
-        const producer = await AMQPService.createSingleQueueProducer({
+        await AMQPService.createSingleQueueProducer({
             vhost: process.env.AMQP_VHOST,
             hostname: process.env.AMQP_HOST,
             username: process.env.AMQP_USERNAME,
