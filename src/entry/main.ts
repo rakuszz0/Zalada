@@ -8,7 +8,7 @@ import { ajvFilePlugin } from "src/utils/ajv"
 import { ZodError } from "zod"
 import cron from "src/cron"
 import AMQPService from "@infrastructure/amqp"
-import { envSchema } from "src/config/app"
+import { mainAppSchema } from "src/config/app"
 import logger from "src/utils/logger"
 
 const server = fastify({ ajv: { plugins: [ajvFilePlugin] } })
@@ -16,7 +16,7 @@ const server = fastify({ ajv: { plugins: [ajvFilePlugin] } })
 async function main() {
     try {
         // Env Validation
-        await envSchema.parseAsync(process.env)
+        await mainAppSchema.parseAsync(process.env)
 
         await AMQPService.createSingleQueueProducer({
             vhost: process.env.AMQP_VHOST,
