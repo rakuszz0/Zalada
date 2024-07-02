@@ -45,9 +45,11 @@ async function main() {
         logger.info({ message: `server running at ${url}` })
     } catch (error) {
         if (error instanceof ZodError) {
-            logger.error({ message: error.issues })
+            const err = error.issues[0]
+            console.error({ message: `${err.code} ${err.path[0]}` })
         } else {
-            logger.error({ message: error })
+            const message = JSON.stringify(error)
+            console.error({ message })
         }
 
         process.exit(1)

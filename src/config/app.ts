@@ -41,7 +41,8 @@ export const mainAppSchema = z.object({
 })
 
 export const mailAppSchema = z.object({
-    ...mailAmqpDto
+    ...mailAmqpDto,
+    ...mailerDto
 })
 
 

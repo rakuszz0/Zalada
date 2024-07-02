@@ -4,13 +4,30 @@ export type SendMail = Omit<SendMailOptions, 'from'>
 
 export type OrderConfirmationMailTemplate = { product_name: string, quantity: number, price: number }
 
-export type OrderConfirmationTemplate = { template: "ORDER_CONFIRMATION", content: { order_no: string, order_time: string, total_price: number, username: string ,items: OrderConfirmationMailTemplate[] }  }
+type MailProps = {
+    to: string
+    subject: string
+}
 
-export type LowStockTemplate = { template: "UPDATE_STOCK", content: LowStockMailTemplate[] } 
+export type OrderConfirmationTemplate = { 
+    template: "ORDER_CONFIRMATION", 
+    props: {
+        order_no: string,
+        order_time: string,
+        total_price: string,
+        username: string,
+        items: OrderConfirmationMailTemplate[]
+    }
+} & MailProps
+
+export type LowStockTemplate = { 
+    template: "UPDATE_STOCK", 
+    props: LowStockMailTemplate[]
+} & MailProps
 
 export type LowStockMailTemplate = {
     name: string,
     stock: string
 }
 
-export type GetTemplate = OrderConfirmationTemplate | LowStockTemplate
+export type TemplateList = OrderConfirmationTemplate | LowStockTemplate

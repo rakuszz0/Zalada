@@ -1,10 +1,10 @@
 import db from "@database"
 import { CronJob } from "cron/dist"
 import moment from "moment"
-import Handlebars from "handlebars"
 import fs from "fs"
 import path from "path"
 import InfraMail from "@infrastructure/mailer"
+import amqp from "@infrastructure/amqp"
 
 // Cron for cancel order when customer not pay order for 2 hours
 export async function CronOrderAutoCancel() {
@@ -39,7 +39,6 @@ export async function CronOrderAutoCancel() {
         job.start()
     } catch (error) {
         throw error
-        // job.stop()
     }
 }
 
@@ -50,13 +49,9 @@ export async function CronSendNotificationLowStock() {
             try {
                 const products = await db.query('SELECT * FROM products WHERE stock < ?', [process.env.LOW_STOCK_TRESHOLD])
                 if (products.length) {
-                    const users = await db.query<Array<{ email: string }>>('SELECT email FROM users')
+                    const users = await db.query<Array<{ email: string }>>('SELECT email FROM users WHERE user_level = 1')
                     for (const user of users) {
-                        const template = Handlebars.compile(fs.readFileSync(path.join(__dirname, '../../src/services/templates/low-stock.handlebars')))
-
-                        const html = template({ products })
-
-                        await InfraMail.sendMail({ to: user.email, subject: "Low Stock Notification", html })
+                        await InfraMail.parseAndSendMail({ to: user.email, subject: "Low Stock Notification", template: "UPDATE_STOCK", props: products })
                     }
                 }
             } catch (error) {
@@ -69,6 +64,5 @@ export async function CronSendNotificationLowStock() {
         job.start()
     } catch (error) {
         throw error
-        // job.stop()
     }
 }

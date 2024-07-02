@@ -12,6 +12,7 @@ import Handlebars from "handlebars";
 import fs from "fs"
 import path from "path";
 import amqp from "@infrastructure/amqp";
+import mailer from "@infrastructure/mailer";
 
 export async function getPaymentTypesDomain() {
     return await TransactionRepository.DBGetPaymentTypes()
@@ -157,27 +158,18 @@ export async function paymentOrderDomain({amount, order_no, customer_id, email, 
     // Set transaction to pending approval 
     await TransactionRepository.DBUpdateTransactionStatus({order_no, status: 2})
 
-    const template = Handlebars.compile(fs.readFileSync(path.join(__dirname, '../templates/order-confirmation.handlebars'), 'utf-8'))
-
-    const html = template({ 
-        order_no,
-        order_time: moment.unix(transaction.created_at).format(`YYYY-MM-DD HH:mm`),
-        total_price,
-        items: orders,
-        username
+    await mailer.parseAndSendMail({
+        props: {
+            order_no,
+            order_time: moment.unix(transaction.created_at).format(`YYYY-MM-DD HH:mm`),
+            total_price: formatNominalIDR(total_price),
+            items: orders,
+            username
+        },
+        subject: "Payment Order Confirmation",
+        template: "ORDER_CONFIRMATION",
+        to: email
     })
-
-    // Send Mail to use
-    // await MailService.sendMail({
-    //     to: email,
-    //     subject: "Order Confirmation",
-    //     html 
-    // })
-
-    const amq = amqp.getInstance('zalada-mail')
-    const payload = JSON.stringify({ func: "sendMail" })
-
-    amq.sendToQueue('zalada-mail', Buffer.from(payload))
 
     return true
 }
@@ -418,4 +410,9 @@ export async function transactionDetailsDomain({ order_no }: TransactionDto.Tran
         items: orders,
         attachment: CommonRepository.getImageURL({ filename: `${order_no.split('/').join('-')}.png`, pathdir: "orders" })
     }
+}
+
+
+function formatNominalIDR(num: number) {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(num)
 }

@@ -1,6 +1,8 @@
 import 'dotenv/config'
 
 import AMQPService from "@infrastructure/amqp";
+import MailerService from "@infrastructure/mailer";
+
 import { mailAppSchema } from "src/config/app";
 import { ConsumerMessageHandler } from "src/controller/amqp/singlequeue/consumer";
 import logger from 'src/utils/logger';
@@ -8,6 +10,8 @@ import logger from 'src/utils/logger';
 async function start() {
     try {
         await mailAppSchema.parseAsync(process.env)
+
+        await MailerService.init()
 
         const queue = 'zalada-mail'
 
