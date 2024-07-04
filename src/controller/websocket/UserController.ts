@@ -1,4 +1,4 @@
-import { Server } from "socket-io"
+import { Server } from "socket.io"
 
 async function LoginEvent(io: Server) {
     // Get user by claims token (parse it)   

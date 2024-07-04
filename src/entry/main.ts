@@ -6,9 +6,10 @@ import SwaggerService from '@infrastructure/Main/swagger'
 import RoutesService from "@infrastructure/Main/routes"
 import { ajvFilePlugin } from "src/utils/ajv"
 import CronService from "src/cron"
-import { InfraAMQP, InfraDB } from "@infrastructure/Common"
+import { InfraAMQP, InfraDB, InfraWS } from "@infrastructure/Common"
 import { mainAppSchema } from "src/config/app"
 import logger from "src/utils/logger"
+import { Server } from "socket.io"
 
 const server = fastify({ ajv: { plugins: [ajvFilePlugin] } })
 
@@ -29,6 +30,20 @@ async function main() {
 
         // Initialize database service
         await InfraDB.init()
+
+        const io = new Server(server.server, {
+            cors: {
+                origin: "*"
+            }
+        })
+
+
+        server.decorate('io', io)
+
+
+        server.io.on('connection', (data) => {
+            logger.info({ message: "new connected client", data })            
+        })
 
         await server.register(SwaggerService)
 
@@ -57,3 +72,10 @@ async function main() {
 }
 
 main()
+
+
+declare module "fastify" {
+    interface FastifyInstance {
+        io: Server
+    }
+}
