@@ -1,9 +1,9 @@
-import { NotFoundError, RequestError, ServerError } from "../models/Common";
+import { RequestError, ServerError } from "../models/Common";
 import * as UserRepository from "../repository/User";
 import * as UserTypes from "../models/User"
 import * as ProductDto from "../models/Product";
 import * as ProductRepository from "../repository/Product";
-import database from "@infrastructure/database";
+import { InfraDB } from "@infrastructure/Common";
 import * as Bcrypt from "src/utils/password";
 import * as Jwt from "src/utils/jwt";
 import format from "format-unicorn/safe"
@@ -120,7 +120,7 @@ export async function changePasswordDomain(params: UserTypes.ChangePassRequest) 
     throw new RequestError("INVALID_PASSWORD")
   }
 
-  const db = database.getDatasource()
+  const db = InfraDB.getInstance()
   const conn = db.createQueryRunner()
   await conn.connect()
   try {
@@ -146,7 +146,7 @@ export async function deleteUserByAdmin({user_id}:UserTypes.DeleteUserRequest){
 
   const data_user = await UserRepository.DBCheckUserExist(user_id) 
   
-  const db = database.getDatasource()
+  const db = InfraDB.getInstance()
   const conn = db.createQueryRunner()
   await conn.connect()
   try {
@@ -250,7 +250,7 @@ export async function restoreTrashedUser(params: UserTypes.RestoreTrashedUser) {
 
   const deleted_user_data = trashedUser[0]
 
-  const db = database.getDatasource()
+  const db = InfraDB.getInstance()
   const conn = db.createQueryRunner()
   await conn.connect()
   try {

@@ -1,18 +1,12 @@
 import * as TransactionRepository from "../repository/Transaction";
-import * as UserRepository from "../repository/User";
 import * as TransactionDto from "../models/Transaction";
 import * as ProductRepository from "../repository/Product"
 import * as CommonRepository from "../repository/Common"
-import { NotFoundError, RequestError } from "../models/Common";
+import { RequestError } from "../models/Common";
 import db from "@database"
 import format from "format-unicorn/safe"
 import moment from "moment"
-import MailService from "@infrastructure/mailer"
-import Handlebars from "handlebars";
-import fs from "fs"
-import path from "path";
-import amqp from "@infrastructure/amqp";
-import mailer from "@infrastructure/mailer";
+import mailer from "@infrastructure/Common/mailer";
 
 export async function getPaymentTypesDomain() {
     return await TransactionRepository.DBGetPaymentTypes()

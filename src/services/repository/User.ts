@@ -1,11 +1,11 @@
-import DatabaseService from "@infrastructure/database"
+import { InfraDB } from "@infrastructure/Common"
 import * as UserTypes from "../models/User/type"
 import { ResultSetHeader } from "mysql2"
 import { QueryRunner } from "typeorm"
 import { NotFoundError, RequestError, ServerError } from "../models/Common";
 import moment from "moment";
 
-const db = DatabaseService.getDatasource()
+const db = InfraDB.getInstance()
 
 export async function DBGetUsers({ search = "1=1", limit = 500, sort = "DESC" }: UserTypes.GetUsersQueryParams) {
   const query = await db.query<UserTypes.GetUserResponse[]>(`SELECT u.id, u.username, u.email, u.first_name, u.last_name, u.phone_number, u.address, u.registered_date, ur.name roles_name FROM users u LEFT JOIN user_roles ur ON ur.id = u.user_level WHERE ${search} ORDER BY u.id ${sort} LIMIT ${limit + 1}`)

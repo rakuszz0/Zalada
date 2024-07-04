@@ -1,7 +1,6 @@
 import 'dotenv/config'
+import { InfraMailer, InfraAMQP } from "@infrastructure/Common";
 
-import AMQPService from "@infrastructure/amqp";
-import MailerService from "@infrastructure/mailer";
 
 import { mailAppSchema } from "src/config/app";
 import { ConsumerMessageHandler } from "src/controller/amqp/singlequeue/consumer";
@@ -11,11 +10,11 @@ async function start() {
     try {
         await mailAppSchema.parseAsync(process.env)
 
-        await MailerService.init()
+        await InfraMailer.init()
 
         const queue = 'zalada-mail'
 
-        const amqp = await AMQPService.createSingleQueueConsumer({
+        const amqp = await InfraAMQP.createSingleQueueConsumer({
             vhost: process.env.AMQP_VHOST,
             hostname: process.env.AMQP_HOST,
             username: process.env.AMQP_USERNAME,
@@ -27,7 +26,7 @@ async function start() {
 
         amqp.consume(queue, ConsumerMessageHandler, { noAck: true })   
     } catch (error) {
-        logger.info({ message: error })
+        logger.info({ message: 'zalada-mail', reason: error })
     }
 }
 

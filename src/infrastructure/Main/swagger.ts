@@ -1,12 +1,12 @@
 import fastifySwagger from "@fastify/swagger"
 import fastifySwaggerUi from "@fastify/swagger-ui"
 import fp from "fastify-plugin"
-import { userSchemas } from "../services/models/User"
-import { productSchemas } from "src/services/models/Product"
-import { transactionSchemas } from "src/services/models/Transaction"
-import { commonSchemas } from "src/services/models/Common"
-import { cartSchemas } from "src/services/models/Cart"
-import { logSchemas } from "src/services/models/Log"
+import { userSchemas } from "@services/models/User"
+import { productSchemas } from "@services/models/Product"
+import { transactionSchemas } from "@services/models/Transaction"
+import { commonSchemas } from "@services/models/Common"
+import { cartSchemas } from "@services/models/Cart"
+import { logSchemas } from "@services/models/Log"
 
 
 export default fp(async (server) => {

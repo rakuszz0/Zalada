@@ -1,11 +1,12 @@
 import db from "@database"
+import { Infrastructure } from "./base"
 
-class DatabaseService {
+class DatabaseService extends Infrastructure {
     async init() {
         await db.initialize()
     }
     
-    getDatasource() {
+    getInstance() {
         return db
     }
 }

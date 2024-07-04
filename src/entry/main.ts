@@ -1,13 +1,12 @@
 import "dotenv/config"
 import fastify from 'fastify'
-import DatabaseService from '@infrastructure/database'
-import SwaggerService from '@infrastructure/swagger'
-import RoutesService from "@infrastructure/routes"
-
-import { ajvFilePlugin } from "src/utils/ajv"
 import { ZodError } from "zod"
-import cron from "src/cron"
-import AMQPService from "@infrastructure/amqp"
+
+import SwaggerService from '@infrastructure/Main/swagger'
+import RoutesService from "@infrastructure/Main/routes"
+import { ajvFilePlugin } from "src/utils/ajv"
+import CronService from "src/cron"
+import { InfraAMQP, InfraDB } from "@infrastructure/Common"
 import { mainAppSchema } from "src/config/app"
 import logger from "src/utils/logger"
 
@@ -18,7 +17,7 @@ async function main() {
         // Env Validation
         await mainAppSchema.parseAsync(process.env)
 
-        await AMQPService.createSingleQueueProducer({
+        await InfraAMQP.createSingleQueueProducer({
             vhost: process.env.AMQP_VHOST,
             hostname: process.env.AMQP_HOST,
             username: process.env.AMQP_USERNAME,
@@ -28,17 +27,17 @@ async function main() {
             protocol: 'amqp'
         })
 
+        // Initialize database service
+        await InfraDB.init()
+
         await server.register(SwaggerService)
 
         // Register all routes
         await server.register(RoutesService)
 
-        // Initialize database service
-        await DatabaseService.init()
-
         await server.ready()
 
-        await cron()
+        await CronService()
 
         const url = await server.listen({ port: process.env.NODE_PORT, host: process.env.NODE_HOST })
 

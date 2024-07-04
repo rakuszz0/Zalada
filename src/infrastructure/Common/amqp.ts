@@ -1,8 +1,9 @@
 import { AMQPConnection } from "src/services/models/Common";
-import amqplib, {  } from "amqplib"
+import amqplib from "amqplib"
 import logger from "src/utils/logger";
+import { Infrastructure } from "./base";
 
-class AMQPService {
+class AMQPService implements Infrastructure {
     private connection: Record<string, amqplib.Channel> = {}
     private instance: amqplib.Connection
 

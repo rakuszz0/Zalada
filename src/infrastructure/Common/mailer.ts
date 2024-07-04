@@ -1,17 +1,19 @@
 import mail, { Transporter } from "nodemailer"
-import { MailOptions } from "nodemailer/lib/json-transport"
-import { TemplateList } from "src/services/models/Mail"
 import fs from "fs"
 import path from "path"
-import amqp from "./amqp"
 import Handlebars from "handlebars"
 
-class MailerService {
+import { MailOptions } from "nodemailer/lib/json-transport"
+import { TemplateList } from "@services/models"
+import { InfraAMQP } from "@infrastructure/Common"
+import { Infrastructure } from "@infrastructure/Common/base"
+
+class MailerService extends Infrastructure {
     private transporter: Transporter
 
     async init() {
         if(this.transporter) {
-            return this.getTransporter()
+            return this.getInstance()
         }
 
         this.transporter = mail.createTransport({
@@ -30,7 +32,7 @@ class MailerService {
         return this.transporter
     }
 
-    getTransporter() {
+    getInstance() {
         return this.transporter
     }
 
@@ -55,7 +57,7 @@ class MailerService {
                 break
         }
 
-        return amqp.publish('zalada-mail', { func: 'SendMail', ...mail, html })
+        return InfraAMQP.publish('zalada-mail', { func: 'SendMail', ...mail, html })
     }
 }
 

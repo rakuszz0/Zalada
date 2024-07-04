@@ -1,10 +1,7 @@
 import db from "@database"
 import { CronJob } from "cron/dist"
 import moment from "moment"
-import fs from "fs"
-import path from "path"
-import InfraMail from "@infrastructure/mailer"
-import amqp from "@infrastructure/amqp"
+import InfraMail from "@infrastructure/Common/mailer"
 
 // Cron for cancel order when customer not pay order for 2 hours
 export async function CronOrderAutoCancel() {

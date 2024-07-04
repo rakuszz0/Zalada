@@ -1,7 +1,7 @@
 import * as ProductRepository from "../repository/Product";
 import * as ProductDto from "../models/Product";
 import format from "format-unicorn/safe"
-import database from "@infrastructure/database";
+import { InfraDB } from "@infrastructure/Common";
 import * as TransactionRepository from "../repository/Transaction";
 import { RequestError } from "../models/Common";
 
@@ -86,7 +86,7 @@ export async function deleteProductByAdmin(params: ProductDto.DeleteProductReque
     
     const checkProduct = await ProductRepository.DBCheckProductExist(product_id)
   
-    const db = database.getDatasource();
+    const db = InfraDB.getInstance();
     const conn = db.createQueryRunner();
     await conn.connect()
     try {
