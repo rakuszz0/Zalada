@@ -1,7 +1,6 @@
 import 'dotenv/config'
+
 import { InfraMailer, InfraAMQP } from "@infrastructure/Common";
-
-
 import { mailAppSchema } from "src/config/app";
 import { ConsumerMessageHandler } from "src/controller/amqp/singlequeue/consumer";
 import logger from 'src/utils/logger';
@@ -12,7 +11,7 @@ async function start() {
 
         await InfraMailer.init()
 
-        const queue = 'zalada-mail'
+        const queue = process.env.AMQP_MAILER_QUEUE
 
         const amqp = await InfraAMQP.createSingleQueueConsumer({
             vhost: process.env.AMQP_VHOST,

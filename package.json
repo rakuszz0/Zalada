@@ -56,7 +56,9 @@
     "mysql2": "^3.6.5",
     "nodemailer": "^6.9.7",
     "pino": "^9.2.0",
+    "redis": "^4.6.15",
     "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.7.5",
     "typeorm": "^0.3.17",
     "zod": "^3.22.4"
   }
