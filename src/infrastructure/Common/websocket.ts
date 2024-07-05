@@ -1,7 +1,7 @@
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { Infrastructure } from "./base";
 import { Server, ServerOptions } from "socket.io"
-import { FastifyInstance, FastifyRequest, RawServerDefault } from "fastify";
+import { RawServerDefault } from "fastify";
 
 export class WebsocketService extends Infrastructure {
     private connection: Record<string, Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>>
