@@ -2,6 +2,7 @@ import db from "@database"
 import { CronJob } from "cron/dist"
 import moment from "moment"
 import InfraMail from "@infrastructure/Common/mailer"
+import logger from "src/utils/logger"
 
 // Cron for cancel order when customer not pay order for 2 hours
 export async function CronOrderAutoCancel() {
@@ -23,7 +24,9 @@ export async function CronOrderAutoCancel() {
 
                     // Set order to cancelled
                     await db.query(`UPDATE transactions SET status = ? WHERE order_no = ?`, [7, trans.order_no])
+                    logger.info({ message: "CRON_ORDER_AUTO_CANCEL", data: transactions.length })
                 }
+
             } catch (error) {
                 throw error
             }      
@@ -50,9 +53,33 @@ export async function CronSendNotificationLowStock() {
                     for (const user of users) {
                         await InfraMail.parseAndSendMail({ to: user.email, subject: "Low Stock Notification", template: "UPDATE_STOCK", props: products })
                     }
+
+                    logger.info({ message: "CRON_SEND_NOTIFICATION", data: products.length })
                 }
             } catch (error) {
                 throw error
+            }
+        }
+    })
+
+    try {
+        job.start()
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function CronAutoFinishTransaction() {
+    const job = CronJob.from({
+        cronTime: "* 0 * * *",
+        onTick: async () => {
+            const products = await db.query<Array<{ order_no: string }>>('SELECT order_no FROM transactions WHERE status = 5 AND arrived_at IS NOT NULL')
+            
+            if(products.length) {
+                const productIds = products.map(p => p.order_no).join(',')
+                await db.query('UPDATE SET status = 6 WHERE order_no IN ?', [productIds])
+
+                logger.info({ message: "CRON_AUTO_FINISH_TRANSACTION", data: products.length })
             }
         }
     })
