@@ -23,9 +23,8 @@ async function main() {
             hostname: process.env.AMQP_HOST,
             username: process.env.AMQP_USERNAME,
             password: process.env.AMQP_PASSWORD,
-            queue: 'zalada-mail',
-            serviceName: 'zalada-mail',
-            protocol: 'amqp'
+            queue: process.env.AMQP_MAILER_QUEUE,
+            serviceName: process.env.AMQP_MAILER_NAME
         })
 
         // Initialize database service

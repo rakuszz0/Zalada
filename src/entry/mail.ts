@@ -19,8 +19,7 @@ async function start() {
             username: process.env.AMQP_USERNAME,
             password: process.env.AMQP_PASSWORD,
             queue,
-            serviceName: 'zalada-mail',
-            protocol: 'amqp'
+            serviceName: process.env.AMQP_MAILER_NAME
         })
 
         amqp.consume(queue, ConsumerMessageHandler, { noAck: true })   

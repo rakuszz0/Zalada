@@ -5,7 +5,8 @@ const mailAmqpDto = {
     AMQP_PASSWORD: z.string(),
     AMQP_HOST: z.string(),
     AMQP_PORT: z.preprocess(data => parseInt(data as string), z.number()),
-    AMQP_MAILER_QUEUE: z.string()
+    AMQP_MAILER_QUEUE: z.string(),
+    AMQP_MAILER_NAME: z.string()
 }
 
 const mainDBDto = {
